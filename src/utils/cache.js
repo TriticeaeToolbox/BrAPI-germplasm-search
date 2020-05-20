@@ -3,9 +3,10 @@
 const fs = require('fs');
 const cache = require('memory-cache');
 const md5 = require('md5');
+const config = require('./config.js');
 
 // Max time to keep the records in the cache (ms)
-const TIMEOUT = 1000*60*60*24*7*2;   // = 2 weeks
+const TIMEOUT = config.cache.timeout;
 
 
 /**
@@ -42,9 +43,10 @@ function isCached(key) {
 
 /**
  * Import the cache from a JSON file
- * @param  {string} path Path to a JSON file of an exported cache
+ * @param  {string} [path] Path to a JSON file of an exported cache
  */
 function importJSON(path) {
+    path = path ? path : config.cache.path;
     try {
         if ( fs.existsSync(path) ) {
             let data = fs.readFileSync(path);
@@ -56,9 +58,10 @@ function importJSON(path) {
 
 /**
  * Export the cache to a JSON file
- * @param  {string} path Path of a JSON file to write the exported cache to
+ * @param  {string} [path] Path of a JSON file to write the exported cache to
  */
 function exportJSON(path) {
+    path = path ? path : config.cache.path;
     try {
         let data = cache.exportJson();
         fs.writeFileSync(path, data);

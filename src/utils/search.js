@@ -9,7 +9,7 @@ const SEARCH_SUBROUTINES = [
 ]
 
 /**
- * Search the BrAPI database for germplasm entries that match the specified search 
+ * Search the BrAPI database terms for germplasm entries that match the specified search 
  * terms.  The callback function will return an object (with keys set to the original 
  * search terms) where each property is an object with the properties:
  *     - term = original search term
@@ -21,13 +21,13 @@ const SEARCH_SUBROUTINES = [
  *     {boolean} punctuation = match search terms to database terms after removing special characters
  *     {boolean} edit_distance = perform edit distance search on database names and synonyms
  *     {int} max_edit_distance = maximum edit distance for a match
- * @param  {String[]}   terms      List of germplasm names to find matches for
- * @param  {BrAPI}      brapi      The BrAPI node to perform the search on
- * @param  {Object}     [config]   Search configuration properties
- * @param  {Function}   callback   Callback function(matches)
- * @param  {Function}   [progress] Callback function(status, progress) for updating search progress
+ * @param  {String[]}   search_terms  List of germplasm names to find matches for
+ * @param  {Object[]}   db_terms      The database terms to perform the search on
+ * @param  {Object}     [config]      Search configuration properties
+ * @param  {Function}   callback      Callback function(matches)
+ * @param  {Function}   [progress]    Callback function(status, progress) for updating search progress
  */
-function search(terms, brapi, config, callback, progress) {
+function search(search_terms, db_terms, config, callback, progress) {
 
     // Set parameters
     if ( !callback && typeof config === 'function' ) {
@@ -41,24 +41,34 @@ function search(terms, brapi, config, callback, progress) {
     }
 
     // Check for required parameters
-    if ( !terms || terms.length === 0 ) {
+    if ( !search_terms || search_terms.length === 0 ) {
         console.log("ERROR: Search terms are required");
         return;
     }
-    if ( !brapi ) {
-        console.log("ERROR: BrAPI node for the database is required");
+    else if ( !database ) {
+        console.log("ERROR: BrAPI database properties are required");
         return;
     }
-    if ( !config ) {
+    else if ( !database.address ) {
+        console.log("ERROR: BrAPI database address is required");
+        return;
+    }
+    else if ( !config ) {
         console.log("ERROR: Search configuration object is required")
         return;
     }
 
+    // TODO: set default config properties, if not provided
+
+
+    // Create BrAPI node
+    let brapi = BrAPI(database.address, database.version, database.auth_token, database.call_limit);
+
     // Set intial matches
     let matches = {}
-    for ( let i = 0; i < terms.length; i++ ) {
-        matches[terms[i]] = {
-            term: terms[i],
+    for ( let i = 0; i < search_terms.length; i++ ) {
+        matches[search_terms[i]] = {
+            term: search_terms[i],
             matchType: 'none',
             matches: []
         }
@@ -68,80 +78,9 @@ function search(terms, brapi, config, callback, progress) {
     // Reset progress
     if ( progress ) progress("", 0);
 
+    // Start the first search subroutine
+    _startSubroutine(db_terms, matches, config, progress, callback);
 
-    // Get all germplasm names and synonyms from the database
-    _getGermplasm(brapi, progress, function(db_terms) {
-
-        // Start the first search subroutine
-        _startSubroutine(db_terms, matches, config, progress, callback);
-
-    });
-
-}
-
-
-/**
- * Get all germplasm records - use cached if available otherwise 
- * request fresh records from the database
- * @param  {BrAPI}    brapi    BrAPI Node
- * @param  {Function} progress Progress callback function
- * @param  {Function} callback Callback function(db_terms)
- */
-function _getGermplasm(brapi, progress, callback) {
-    if ( progress ) progress("Getting germplasm entries from the database<br />This will take a few moments...", -1);
-    
-    // TODO: Get from cache, if available
-
-    // Get fresh germplasm records
-    _getGermplasmFresh(brapi, progress, callback);
-}
-
-
-/**
- * Get fresh germplasm records from the database and parse out the 
- * names and synonyms as database terms
- * @param  {BrAPI}    brapi    BrAPI Node
- * @param  {Function} progress Progress callback function
- * @param  {Function} callback Callback function(db_terms)
- */
-function _getGermplasmFresh(brapi, progress, callback) {
-    if ( progress ) progress("Getting germplasm entries from the database<br />This will take a few moments...", -1);
-
-    let count = 0;
-    let total = undefined;
-    let db_terms = [];
-    let cache_key = brapi.brapi.brapi_base_url;
-    
-    brapi
-        .germplasm({pageSize: 1000})
-        .each(function(datum, key) {
-            if ( !total ) {
-                total = datum.__response.metadata.pagination.totalCount;
-            }
-            count++;
-            if ( count % 50 === 0 ) {
-                progress("Getting germplasm entries from the database<br />This will take a few moments...", (count/total)*100);
-            }
-            
-            db_terms.push({
-                term: datum.germplasmName.trim(),
-                type: "name",
-                record: datum
-            });
-            for ( let i = 0; i < datum.synonyms.length; i++ ) {
-                db_terms.push({
-                    term: datum.synonyms[i].trim(),
-                    type: "synonym",
-                    record: datum
-                });
-            }
-        })
-        .all(function(resp) {
-
-            // TODO: Add database records to cache
-
-            return callback(db_terms);
-        });
 }
 
 

@@ -22,7 +22,11 @@ if ( config.cache.autoImport ) {
  */
 function put(key, value) {
     let cache_key = _checksum(key);
-    cache.put(cache_key, value, TIMEOUT);
+    let info = {
+        saved: new Date(),
+        value: value
+    }
+    cache.put(cache_key, info, TIMEOUT);
     if ( config.cache.autoExport ) {
         exportJSON();
     }
@@ -35,7 +39,22 @@ function put(key, value) {
  */
 function get(key) {
     let cache_key = _checksum(key);
-    return cache.get(cache_key);
+    return cache.get(cache_key).value;
+}
+
+/**
+ * Get cached value and metadata info
+ * @param  {string} key Key of cached value
+ * @return {Object}     Cached info{saved, value}
+ */
+function info(key) {
+    if ( isCached(key) ) {
+        let cache_key = _checksum(key);
+        return cache.get(cache_key);
+    }
+    else {
+        return undefined;
+    }
 }
 
 /**
@@ -96,6 +115,7 @@ function _checksum(value) {
 module.exports = {
     put: put,
     get: get,
+    info: info,
     isCached: isCached,
     import: importJSON,
     export: exportJSON

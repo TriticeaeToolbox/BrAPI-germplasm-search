@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/TriticeaeToolbox/BrAPI-germplasm-search#readme",
   "dependencies": {
-    "@solgenomics/brapijs": "^1.0.1"
+    "@solgenomics/brapijs": "^1.0.1",
+    "deep-extend": "^0.6.0",
+    "express": "^4.17.1"
   }
 }

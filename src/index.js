@@ -1,3 +1,6 @@
 'use strict';
 
-module.exports = require('./utils/search.js');
+module.exports = {
+    getDBTerms: require('./utils/database.js'),
+    search: require('./utils/search.js')
+}

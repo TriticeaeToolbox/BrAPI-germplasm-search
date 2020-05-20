@@ -5,5 +5,12 @@
         "export": "./cache.json",
         "autoImport": true,
         "autoExport": true
+    },
+    "search": {
+        "exact": true,
+        "synonyms": true,
+        "punctuation": true,
+        "edit_distance": false,
+        "max_edit_distance": 2
     }
 }

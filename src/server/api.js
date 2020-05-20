@@ -29,13 +29,16 @@ router.use(function(req, res, next) {
  */
 router.get('/job/:id', function(req, res, next) {
     let id = req.params.id;
-    let results = req.query.results && req.query.results === 'true';
+    let results = !req.query.results || !req.query.results === 'false';
     let status = queue.getStatus(id);
 
     // Complete Job
     if ( status === "complete" ) {
-        let body = results ? queue.getResults(id) : {};
-        response.success(res, body);
+        let body = {
+            id: id,
+            results: queue.getResults(id)
+        }
+        response.pending(res, status, body);
         return next();
     }
 
@@ -135,13 +138,90 @@ router.put('/cache', function(req, res, next) {
 
 /**
  * Perform the germplasm search
+ * Required body params: database.address, terms
+ * Optional body params: database.version, database.auth_token, database.call_limit, force, config
  * @param  {Object}   req   Express Request
  * @param  {Object}   res   Express Response
  * @param  {Function} next  Express handler stack callback
  */
 router.post('/search', function(req, res, next) {
-    
+    let database = req.body.database;
+    let force = req.body.force && req.body.force === 'true';
+    let terms = req.body.terms;
+    let search_config = req.body.config
+
+    // Check params
+    if ( !database ) {
+        response.error(res, 400, "Database properties not provided as 'database' in the request body");
+        return next();
+    }
+    if ( !database.address ) {
+        response.error(res, 400, "Database address not provided as 'database.address' in the request body");
+        return next();
+    }
+    if ( !terms || terms.length === 0 ) {
+        response.error(res, 400, "Search terms not provided as 'terms' in the request body");
+        return next();
+    }
+
+
+    // Add the Job to the Queue
+    let id = queue.add(function() {
+
+        // Get DB Terms from the cache
+        let db_terms = cache.get(database.address);
+        
+        // Update the cache of db terms?
+        if ( force || !db_terms || db_terms.length === 0 ) {
+            
+            // Get Fresh DB Terms
+            getDBTerms(database, true, function(status, progress) {
+                queue.setMessage(id, status.title, status.subtitle);
+                queue.setProgress(id, progress);
+            }, function(db_terms) {
+                
+                // Search on the DB Terms
+                _search(id, terms, db_terms, search_config);
+
+            });
+        }
+
+        // Use the cached db terms...
+        else {
+
+            // Search on the DB terms
+            _search(id, terms, db_terms, search_config);
+
+        }
+
+    });
+
+    // Star the Job
+    queue.start(id);
+
+    // Return a queued response
+    response.queued(res, id);
     return next();
+
+
+    /**
+     * Perform the database search
+     * @param  {string}     id            Job ID
+     * @param  {string[]}   terms         Search Terms
+     * @param  {Object}     db_terms      Database Terms
+     * @param  {Object}     search_config Search Parameters
+     */
+    function _search(id, terms, db_terms, search_config) {
+        search(terms, db_terms, search_config, function(status, progress) {
+            console.log("PROGRESS: " + progress);
+            queue.setMessage(id, status.title, status.subtitle);
+            queue.setProgress(id, progress);
+        }, function(matches) {
+            console.log("COMPLETE");
+            console.log(matches);
+            queue.complete(id, matches);
+        });
+    }
 });
 
 

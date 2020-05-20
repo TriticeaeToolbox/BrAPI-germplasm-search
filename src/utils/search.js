@@ -1,5 +1,9 @@
 'use strict';
 
+const extend = require('deep-extend');
+const DEFAULT_CONFIG = require('./config.js').search;
+
+
 // Search Subroutine start functions
 const SEARCH_SUBROUTINES = [
     _startExact,
@@ -24,45 +28,38 @@ const SEARCH_SUBROUTINES = [
  * @param  {String[]}   search_terms  List of germplasm names to find matches for
  * @param  {Object[]}   db_terms      The database terms to perform the search on
  * @param  {Object}     [config]      Search configuration properties
- * @param  {Function}   callback      Callback function(matches)
  * @param  {Function}   [progress]    Callback function(status, progress) for updating search progress
+ * @param  {Function}   callback      Callback function(matches)
  */
-function search(search_terms, db_terms, config, callback, progress) {
+function search(search_terms, db_terms, config, progress, callback) {
 
     // Set parameters
-    if ( !callback && typeof config === 'function' ) {
+    if ( !callback && !progress && typeof config === 'function' ) {
         callback = config;
+        progress = undefined;
         config = {};
     }
-    else if ( !progress && typeof config === 'function' ) {
-        progress = callback;
-        callback = config;
+    if ( !callback && typeof progress === 'function' && typeof config === 'object' ) {
+        callback = progress;
+        progress = undefined;
+    }
+    if ( !callback && typeof progress === 'function' && typeof config === 'function' ) {
+        callback = progress;
+        progress = config;
         config = {};
     }
 
     // Check for required parameters
     if ( !search_terms || search_terms.length === 0 ) {
-        console.log("ERROR: Search terms are required");
+        throw("Search terms are required");
         return;
     }
-    else if ( !database ) {
-        console.log("ERROR: BrAPI database properties are required");
-        return;
-    }
-    else if ( !database.address ) {
-        console.log("ERROR: BrAPI database address is required");
-        return;
-    }
-    else if ( !config ) {
-        console.log("ERROR: Search configuration object is required")
-        return;
+    else if ( !db_terms || db_terms.length === 0 ) {
+        throw("DB terms are required");
     }
 
-    // TODO: set default config properties, if not provided
-
-
-    // Create BrAPI node
-    let brapi = BrAPI(database.address, database.version, database.auth_token, database.call_limit);
+    // Merge provided config into default config
+    config = extend(DEFAULT_CONFIG, config);
 
     // Set intial matches
     let matches = {}
@@ -74,9 +71,11 @@ function search(search_terms, db_terms, config, callback, progress) {
         }
     }
 
+    console.log(matches);
+
 
     // Reset progress
-    if ( progress ) progress("", 0);
+    if ( progress ) progress({}, 0);
 
     // Start the first search subroutine
     _startSubroutine(db_terms, matches, config, progress, callback);
@@ -99,7 +98,15 @@ function _startSubroutine(db_terms, matches, config, progress, callback, index) 
     
     let count = index+1;
     let total = SEARCH_SUBROUTINES.length;
-    if ( progress ) progress("Performing search...<br />Step " + count + " / " + total, (count/total)*100);
+    if ( progress ) {
+        progress(
+            {
+                title: "Performing search...",
+                subtitle: "Step " + count + " / " + total
+            }, 
+            (count/total)*100
+        );
+    }
     
     SEARCH_SUBROUTINES[index](db_terms, matches, config, function(matches) {
         index++;
@@ -195,7 +202,7 @@ function _getExactMatches(db_terms, matches, callback) {
     for ( let i = 0; i < db_terms.length; i++ ) {
         let db_term = db_terms[i];
         if ( db_term.type === 'name' ) {
-            for ( key in matches ) {
+            for ( let key in matches ) {
                 if ( matches.hasOwnProperty(key) ) {
                     let match = matches[key];
                     if ( db_term.term.toUpperCase() === match.term.toUpperCase() ) {
@@ -219,7 +226,7 @@ function _getSynonymMatches(db_terms, matches, callback) {
     for ( let i = 0; i < db_terms.length; i++ ) {
         let db_term = db_terms[i];
         if ( db_term.type === 'synonym' ) {
-            for ( key in matches ) {
+            for ( let key in matches ) {
                 if ( matches.hasOwnProperty(key) ) {
                     let match = matches[key];
                     if ( db_term.term.toUpperCase() === match.term.toUpperCase() ) {

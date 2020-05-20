@@ -86,7 +86,6 @@ function getProgress(id) {
 function getResults(id) {
     if ( getStatus(id) === "complete" ) {
         let rtn = QUEUE[id].results;
-        delete QUEUE[id];
         return rtn;
     }
     return undefined;

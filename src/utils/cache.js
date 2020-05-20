@@ -9,6 +9,12 @@ const config = require('./config.js');
 const TIMEOUT = config.cache.timeout;
 
 
+// Automatically import on init
+if ( config.cache.autoImport ) {
+    importJSON();
+}
+
+
 /**
  * Put the value into the memory cache
  * @param  {string} key   Key of cache value
@@ -17,6 +23,9 @@ const TIMEOUT = config.cache.timeout;
 function put(key, value) {
     let cache_key = _checksum(key);
     cache.put(cache_key, value, TIMEOUT);
+    if ( config.cache.autoExport ) {
+        exportJSON();
+    }
 }
 
 /**
@@ -46,14 +55,16 @@ function isCached(key) {
  * @param  {string} [path] Path to a JSON file of an exported cache
  */
 function importJSON(path) {
-    path = path ? path : config.cache.path;
+    path = path ? path : config.cache.export;
     try {
         if ( fs.existsSync(path) ) {
             let data = fs.readFileSync(path);
-            cache.importJson(data);
+            cache.importJson(data.toString());
         }
     }
-    catch(e) {}
+    catch(e) {
+        console.log(e);
+    }
 }
 
 /**
@@ -61,12 +72,14 @@ function importJSON(path) {
  * @param  {string} [path] Path of a JSON file to write the exported cache to
  */
 function exportJSON(path) {
-    path = path ? path : config.cache.path;
+    path = path ? path : config.cache.export;
     try {
         let data = cache.exportJson();
         fs.writeFileSync(path, data);
     }
-    catch(e) {}
+    catch(e) {
+        console.log(e);
+    }
 }
 
 

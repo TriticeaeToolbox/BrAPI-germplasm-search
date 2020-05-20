@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/TriticeaeToolbox/BrAPI-germplasm-search/issues"
   },
-  "homepage": "https://github.com/TriticeaeToolbox/BrAPI-germplasm-search#readme"
+  "homepage": "https://github.com/TriticeaeToolbox/BrAPI-germplasm-search#readme",
+  "dependencies": {
+    "@solgenomics/brapijs": "^1.0.1"
+  }
 }

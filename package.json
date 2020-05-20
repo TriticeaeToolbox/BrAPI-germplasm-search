@@ -1,0 +1,25 @@
+{
+  "name": "brapi-germplasm-search",
+  "version": "1.0.0",
+  "description": "A BrAPI-powered bulk germplasm search API server and website",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TriticeaeToolbox/BrAPI-germplasm-search.git"
+  },
+  "keywords": [
+    "BrAPI",
+    "breedbase",
+    "SGN",
+    "germplasm"
+  ],
+  "author": "David Waring <djw64@cornell.edu>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TriticeaeToolbox/BrAPI-germplasm-search/issues"
+  },
+  "homepage": "https://github.com/TriticeaeToolbox/BrAPI-germplasm-search#readme"
+}

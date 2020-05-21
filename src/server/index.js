@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const express = require('express');
 const config = require('../utils/config.js');
 const api = require('./api.js');
@@ -12,6 +13,9 @@ server.use(express.json());
 
 // Set API Routes
 server.use('/api', api);
+
+// Set Static Resources
+server.use(express.static(path.resolve(__dirname, '../../static')));
 
 // Start the Server
 server.listen(config.port, function() {

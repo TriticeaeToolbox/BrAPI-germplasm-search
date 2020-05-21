@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Germplasm Search Tool</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="./css/styles.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <!-- Main Page Content -->
+    <main role="main" class="container">
+      <h1 class="mt-5">BrAPI Germplasm Search Tool</h1>
+      <p class="lead">
+        This search tool will attempt to match a list of your germplasm names 
+        to existing entries in a BrAPI-compliant database.
+      </p>
+
+
+      <!-- SEARCH CONTAINER -->
+      <div id="search-container" class="section-container">
+
+        <br />
+
+        <!-- Database Selection -->
+        <p><strong>Select a Database:</strong></p>
+        <div class="input-group mb-3">
+          <select id="database-select" class="custom-select"></select>
+          <div class="input-group-append">
+            <button id="edit-database" type="button" class="btn btn-secondary">
+              <svg class="bi bi-pencil" width="20px" height="20px" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M11.293 1.293a1 1 0 011.414 0l2 2a1 1 0 010 1.414l-9 9a1 1 0 01-.39.242l-3 1a1 1 0 01-1.266-1.265l1-3a1 1 0 01.242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 00.5.5H4v.5a.5.5 0 00.5.5H5v.5a.5.5 0 00.5.5H6v-1.5a.5.5 0 00-.5-.5H5v-.5a.5.5 0 00-.5-.5H3z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+      </div>
+
+
+        
+
+
+        <!-- Database Settings -->
+        <div id="database-settings" class="well">
+          <p>
+            <strong>Enter Database Settings:</strong>
+            <a href="https://github.com/solgenomics/BrAPI-js#initialization-and-configuration" title="BrAPI Initialization and Configuration" style="float: right">
+              <svg class="bi bi-info-circle-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </a>
+          </p>
+          <div id="database-settings-properties">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><strong>Address*</strong></span>
+              </div>
+              <input id="database-address" class="database-setting form-control" type="text" placeholder="https://www.example.com/brapi/v1" aria-label="Address">
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Version</span>
+              </div>
+              <input id="database-version" class="database-setting form-control" type="text" placeholder="v1.3" aria-label="Version">
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Auth Token</span>
+              </div>
+              <input id="database-auth-token" class="database-setting form-control" type="text" placeholder="myToken" aria-label="Auth Token">
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Call Limit</span>
+              </div>
+              <input id="database-call-limit" class="database-setting form-control" type="text" placeholder="18" aria-label="Call Limit">
+            </div>
+          </div>
+        </div>
+
+        <br />
+
+        <p class="text-muted"><strong>
+          <svg class="bi bi-cloud-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.887 5.2l-.964-.165A2.5 2.5 0 103.5 10H6v1H3.5a3.5 3.5 0 11.59-6.95 5.002 5.002 0 119.804 1.98A2.501 2.501 0 0113.5 11H10v-1h3.5a1.5 1.5 0 00.237-2.981L12.7 6.854l.216-1.028a4 4 0 10-7.843-1.587l-.185.96z"/>
+              <path fill-rule="evenodd" d="M5 12.5a.5.5 0 01.707 0L8 14.793l2.293-2.293a.5.5 0 11.707.707l-2.646 2.646a.5.5 0 01-.708 0L5 13.207a.5.5 0 010-.707z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M8 6a.5.5 0 01.5.5v8a.5.5 0 01-1 0v-8A.5.5 0 018 6z" clip-rule="evenodd"/>
+            </svg>
+          Germplasm Download:
+        </strong>
+
+        <span id="cache-available-info" class="cache-badge badge badge-pill badge-success" style="display: none">
+          <svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+          </svg>
+          Cached Germplasm Available
+        </span>
+
+        <span id="cache-unavailable-info" class="cache-badge badge badge-pill badge-warning" style="display: none">
+          <svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+          </svg>
+          Cached Germplasm Not Available
+        </span>
+      </p>
+
+        
+        
+        <div class="custom-control custom-switch">
+          <input id="use-cache" class="custom-control-input" type="checkbox" checked disabled>
+          <label class="custom-control-label" for="use-cache">
+            Download germplasm records from the database
+          </label>
+        </div>
+
+
+        <br /><br /><br />
+
+        <!-- Search Options -->
+        <p><strong>Search Options:</strong></p>
+        <p class="text-muted">Customize the parameters used to search the database</p>
+        <div class="well">
+
+          <h4>Basic Search</h4>
+          
+          <div class="custom-control custom-switch">
+            <input id="include-exact" class="custom-control-input" type="checkbox" checked disabled>
+            <label class="custom-control-label" for="include-exact">
+              Search for Exact Matches
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries that exactly match (case-insensitive) the database entry name">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+          </div>
+          
+          <div class="custom-control custom-switch">
+            <input id="include-synonyms" class="custom-control-input" type="checkbox" checked>
+            <label class="custom-control-label" for="include-synonyms">
+              Search for Synonyms
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries that exactly match (case-insensitive) a synonym of a database entry">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+          </div>
+
+          <br />
+         
+          <h4>Extended Search</h4>
+          
+          <div class="custom-control custom-switch">
+            <input id="include-punctuation" class="custom-control-input" type="checkbox">
+            <label class="custom-control-label" for="include-punctuation">
+              Remove Punctuation
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries where the database name or a database synonym are the same as the input germplasm name when special characters have been removed">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+          </div>
+          
+          <div class="custom-control custom-switch">
+            <input id="include-edit-distance" class="custom-control-input" type="checkbox">
+            <label class="custom-control-label" for="include-edit-distance">
+              Edit Distance Comparison
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries where the database name or a database synonym are the same as the input germplasm name within a maximum edit distance (number of characters changed, added and/or removed)">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+            <div class="input-group mb-3 mt-2">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Max Edit Distance</span>
+              </div>
+              <select class="form-control" id="max-edit-distance">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <br /><br />
+
+        <!-- Search Term Input -->
+        <p><strong>Search Terms:</strong></p>
+        <p class="text-muted">Enter your list of germplasm names (newline or comma-separated)</p>
+        <textarea id="input-terms" class="form-control" rows="15"></textarea>
+
+        <br /><br /><br />
+
+        <!-- Search Button -->
+        <button id="search" type="button" class="btn btn-primary btn-block">Search</button>
+
+      </div>
+
+
+      <!-- SEARCHING CONTAINER -->
+      <div id="searching-container" class="section-container text-success">
+        <div class="spinner-grow ml-auto" role="status"></div>
+        <br /><br />
+        <p><strong>SEARCHING...</strong></p>
+        <p id="searching-status" class="text-secondary"></p>
+        <div id="searchng-progress" class="progress">
+          <div id="searching-progress-bar" class="progress-bar progress-bar-animated bg-success" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+
+
+      <!-- RESULTS CONTAINER -->
+      <div id="results-container" class="section-container">
+        <br />
+
+        <!-- Matches Table -->
+        <table id="matches-table" class="table table-striped table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th width="225px">Input Germplasm Name</th>
+              <th width="180px">Match Type</th>
+              <th>Database Matches</th>
+            </tr>
+          </thead>
+          <tbody id="matches-table-body"></tbody>
+        </table>
+        <br />
+
+        <!-- Download buttons -->
+        <div class="d-flex flex-row">
+          <div class="p-2 flex-fill">
+            <button id="download-matches" type="button" class="btn btn-success btn-block" data-toggle="tooltip" data-title="Download a table containing the germplasm names and selected database matches for entries with a match">
+              <svg class="bi bi-check-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                  <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/>
+              </svg>
+              Download Matches
+            </button>
+          </div>
+          <div class="p-2 flex-fill">
+            <button id="download-no-matches" type="button" class="btn btn-danger btn-block" data-toggle="tooltip" data-title="Download a table containing the germplasm names of entries that do not have a database match">
+              <svg class="bi bi-x-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/>
+              </svg>
+              Download No Matches
+            </button>
+          </div>
+          <div class="p-2 flex-fill">
+            <button id="download-all" type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-title="Download a table containing the germplasm name, match type, selected database match, and the non-selected match suggestions for all entries">
+              <svg class="bi bi-file-earmark-spreadsheet" width="1em" height="1em" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M13 9H3V8h10v1zm0 3H3v-1h10v1z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M5 14V9h1v5H5zm4 0V9h1v5H9z" clip-rule="evenodd"/>
+                <path d="M4 1h5v1H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6h1v7a2 2 0 01-2 2H4a2 2 0 01-2-2V3a2 2 0 012-2z"/>
+                <path d="M9 4.5V1l5 5h-3.5A1.5 1.5 0 019 4.5z"/>
+              </svg>
+              Download All
+            </button>
+          </div>
+        </div>
+        
+        <hr />
+        
+        <!-- Return to search -->
+        <button id="matches-return" type="button" class="btn btn-secondary btn-block">
+          <svg class="bi bi-chevron-left" width="1em" height="1em" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 010 .708L5.707 8l5.647 5.646a.5.5 0 01-.708.708l-6-6a.5.5 0 010-.708l6-6a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+          </svg>
+          Return to Search
+        </button>
+      </div>
+
+      <!-- ERROR CONTAINER -->
+      <div id="error-container" class="section-container text-danger">
+        <p><strong>ERROR!</strong></p>
+        <p id="error-text"></p>
+        <p class="text-secondary">
+          An error occurred and the search could not be performed.  Check the search settings (such 
+          as the database settings and the input of germplasm names) and try again.
+        </p>
+        <br />
+        <button id="error-return" type="button" class="btn btn-primary btn-block">
+          <svg class="bi bi-chevron-left" width="1em" height="1em" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 010 .708L5.707 8l5.647 5.646a.5.5 0 01-.708.708l-6-6a.5.5 0 010-.708l6-6a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+          </svg>
+          Return to Search
+        </button>
+      </div>
+
+      <br /><br /><br />
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">This search tool is powered by <a href='https://brapi.org'>
+          <img id="brapi-logo" src="./img/brapi-logo.svg" title="The Breeding API">
+        </a></span>
+      </div>
+    </footer>
+
+    <!-- GERMPLASM DETAILS MODAL DIALOG -->
+    <div class="modal fade" id="germplasmModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="germplasmModal-title"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            The details of the germplasm stored in the database are:
+            <br /><br />
+            <div id="germplasmModal-details"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/search.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+      $(document).ready(function() {
+
+        // Parse Query Params
+        let searchParams = new URLSearchParams(window.location.search);
+        let db = searchParams ? searchParams.get('db') : undefined;
+        let db_address = searchParams ? searchParams.get('db_address') : undefined;
+        let db_version = searchParams ? searchParams.get('db_version') : undefined;
+        let db_auth_token = searchParams ? searchParams.get('db_auth_token') : undefined;
+        let db_call_limit = searchParams ? searchParams.get('db_call_limit') : undefined;
+        let include_synonyms = searchParams ? searchParams.get('synonyms') : undefined;
+        let include_punctuation = searchParams ? searchParams.get('punctuation') : undefined;
+        let include_edit_distance = searchParams ? searchParams.get('edit_distance') : undefined;
+        let max_edit_distance = searchParams ? searchParams.get('max_edit_distance') : undefined;
+        let terms = searchParams ? searchParams.getAll('term') : undefined;
+        
+
+        // Set the list of Databases and Custom DB Properties
+        setDatabases(db, function() {
+          setDatabaseProperties(db_address, db_version, db_auth_token, db_call_limit);
+        });
+
+        // Set initial options
+        setOptions(
+          include_synonyms, 
+          include_punctuation, 
+          include_edit_distance, max_edit_distance, 
+          terms
+        );
+
+        // Set Click Listeners
+        $("#edit-database").click(toggleEditDatabase);
+        $("#search").click(function() {
+          startSearch();
+        });
+        $("#error-return").click(displaySearch);
+        $("#download-matches").click(downloadMatches);
+        $("#download-no-matches").click(downloadNoMatches);
+        $("#download-all").click(downloadAll);
+        $("#matches-return").click(displaySearch);
+
+        // Enable Tooltips
+        $("[data-toggle='tooltip']").tooltip({delay: {"show": 500, "hide": 0}});
+
+      });
+    </script>
+  </body>
+</html>

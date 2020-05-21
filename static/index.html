@@ -50,7 +50,8 @@
         <div id="database-settings" class="well">
           <p>
             <strong>Enter Database Settings:</strong>
-            <a href="https://github.com/solgenomics/BrAPI-js#initialization-and-configuration" title="BrAPI Initialization and Configuration" style="float: right">
+            <a href="https://github.com/solgenomics/BrAPI-js#initialization-and-configuration" target="_blank" title="BrAPI Initialization and Configuration" style="float: right; color: #666">
+              BrAPI Configuration Info&nbsp;
               <svg class="bi bi-info-circle-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
@@ -86,32 +87,62 @@
 
         <br />
 
-        <p class="text-muted"><strong>
-          <svg class="bi bi-cloud-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <p class="text-muted">
+          <strong>
+            <svg class="bi bi-cloud-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M4.887 5.2l-.964-.165A2.5 2.5 0 103.5 10H6v1H3.5a3.5 3.5 0 11.59-6.95 5.002 5.002 0 119.804 1.98A2.501 2.501 0 0113.5 11H10v-1h3.5a1.5 1.5 0 00.237-2.981L12.7 6.854l.216-1.028a4 4 0 10-7.843-1.587l-.185.96z"/>
               <path fill-rule="evenodd" d="M5 12.5a.5.5 0 01.707 0L8 14.793l2.293-2.293a.5.5 0 11.707.707l-2.646 2.646a.5.5 0 01-.708 0L5 13.207a.5.5 0 010-.707z" clip-rule="evenodd"/>
               <path fill-rule="evenodd" d="M8 6a.5.5 0 01.5.5v8a.5.5 0 01-1 0v-8A.5.5 0 018 6z" clip-rule="evenodd"/>
             </svg>
-          Germplasm Download:
-        </strong>
+            Germplasm Download:
+          </strong>
+        </p>
 
-        <span id="cache-available-info" class="cache-badge badge badge-pill badge-success" style="display: none">
-          <svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
-          </svg>
-          Cached Germplasm Available
-        </span>
+        <div id="cache-available-info" class="alert alert-success" role="alert">
+          <p class="mb-0">
+            <strong>
+              <svg class="bi bi-check-circle" width="18px" height="18px" viewBox="0 0 18 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/>
+              </svg>
+              &nbsp;
+              Cached Germplasm Available
+            </strong>
+          </p>
+          <hr class="mt-0" />
+          <p>
+            Germplasm records from the database have already been downloaded and the search can be performed on these cached records.
+          </p>
+          <p>
+            <strong>Saved: </strong><span id="cache-available-info-saved"></span>
+            <br />
+            <strong>Records: </strong><span id="cache-available-info-records"></span>
+          </p>
+          <p>
+            If the germplasm in the database have been updated since the cache was saved, you can 
+            have the germplasm records downloaded again.
+          </p>
+        </div>
 
-        <span id="cache-unavailable-info" class="cache-badge badge badge-pill badge-warning" style="display: none">
-          <svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
-          </svg>
-          Cached Germplasm Not Available
-        </span>
-      </p>
+        <div id="cache-unavailable-info" class="alert alert-warning" role="alert">
+          <p class="mb-0">
+            <strong>
+              <svg class="bi bi-x-circle" width="18px" height="18px" viewBox="0 0 18 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/>
+              </svg>
+              &nbsp;
+              Cached Germplasm Not Available
+            </strong>
+          </p>
+          <hr class="mt-0" />
+          <p>
+            Germplasm records from the database are not yet available and will have to be downloaded before performing the search. 
+            The amount of time this takes will depend on the number of records in the database.
+          </p>
+        </div>
 
-        
-        
         <div class="custom-control custom-switch">
           <input id="use-cache" class="custom-control-input" type="checkbox" checked disabled>
           <label class="custom-control-label" for="use-cache">
@@ -119,8 +150,7 @@
           </label>
         </div>
 
-
-        <br /><br /><br />
+        <br /><br />
 
         <!-- Search Options -->
         <p><strong>Search Options:</strong></p>

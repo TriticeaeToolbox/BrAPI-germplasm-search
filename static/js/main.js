@@ -99,7 +99,7 @@ function setDatabases(selected, callback) {
          */
         function _databaseAddressChanged() {
             let db_address = $(settings_database_address).val();
-            // TODO: Update address cache info
+            setCacheInfo(db_address);
         }
 
     });
@@ -123,6 +123,32 @@ function setDatabaseProperties(address, version, auth_token, call_limit) {
             if ( call_limit ) $("#database-call-limit").val(call_limit);
         });
     }
+}
+
+
+/**
+ * Set the cache info for the specifed database
+ * @param {string} db_address DB Address
+ */
+function setCacheInfo(db_address) {
+    console.log("SET CACHE INFO: " + db_address);
+    getCacheInfo(db_address, function(err, info) {
+        if ( info && info.saved && info.records && parseInt(info.records) > 0 ) {
+            let saved = new Date(info.saved);
+            $("#use-cache").attr("disabled", false);
+            $("#use-cache").prop("checked", false);
+            $("#cache-available-info-saved").html(saved.toLocaleString());
+            $("#cache-available-info-records").html(info.records);
+            $("#cache-unavailable-info").hide();
+            $("#cache-available-info").show();
+        }
+        else {
+            $("#use-cache").attr("disabled", true);
+            $("#use-cache").prop("checked", true);
+            $("#cache-available-info").hide();
+            $("#cache-unavailable-info").show();
+        }
+    });
 }
 
 

@@ -24,6 +24,17 @@ function getDatabases(callback) {
 
 
 /**
+ * Get cache info for the specified database
+ * @param  {string}   address  DB Address
+ * @param  {Function} callback Callback function(err, info)
+ * @return {[type]}            [description]
+ */
+function getCacheInfo(address, callback) {
+    _get("/cache?address=" + address, callback);
+}
+
+
+/**
  * Make a GET Request
  * @param  {string}   path     API Path
  * @param  {Function} callback Callback function(err, response)

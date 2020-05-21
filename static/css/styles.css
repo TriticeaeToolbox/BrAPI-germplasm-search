@@ -43,10 +43,8 @@ h4 {
   display: none;
 }
 
-.cache-available-info {
-  position: relative;
-  right: 0;
-  float: right;
+#cache-available-info, #cache-unavailable-info {
+  display: none;
 }
 
 .custom-switch {

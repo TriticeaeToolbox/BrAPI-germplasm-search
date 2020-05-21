@@ -133,7 +133,7 @@ function _post(path, body, callback) {
  * @param  {Function} callback Callback function(err, response)
  */
 function _request(method, path, body, callback) {
-    console.log("--> API REQUEST [" + method + "] " + path);
+    // console.log("--> API REQUEST [" + method + "] " + path);
     
     // Set URL to Config API Host
     let url = path.startsWith("http") ? path : API_HOST + path;
@@ -157,8 +157,8 @@ function _request(method, path, body, callback) {
                 // Parse Response to JSON
                 var resp = JSON.parse(xhr.response);
 
-                console.log("--> API RESPONSE:");
-                console.log(resp);
+                // console.log("--> API RESPONSE:");
+                // console.log(resp);
 
                 // Request Error
                 if ( resp.status === "error" ) {

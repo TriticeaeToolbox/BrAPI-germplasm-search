@@ -2,6 +2,7 @@
 
 const extend = require('deep-extend');
 const DEFAULT_CONFIG = require('./config.js').search;
+const getEditDistance = require('./editdistance.js');
 
 
 // Search Subroutine start functions
@@ -70,9 +71,6 @@ function search(search_terms, db_terms, config, progress, callback) {
             matches: []
         }
     }
-
-    console.log(matches);
-
 
     // Reset progress
     if ( progress ) progress({}, 0);

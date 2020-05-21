@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "brapi-germplasm-search": "node ./src/server/index.js"
+    "brapi-germplasm-search": "./src/server/index.js"
   },
   "repository": {
     "type": "git",

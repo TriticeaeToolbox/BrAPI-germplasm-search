@@ -40,9 +40,7 @@
               </svg>
             </button>
           </div>
-      </div>
-
-
+        </div>
         
 
 
@@ -87,6 +85,8 @@
 
         <br />
 
+
+        <!-- Cache Info -->
         <p class="text-muted">
           <strong>
             <svg class="bi bi-cloud-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -143,9 +143,10 @@
           </p>
         </div>
 
+        <!-- Download Switch -->
         <div class="custom-control custom-switch">
-          <input id="use-cache" class="custom-control-input" type="checkbox" checked disabled>
-          <label class="custom-control-label" for="use-cache">
+          <input id="download-records" class="custom-control-input" type="checkbox" checked disabled>
+          <label class="custom-control-label" for="download-records">
             Download germplasm records from the database
           </label>
         </div>
@@ -240,7 +241,7 @@
       <div id="searching-container" class="section-container text-success">
         <div class="spinner-grow ml-auto" role="status"></div>
         <br /><br />
-        <p><strong>SEARCHING...</strong></p>
+        <p><strong><span id="searching-title"></span></strong></p>
         <p id="searching-status" class="text-secondary"></p>
         <div id="searchng-progress" class="progress">
           <div id="searching-progress-bar" class="progress-bar progress-bar-animated bg-success" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
@@ -399,9 +400,7 @@
 
         // Set Click Listeners
         $("#edit-database").click(toggleEditDatabase);
-        $("#search").click(function() {
-          startSearch();
-        });
+        $("#search").click(setupSearch);
         $("#error-return").click(displaySearch);
         $("#download-matches").click(downloadMatches);
         $("#download-no-matches").click(downloadNoMatches);

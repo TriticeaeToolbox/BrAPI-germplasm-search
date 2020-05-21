@@ -18,10 +18,6 @@ function setDatabases(selected, callback) {
     let settings_database_version = "#database-version";
     let settings_database_auth_token = "#database-auth-token";
     let settings_database_call_limit = "#database-call-limit";
-    let cache_switch = "#use-cache";
-    let cache_available_info = "#cache-available-info";
-    let cache_available_date = "#cache-available-date";
-    let cache_unavailable_info = "#cache-unavailable-info";
 
     // Get supported Databases
     getDatabases(function(err, databases) {
@@ -121,6 +117,8 @@ function setDatabaseProperties(address, version, auth_token, call_limit) {
             if ( version ) $("#database-version").val(version);
             if ( auth_token ) $("#database-auth-token").val(auth_token);
             if ( call_limit ) $("#database-call-limit").val(call_limit);
+
+            setCacheInfo(address);
         });
     }
 }
@@ -131,20 +129,19 @@ function setDatabaseProperties(address, version, auth_token, call_limit) {
  * @param {string} db_address DB Address
  */
 function setCacheInfo(db_address) {
-    console.log("SET CACHE INFO: " + db_address);
     getCacheInfo(db_address, function(err, info) {
         if ( info && info.saved && info.records && parseInt(info.records) > 0 ) {
             let saved = new Date(info.saved);
-            $("#use-cache").attr("disabled", false);
-            $("#use-cache").prop("checked", false);
+            $("#download-records").attr("disabled", false);
+            $("#download-records").prop("checked", false);
             $("#cache-available-info-saved").html(saved.toLocaleString());
             $("#cache-available-info-records").html(info.records);
             $("#cache-unavailable-info").hide();
             $("#cache-available-info").show();
         }
         else {
-            $("#use-cache").attr("disabled", true);
-            $("#use-cache").prop("checked", true);
+            $("#download-records").attr("disabled", true);
+            $("#download-records").prop("checked", true);
             $("#cache-available-info").hide();
             $("#cache-unavailable-info").show();
         }
@@ -206,7 +203,7 @@ function toggleEditDatabase() {
 /**
  * Start the Search
  */
-function startSearch() {
+function setupSearch() {
 
     // Disable the search button
     $("#search").attr("disabled", true);
@@ -223,6 +220,9 @@ function startSearch() {
     if ( !database.address || database.address === "" ) {
         return displayError("A database address / URL is required");
     }
+
+    // Get database request
+    let force = $("#download-records").prop("checked");
 
     // Get search parameters
     let config = {};
@@ -262,16 +262,18 @@ function startSearch() {
     });
 
     // Start the search
-    search(terms, config, updateProgress, displayMatches);
+    search(terms, database, force, config);
 }
 
 
 /**
  * Update the progress display of the search
+ * @param  {title}  title     Process Title
  * @param  {Object} status    Status message
  * @param  {int}    progress  Percent progress
  */
-function updateProgress(status, progress) {
+function updateProgress(title, status, progress) {
+    $("#searching-title").html(title);
     $("#searching-status").html(status.title + "<br />" + status.subtitle);
     if ( progress ) {
         if ( progress === -1 ) {
@@ -538,6 +540,7 @@ function displayError(err) {
 function displaySearch() {
     $("#search").attr("disabled", false);
     displayContainer("search");
+    setCacheInfo($("#database-address").val());
 }
 
 

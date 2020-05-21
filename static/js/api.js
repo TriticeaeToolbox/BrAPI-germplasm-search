@@ -30,7 +30,68 @@ function getDatabases(callback) {
  * @return {[type]}            [description]
  */
 function getCacheInfo(address, callback) {
-    _get("/cache?address=" + address, callback);
+    if ( address && address != "" ) {
+        _get("/cache?address=" + address, callback);
+    }
+    else {
+        return callback();
+    }
+}
+
+
+/**
+ * Update the cache for the specified database
+ * @param  {Object}   database Database properties
+ * @param  {Function} callback Callback function(err, job id)
+ * @return {[type]}            [description]
+ */
+function updateCache(database, callback) {
+    _put("/cache", database, function(err, resp) {
+        if ( err || !resp.job || !resp.job.id ) {
+            return callback(err);
+        }
+        return callback(null, resp.job.id);
+    });
+}
+
+
+/**
+ * Start the search on the API Server
+ * @param  {String[]}   terms    Search terms
+ * @param  {Object}     database Database properties
+ * @param  {Object}     config   Search config options
+ * @param  {Function}   callback Callback function(err, job id)
+ */
+function startSearch(terms, database, config, callback) {
+    let body = {
+        terms: terms,
+        database: database,
+        config: config
+    }
+    _post("/search", body, function(err, resp) {
+        if ( err || !resp.job || !resp.job.id ) {
+            return callback(err);
+        }
+        return callback(null, resp.job.id);
+    });
+}
+
+
+/**
+ * Get Job Info
+ * @param  {string}   id       Job ID
+ * @param  {boolean}  results  Request the results of a completed job
+ * @param  {Function} callback Callback function(err, status, job|results)
+ */
+function getJobInfo(id, results, callback) {
+    let path = "/job/" + id;
+    if ( !results ) path += "?results=false";
+    _get(path, function(err, resp) {
+        if ( err ) {
+            return callback(err);
+        }
+        return callback(err, resp.status, resp.job);
+    });
 }
 
 
@@ -41,6 +102,26 @@ function getCacheInfo(address, callback) {
  */
 function _get(path, callback) {
     _request("GET", path, undefined, callback);
+}
+
+/**
+ * Make a PUT Request
+ * @param  {string}   path     API Path
+ * @param  {Object}   body     JSON Request Body
+ * @param  {Function} callback Callback function(err, response)
+ */
+function _put(path, body, callback) {
+    _request("PUT", path, body, callback);
+}
+
+/**
+ * Make a POST Request
+ * @param  {string}   path     API Path
+ * @param  {Object}   body     JSON Request Body
+ * @param  {Function} callback Callback function(err, response)
+ */
+function _post(path, body, callback) {
+    _request("POST", path, body, callback);
 }
 
 

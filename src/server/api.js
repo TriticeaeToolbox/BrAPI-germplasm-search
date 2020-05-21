@@ -59,14 +59,14 @@ router.get('/databases', function(req, res, next) {
  */
 router.get('/job/:id', function(req, res, next) {
     let id = req.params.id;
-    let results = !req.query.results || !req.query.results === 'false';
+    let results = !(req.query.results && req.query.results === 'false');
     let status = queue.getStatus(id);
 
     // Complete Job
     if ( status === "complete" ) {
         let body = {
             id: id,
-            results: queue.getResults(id)
+            results: results ? queue.getResults(id) : undefined
         }
         response.pending(res, status, body);
         return next();
@@ -176,7 +176,7 @@ router.put('/cache', function(req, res, next) {
  */
 router.post('/search', function(req, res, next) {
     let database = req.body.database;
-    let force = req.body.force && req.body.force === 'true';
+    let force = req.body.force && ( req.body.force === 'true' || req.body.force === true );
     let terms = req.body.terms;
     let search_config = req.body.config
 
@@ -194,6 +194,11 @@ router.post('/search', function(req, res, next) {
         return next();
     }
 
+    console.log("--> STARTING SEARCH...");
+    console.log(force);
+    console.log(terms);
+    console.log(search_config);
+
 
     // Add the Job to the Queue
     let id = queue.add(function() {
@@ -203,6 +208,7 @@ router.post('/search', function(req, res, next) {
         
         // Update the cache of db terms?
         if ( force || !db_terms || db_terms.length === 0 ) {
+            console.log("... Getting fresh DB Terms");
             
             // Get Fresh DB Terms
             getDBTerms(database, true, function(status, progress) {
@@ -242,6 +248,7 @@ router.post('/search', function(req, res, next) {
      * @param  {Object}     search_config Search Parameters
      */
     function _search(id, terms, db_terms, search_config) {
+        console.log("...Starting search");
         search(terms, db_terms, search_config, function(status, progress) {
             console.log("PROGRESS: " + progress);
             queue.setMessage(id, status.title, status.subtitle);

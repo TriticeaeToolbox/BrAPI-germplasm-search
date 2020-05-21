@@ -1,5 +1,19 @@
 {
     "port": 3000,
+    "databases": [
+        {
+            "name": "T3/Wheat",
+            "address": "https://wheat.triticeaetoolbox.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10
+        },
+        {
+            "name": "T3/Oat",
+            "address": "https://oat.triticeaetoolbox.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10
+        }
+    ],
     "cache": {
         "timeout": 1209600000,
         "export": "./cache.json",

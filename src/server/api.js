@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const response = require('./response.js');
 const queue = require('./queue.js');
+const config = require('../utils/config.js');
 const cache = require('../utils/cache.js');
 const getDBTerms = require('../utils/database.js');
 const search = require('../utils/search.js');
@@ -18,6 +19,35 @@ router.use(function(req, res, next) {
     let ts = new Date().toISOString();
     console.log("[API] [" + ts + "] {" + req.method + "} " + req.originalUrl);
     return next();
+});
+
+
+/**
+ * Get a list of all supported databases
+ * Or the properties of database specified by name
+ * @param  {Object}   req   Express Request
+ * @param  {Object}   res   Express Response
+ * @param  {Function} next  Express handler stack callback
+ */
+router.get('/databases', function(req, res, next) {
+    let name = req.query.name;
+    let databases = config.databases;
+
+    // Return a specific database
+    if ( name ) {
+        for ( let i = 0; i < databases.length; i++ ) {
+            if ( databases[i].name.toLowerCase() === name.toLowerCase() ) {
+                response.success(res, databases[i]);
+                return next();
+            }
+        }
+        response.error(res, 404, "Database not found for name " + name);
+        return next();
+    }
+
+    // Return all databases
+    response.success(res, databases);
+    return next(); 
 });
 
 

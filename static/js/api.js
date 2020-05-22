@@ -1,6 +1,6 @@
 const API_HOST = window.location.origin + "/api";
 
-// API CACHES
+// CACHE OF DATABASES
 let DATABASES = undefined;
 
 
@@ -78,7 +78,7 @@ function startSearch(terms, database, config, callback) {
 
 
 /**
- * Get Job Info
+ * Get the status and info of a job and optionally its results
  * @param  {string}   id       Job ID
  * @param  {boolean}  results  Request the results of a completed job
  * @param  {Function} callback Callback function(err, status, job|results)

@@ -201,7 +201,7 @@ function toggleEditDatabase() {
 
 
 /**
- * Start the Search
+ * Format the search parameters and start the search workflow
  */
 function setupSearch() {
 
@@ -262,19 +262,22 @@ function setupSearch() {
     });
 
     // Start the search
-    search(terms, database, force, config);
+    handleSearch(terms, database, force, config);
 }
 
 
 /**
  * Update the progress display of the search
  * @param  {title}  title     Process Title
- * @param  {Object} status    Status message
+ * @param  {Object} status    Status message information {title, subtitle}
  * @param  {int}    progress  Percent progress
  */
 function updateProgress(title, status, progress) {
     $("#searching-title").html(title);
-    $("#searching-status").html(status.title + "<br />" + status.subtitle);
+    let html = "";
+    if ( status && status.title ) html += status.title;
+    if ( status && status.subtitle ) html += "<br />" + status.subtitle;
+    $("#searching-status").html(html);
     if ( progress ) {
         if ( progress === -1 ) {
             $("#searching-progress-bar").addClass("progress-bar-striped");
@@ -297,7 +300,7 @@ function updateProgress(title, status, progress) {
 
 /**
  * Display the matches from the search
- * @param  {Object[]} matches Search matches
+ * @param  {Object} matches Search matches
  */
 function displayMatches(matches) {
     MATCHES = matches;

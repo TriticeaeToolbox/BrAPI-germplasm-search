@@ -5,7 +5,7 @@
  * @param  {boolean}    force     Force download of new records
  * @param  {Object}     config    Search Config
  */
-function search(terms, database, force, config) {
+function handleSearch(terms, database, force, config) {
     if ( force ) {
         _updateGermplasm(database, function() {
             _startSearch(terms, database, config, displayMatches);
@@ -60,8 +60,10 @@ function _startSearch(terms, database, config, callback) {
  * @param  {boolean}  results  True to get results from completed job
  * @param  {string}   title    Job Title (displayed on website)
  * @param  {Function} callback Callback function(results)
+ * @param  {int}      [count]  Ping count
  */
-function _watchJob(id, results, title, callback) {
+function _watchJob(id, results, title, callback, count) {
+    if ( !count ) count = 0;
     getJobInfo(id, results, function(err, status, info) {
         if ( status === 'complete' ) {
             updateProgress(title, {title: '', subtitle: ''}, 100);
@@ -74,9 +76,10 @@ function _watchJob(id, results, title, callback) {
             return callback(info);
         }
         else if ( ['queued', 'pending', 'running'].includes(status) ) {
+            let to = 500+(Math.pow(count, 3));
             setTimeout(function() {
-                _watchJob(id, results, title, callback)
-            }, 1500)
+                _watchJob(id, results, title, callback, count+1)
+            }, to <= 5000 ? to : 5000);
         }
     });
 }

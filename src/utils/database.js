@@ -55,14 +55,6 @@ function getDBTerms(database, force, progress, callback) {
     // Create BrAPI Node
     let brapi = BrAPI(database.address, database.version, database.auth_token, database.call_limit);
     let cache_key = brapi.brapi.brapi_base_url;
-
-    // Set initial progress status
-    if ( progress ) {
-        progress({
-            title: "Getting germplasm entries from the database", 
-            subtitle: "This will take a few moments..."
-        }, -1);
-    }
     
     // Return cached records, if available and allowed
     if ( !force && cache.isCached(cache_key) ) {
@@ -116,6 +108,7 @@ function _getFreshDBTerms(brapi, progress, callback) {
             let record = datum;
             delete record.__response;
 
+            // Collect DB Terms
             db_terms.push({
                 term: datum.germplasmName.trim(),
                 type: "name",

@@ -117,7 +117,7 @@
           <p>
             <strong>Saved: </strong><span id="cache-available-info-saved"></span>
             <br />
-            <strong>Records: </strong><span id="cache-available-info-records"></span>
+            <strong>Terms: </strong><span id="cache-available-info-terms"></span>
           </p>
           <p>
             If the germplasm in the database have been updated since the cache was saved, you can 
@@ -147,7 +147,7 @@
 
         <!-- Download Switch -->
         <div class="custom-control custom-switch">
-          <input id="download-records" class="custom-control-input" type="checkbox" checked disabled>
+          <input id="download-records" class="custom-control-input" type="checkbox" checked>
           <label class="custom-control-label" for="download-records">
             Download germplasm records from the database
           </label>
@@ -160,13 +160,14 @@
         <p class="text-muted">Customize the parameters used to search the database</p>
         <div class="well">
 
-          <h4>Basic Search</h4>
+          <h4>Database Terms</h4>
+          <p class="header-info">Select the terms from the database to match to your search terms</p>
           
           <div class="custom-control custom-switch">
-            <input id="include-exact" class="custom-control-input" type="checkbox" checked disabled>
-            <label class="custom-control-label" for="include-exact">
-              Search for Exact Matches
-              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries that exactly match (case-insensitive) the database entry name">
+            <input id="include-name" class="custom-control-input" type="checkbox" checked>
+            <label class="custom-control-label" for="include-name">
+              Name
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Include the germplasm name in the search">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
@@ -175,8 +176,18 @@
           <div class="custom-control custom-switch">
             <input id="include-synonyms" class="custom-control-input" type="checkbox" checked>
             <label class="custom-control-label" for="include-synonyms">
-              Search for Synonyms
-              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries that exactly match (case-insensitive) a synonym of a database entry">
+              Synonyms 
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Include alternate germplasm names in the search">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+          </div>
+
+          <div class="custom-control custom-switch">
+            <input id="include-accession-numbers" class="custom-control-input" type="checkbox" checked>
+            <label class="custom-control-label" for="include-accession-numbers">
+              Accession Numbers 
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Include registered accession numbers (PI 1234, CI 1234, etc) in the search">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
@@ -184,13 +195,37 @@
 
           <br />
          
-          <h4>Extended Search</h4>
+          <h4>Search Routines</h4>
+          <p class="header-info">
+            Select the individual search routines that are used to find matches between your search terms and the selected 
+            database terms.  All matches are case-insensitive.
+          </p>
           
+          <div class="custom-control custom-switch">
+            <input id="include-exact" class="custom-control-input" type="checkbox" checked>
+            <label class="custom-control-label" for="include-exact">
+              Exact Match
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find germplasm records where a database term is a case-insensitive exact match to your search term">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+          </div>
+
+          <div class="custom-control custom-switch">
+            <input id="include-substring" class="custom-control-input" type="checkbox">
+            <label class="custom-control-label" for="include-substring">
+              Substring Match
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find germplasm records where your search term is contained within a database term">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+          </div>
+
           <div class="custom-control custom-switch">
             <input id="include-punctuation" class="custom-control-input" type="checkbox">
             <label class="custom-control-label" for="include-punctuation">
               Remove Punctuation
-              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries where the database name or a database synonym are the same as the input germplasm name when special characters have been removed">
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Remove all non-alphanumeric characters from the database terms and your search term and find germplasm records where the modified terms match">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
@@ -200,7 +235,7 @@
             <input id="include-edit-distance" class="custom-control-input" type="checkbox">
             <label class="custom-control-label" for="include-edit-distance">
               Edit Distance Comparison
-              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find database entries where the database name or a database synonym are the same as the input germplasm name within a maximum edit distance (number of characters changed, added and/or removed)">
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Calculate the edit distance (the number of character changes, insertions, or deletions) between your search term and the database terms. Include germplasm records where the edit distance is <= the max edit distance.">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
@@ -372,32 +407,48 @@
     <script src="./js/main.js"></script>
     <script>
       $(document).ready(function() {
-
-        // Parse Query Params
-        let searchParams = new URLSearchParams(window.location.search);
-        let db = searchParams ? searchParams.get('db') : undefined;
-        let db_address = searchParams ? searchParams.get('db_address') : undefined;
-        let db_version = searchParams ? searchParams.get('db_version') : undefined;
-        let db_auth_token = searchParams ? searchParams.get('db_auth_token') : undefined;
-        let db_call_limit = searchParams ? searchParams.get('db_call_limit') : undefined;
-        let include_synonyms = searchParams ? searchParams.get('synonyms') : undefined;
-        let include_punctuation = searchParams ? searchParams.get('punctuation') : undefined;
-        let include_edit_distance = searchParams ? searchParams.get('edit_distance') : undefined;
-        let max_edit_distance = searchParams ? searchParams.get('max_edit_distance') : undefined;
-        let terms = searchParams ? searchParams.getAll('term') : undefined;
         
+        // Set initial list of databases
+        setDatabases(
+          q('db'), 
 
-        // Set the list of Databases and Custom DB Properties
-        setDatabases(db, function() {
-          setDatabaseProperties(db_address, db_version, db_auth_token, db_call_limit);
-        });
+          // Set intiail database properties
+          function() {
+            setDatabaseProperties(
+              {
+                address: q('db_address'),
+                version: q('db_version'),
+                auth_token: q('db_auth_token'),
+                call_limit: q('db_call_limit')
+              },
 
-        // Set initial options
-        setOptions(
-          include_synonyms, 
-          include_punctuation, 
-          include_edit_distance, max_edit_distance, 
-          terms
+              // Set intial options
+              function() {
+                setOptions(
+                  {
+                    database_terms: {
+                      name: q('name'),
+                      synonyms: q('synonyms'),
+                      accession_numbers: q('accession_numbers')
+                    },
+                    search_routines: {
+                      exact: q('exact'),
+                      substring: q('substring'),
+                      punctuation: q('punctuation'),
+                      edit_distance: q('edit_distance'),
+                      max_edit_distance: q('max_edit_distance')
+                    },
+                    terms: q('term', true)
+                  }
+                );
+
+                // Auto start the search, if requested
+                if ( ['true', '1', 'on'].includes(q('auto')) ) {
+                  setupSearch();
+                }
+              }
+            );
+          }
         );
 
         // Set Click Listeners

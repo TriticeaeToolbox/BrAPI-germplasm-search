@@ -21,10 +21,17 @@
         "autoExport": true
     },
     "search": {
-        "exact": true,
-        "synonyms": true,
-        "punctuation": true,
-        "edit_distance": false,
-        "max_edit_distance": 2
+        "database_terms": {
+            "name": true,
+            "synonyms": true,
+            "accession_numbers": true
+        },
+        "search_routines": {
+            "exact": true,
+            "substring": false,
+            "punctuation": false,
+            "edit_distance": false,
+            "max_edit_distance": 2
+        }
     }
 }

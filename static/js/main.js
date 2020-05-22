@@ -8,7 +8,7 @@ let MAX_SEARCH_TERMS = 1000;
  * @param {Function} [callback] Callback function(databases)
  */
 function setDatabases(selected, callback) {
-    
+
     // Set element names
     let select = "#database-select";
     let edit = "#edit-database";
@@ -104,46 +104,52 @@ function setDatabases(selected, callback) {
 
 /**
  * Set custom database properties
- * @param {string} address    DB Address
- * @param {string} version    DB Version
- * @param {string} auth_token DB Auth Token
- * @param {int}    call_limit DB Call Limit
+ * @param {Object}   props      DB Properties {address, version, auth_token, call_limit}
+ * @param {Function} [callback] Callback function()
  */
-function setDatabaseProperties(address, version, auth_token, call_limit) {
-    if ( address || version || auth_token || call_limit ) {
+function setDatabaseProperties(props, callback) {
+    if ( props && (props.address || props.version || props.auth_token || props.call_limit) ) {
         setDatabases("custom", function() {
             $("#database-settings").show();
-            if ( address ) $("#database-address").val(address);
-            if ( version ) $("#database-version").val(version);
-            if ( auth_token ) $("#database-auth-token").val(auth_token);
-            if ( call_limit ) $("#database-call-limit").val(call_limit);
+            if ( props.address ) $("#database-address").val(props.address);
+            if ( props.version ) $("#database-version").val(props.version);
+            if ( props.auth_token ) $("#database-auth-token").val(props.auth_token);
+            if ( props.call_limit ) $("#database-call-limit").val(props.call_limit);
 
-            setCacheInfo(address);
+            setCacheInfo(props.address, callback);
         });
+    }
+    else {
+        return callback();
     }
 }
 
 
 /**
  * Set the cache info for the specifed database
- * @param {string} db_address DB Address
+ * @param {string}   db_address DB Address
+ * @param {Function} [callback] Callback function()
  */
-function setCacheInfo(db_address) {
+function setCacheInfo(db_address, callback) {
     getCacheInfo(db_address, function(err, info) {
-        if ( info && info.saved && info.records && parseInt(info.records) > 0 ) {
-            let saved = new Date(info.saved);
-            $("#download-records").attr("disabled", false);
-            $("#download-records").prop("checked", false);
-            $("#cache-available-info-saved").html(saved.toLocaleString());
-            $("#cache-available-info-records").html(info.records);
-            $("#cache-unavailable-info").hide();
-            $("#cache-available-info").show();
-        }
-        else {
-            $("#download-records").attr("disabled", true);
-            $("#download-records").prop("checked", true);
-            $("#cache-available-info").hide();
-            $("#cache-unavailable-info").show();
+        if ( db_address === $("#database-address").val() ) {
+            if ( info && info.saved && info.terms && parseInt(info.terms) > 0 ) {
+                let saved = new Date(info.saved);
+                let force = ['true', '1', 'on'].includes(q('force'));
+                $("#download-records").attr("disabled", false);
+                $("#download-records").prop("checked", force || false);
+                $("#cache-available-info-saved").html(saved.toLocaleString());
+                $("#cache-available-info-terms").html(info.terms);
+                $("#cache-unavailable-info").hide();
+                $("#cache-available-info").show();
+            }
+            else {
+                $("#download-records").attr("disabled", true);
+                $("#download-records").prop("checked", true);
+                $("#cache-available-info").hide();
+                $("#cache-unavailable-info").show();
+            }
+            if ( callback ) return callback();
         }
     });
 }
@@ -151,42 +157,39 @@ function setCacheInfo(db_address) {
 
 /**
  * Set search options
- * @param {string} include_synonyms      Include Synonyms
- * @param {string} include_punctuation   Include Punctuation
- * @param {string} include_edit_distance Include Edit Distance
- * @param {string} max_edit_distance     Max Edit Distance
- * @param {string[]} terms               Search Terms
+ * @param {Object} opts     Initial search options
  */
-function setOptions(include_synonyms, include_punctuation, include_edit_distance, max_edit_distance, terms) {
-    if ( include_synonyms ) {
-      if ( ['true', '1', 'on'].includes(include_synonyms.toLowerCase()) ) {
-        $("#include-synonyms").attr('checked', true);
-      }
-      else if ( ['false', '0', 'off'].includes(include_synonyms.toLowerCase()) ) {
-        $("#include-synonyms").attr('checked', false);
-      }
+function setOptions(opts) {
+    _toggle("#include-name", opts.database_terms.name);
+    _toggle("#include-synonyms", opts.database_terms.synonyms);
+    _toggle("#include-accession-numbers", opts.database_terms.accession_numbers);
+    _toggle("#include-exact", opts.search_routines.exact);
+    _toggle("#include-substring", opts.search_routines.substring);
+    _toggle("#include-punctuation", opts.search_routines.punctuation);
+    _toggle("#include-edit-distance", opts.search_routines.edit_distance);
+    if ( opts.search_routines.max_edit_distance ) {
+        $("#max-edit-distance").val(opts.search_routines.max_edit_distance)
     }
-    if ( include_punctuation ) {
-      if ( ['true', '1', 'on'].includes(include_punctuation.toLowerCase()) ) {
-        $("#include-punctuation").attr('checked', true);
-      }
-      else if ( ['false', '0', 'off'].includes(include_punctuation.toLowerCase()) ) {
-        $("#include-punctuation").attr('checked', false);
-      }
+    if ( opts.terms && opts.terms.length > 0 ) {
+        $("#input-terms").val(opts.terms.join('\n'));
     }
-    if ( include_edit_distance ) {
-      if ( ['true', '1', 'on'].includes(include_edit_distance.toLowerCase()) ) {
-        $("#include-edit-distance").attr('checked', true);
-      }
-      else if ( ['false', '0', 'off'].includes(include_edit_distance.toLowerCase()) ) {
-        $("#include-edit-distance").attr('checked', false);
-      }
-    }
-    if ( max_edit_distance ) {
-      $("#max-edit-distance").val(max_edit_distance);
-    }
-    if ( terms && terms.length > 0 ) {
-      $("#input-terms").val(terms.join('\n'));
+
+    /**
+     * Toggle the specified switch based on the specified value:
+     *     true, 1, on = checked
+     *     false, 0, off = unchecked
+     * @param  {string} el  Element selector
+     * @param  {string} val Initial value
+     */
+    function _toggle(el, val) {
+        if ( val ) {
+            if ( ['true', '1', 'on'].includes(val.toLowerCase()) ) {
+                $(el).prop('checked', true);
+            }
+            else if ( ['false', '0', 'off'].includes(val.toLowerCase()) ) {
+                $(el).prop('checked', false);
+            }
+        }
     }
 }
 
@@ -225,12 +228,20 @@ function setupSearch() {
     let force = $("#download-records").prop("checked");
 
     // Get search parameters
-    let config = {};
-    config.exact = true;
-    config.synonyms = $("#include-synonyms").prop("checked");
-    config.punctuation = $("#include-punctuation").prop("checked");
-    config.edit_distance = $("#include-edit-distance").prop("checked");
-    config.max_edit_distance = $("#max-edit-distance").val();
+    let config = {
+        database_terms: {
+            name: $("#include-name").prop('checked'),
+            synonyms: $("#include-synonyms").prop('checked'),
+            accession_numbers: $("#include-accession-numbers").prop('checked')
+        },
+        search_routines: {
+            exact: $("#include-exact").prop('checked'),
+            substring: $("#include-substring").prop('checked'),
+            punctuation: $("#include-punctuation").prop('checked'),
+            edit_distance: $("#include-edit-distance").prop('checked'),
+            max_edit_distance: $("#max-edit-distance").val()
+        }
+    };
     
     // Get search terms
     let t = $("#input-terms").val();
@@ -555,4 +566,21 @@ function displayContainer(name) {
     let el = "#" + name + "-container";
     $(".section-container").hide();
     $(el).show();
+}
+
+
+/**
+ * Get a query param from the current URL
+ * @param  {string}   name     Query param name
+ * @param  {boolean}  [array]  True if the param should be parsed as an array
+ * @return {string|string[]}   Query param value
+ */
+function q(name, array) {
+    let searchParams = new URLSearchParams(window.location.search);
+    if ( array ) {
+        return searchParams ? searchParams.getAll(name) : undefined;
+    }
+    else {
+        return searchParams ? searchParams.get(name) : undefined;
+    }
 }

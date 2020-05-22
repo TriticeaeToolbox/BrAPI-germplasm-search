@@ -106,7 +106,7 @@ router.get('/cache', function(req, res, next) {
     if ( info ) {
         let body = {
             saved: info.saved,
-            records: info.value.length
+            terms: info.value.length
         }
         response.success(res, body);
         return next();

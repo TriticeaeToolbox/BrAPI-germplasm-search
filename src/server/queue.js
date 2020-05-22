@@ -32,8 +32,10 @@ function add(f) {
 function start(id) {
     if ( QUEUE.hasOwnProperty(id) ) {
         QUEUE[id].function();
-        QUEUE[id].status = "running";
-        _update(id);
+        if ( QUEUE[id].status === "pending" ) {
+            QUEUE[id].status = "running";
+            _update(id);
+        }
     }
 }
 
@@ -85,8 +87,7 @@ function getProgress(id) {
  */
 function getResults(id) {
     if ( getStatus(id) === "complete" ) {
-        let rtn = QUEUE[id].results;
-        return rtn;
+        return QUEUE[id].results;
     }
     return undefined;
 }

@@ -121,6 +121,17 @@ function _getFreshDBTerms(brapi, progress, callback) {
                     record: record
                 });
             }
+            let an = datum.accessionNumber.trim();
+            if ( an && an !== "" ) {
+                let ans = an.split(',');
+                for ( let i = 0; i < ans.length; i++ ) {
+                    db_terms.push({
+                        term: ans[i].trim(),
+                        type: "accession_number",
+                        record: record
+                    });
+                }
+            }
         })
         .all(function(resp) {
             return callback(db_terms);

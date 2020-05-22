@@ -211,17 +211,15 @@ function setupSearch() {
     // Disable the search button
     $("#search").attr("disabled", true);
 
+
+    // FORMAT PARAMS //
+
     // Get database properties
     let database = {
         address: $("#database-address").val(),
         version: $("#database-version").val(),
         auth_token: $("#database-auth-token").val(),
         call_limit: $("#database-call-limit").val()
-    }
-
-    // BrAPI needs at least an address
-    if ( !database.address || database.address === "" ) {
-        return displayError("A database address / URL is required");
     }
 
     // Get database request
@@ -254,15 +252,46 @@ function setupSearch() {
         }
     }
 
-    // No terms provided...
+
+    // CHECK PARAMS //
+
+    // BrAPI needs at least an address
+    if ( !database.address || database.address === "" ) {
+        return displayError("A database address / URL is required");
+    }
+
+    // Ensure at least one database term type
+    let db_term_selected = false;
+    for ( key in config.database_terms ) {
+        if ( config.database_terms.hasOwnProperty(key) ) {
+            if ( config.database_terms[key] === true ) db_term_selected = true;
+        }
+    }
+    if ( !db_term_selected ) {
+        return displayError("Please select at least one database term to use in the search");
+    }
+
+    // Ensure at least one search routine
+    let search_routine_selected = false;
+    for ( key in config.search_routines ) {
+        if ( config.search_routines.hasOwnProperty(key) ) {
+            if ( config.search_routines[key] === true ) search_routine_selected = true;
+        }
+    }
+    if ( !search_routine_selected ) {
+        return displayError("Please select at least one search routine to use in the search");
+    }
+
+    // Check number of search terms
     if ( terms.length === 0 ) {
         return displayError("Please provide a list of germplasm names to search");
     }
-
-    // Too many terms provided...
     else if ( terms.length > MAX_SEARCH_TERMS ) {
         return displayError("Please limit the number of germplasm search terms to a maximum of " + MAX_SEARCH_TERMS);
     }
+
+
+    // START SEARCH //
 
     // Toggle the searching display
     displayContainer("searching");

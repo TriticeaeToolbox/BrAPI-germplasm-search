@@ -69,7 +69,7 @@ function _watchJob(id, results, title, callback, count) {
             updateProgress(title, {title: '', subtitle: ''}, 100);
         }
         else if ( info && info.message && info.progress ) {
-           updateProgress(title, info.message, info.progress); 
+           updateProgress(title, info.message, info.progress);
         }
 
         if ( status === "complete" ) {

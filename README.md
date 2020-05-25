@@ -70,6 +70,452 @@ The following query params use boolean values to toggle the initial search optio
   - **edit_distance:** toggle the edit distance comparison search routine
   - **max_edit_distance:** (integer) set the max edit distance used by the edit distance comparison search routine
  
- When the `auto` query param is set to `1`/`true`/`on` the search will start automatically
- with the default and provided search parameters.
+When the `auto` query param is set to `1`/`true`/`on` the search will start automatically
+with the default and provided search parameters.
+
+## API Usage
+
+The RESTful API is available at `{{host}}/api` with endpoints that can be used to get the list of pre-configured 
+databases, get the germplasm cache status, update a germplasm cache, start a search and get pending job status 
+information or results.
+
+### `GET` `/databases` - Get Pre-Configured Databases
+
+Get a list of the database properties for all of the pre-configured BrAPI databases.
+
+**Response:**
+
+```json
+{
+    "status": "success",
+    "response": [
+        {
+            "name": "T3/Wheat",
+            "address": "https://wheat.triticeaetoolbox.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10
+        },
+        {
+            "name": "T3/Oat",
+            "address": "https://oat.triticeaetoolbox.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10
+        }
+    ]
+}
+```
+
+### `GET` `/cache[?address=]` - Get Germplasm Cache Info
+
+Get the cache status (when the cache was saved and the number of database terms) for all 
+of the cached databases (or the one specified by its address)
+
+**Response:** `/cache`
+```json
+{
+    "status": "success",
+    "response": [
+        {
+            "address": "http://localhost:8080/brapi/v1",
+            "saved": "2020-05-25T18:00:55.350Z",
+            "terms": 28869
+        },
+        {
+            "address": "http://localhost:8081/brapi/v1",
+            "saved": "2020-05-25T18:03:15.374Z",
+            "terms": 63320
+        }
+    ]
+}
+```
+
+**Response:** `/cache?address=http://localhost:8080/brapi/v1`
+```json
+{
+    "status": "success",
+    "response": {
+        "saved": "2020-05-25T17:49:34.592Z",
+        "terms": 28869
+    }
+}
+```
+
+**Response:** `/cache?address=https://oat.triticeaetoolbox.org/brapi/v1`
+```json
+{
+    "status": "error",
+    "error": {
+        "code": 404,
+        "message": "Cache not found for address https://oat.triticeaetoolbox.org/brapi/v1"
+    }
+}
+```
+
+### `PUT` `/cache` - Update Cache
+
+Update the cache of germplasm records for the database specified in the request body.  Since this is 
+long running-task the request is added to a job queue and the response will include the job id.  Use the 
+`/job/:id?results=false` endpoint to get the status of the job to determine when the update is complete.
+
+**Body:**
+```json
+{
+	"address": "http://localhost:8080/brapi/v1",
+	"version": "v1.3",
+  "auth_token": "",
+  "call_limit": 10
+}
+```
+
+**Response:**
+```json
+{
+    "status": "queued",
+    "job": {
+        "id": "61d43d31-3dbb-470c-80dd-43372bb796ed"
+    }
+}
+```
+
+### `POST` `/search` - Start Search
+
+Start a germplasm search on the database, terms and search options provided in the request body.  Since this is 
+long running-task the request is added to a job queue and the response will include the job id.  Use the 
+`/job/:id?results=true` endpoint to get the status of the job and its results when the job is complete.
+
+**Body:**
+```json
+{
+	"database": {
+		"address": "http://localhost:8081/brapi/v1",
+		"version": "v1.3"
+	},
+	"terms": ["JERRY", "syn_a", "ogle"],
+	"config": {
+		"search_routines": {
+			"name": true,
+			"punctuation": true,
+			"substring": true,
+			"edit_distance": false,
+			"max_edit_distance": 3
+		}
+	}
+}
+```
+
+**Response:**
+```json
+{
+    "status": "queued",
+    "job": {
+        "id": "c6a62106-a741-4ddc-a968-b09762908cec"
+    }
+}
+```
+
+### `GET` `/job/:id[?results=true|false]` - Get Job Status
+
+Get the status of the specified job (status, message, progress) and optionally return 
+the results of the job when it is complete.
+
+A job can have one of the following statuses:
+  - **pending:** the job has been added but not yet started
+  - **running:** the job is running (a running job will have the message and progress properties set)
+  - **complete:** the job has finished and will include the results if `results=true`
+  - **removed:** the job no longer exists
   
+**Response:**
+```json
+{
+    "status": "running",
+    "job": {
+        "id": "d2395274-1cbe-414c-b7b5-f6fbeda06547",
+        "message": {
+            "title": "Getting germplasm entries from the database",
+            "subtitle": "This will take a few moments..."
+        },
+        "progress": 25.94899169632266
+    }
+}
+```
+
+**Update Cache Response:** `?results=false`
+```json
+{
+    "status": "complete",
+    "job": {
+        "id": "de5b5f37-8229-4cb8-b360-2f2552200aa5"
+    }
+}
+```
+
+**Search Response:** `?results=true`
+```json
+{
+    "status": "complete",
+    "job": {
+        "id": "5500da49-5a3c-4e69-8106-8095055dbe40",
+        "results": {
+            "JERRY": {
+                "search_term": "JERRY",
+                "search_routines": [
+                    "exact"
+                ],
+                "matches": [
+                    {
+                        "search_routine": {
+                            "key": "exact",
+                            "name": "Exact Match",
+                            "weight": 100
+                        },
+                        "db_term": {
+                            "term": "JERRY",
+                            "type": "name",
+                            "record": {
+                                "subtaxa": null,
+                                "typeOfGermplasmStorageCode": [],
+                                "seedSource": "",
+                                "commonCropName": "cultivated oat,oat",
+                                "subtaxaAuthority": null,
+                                "instituteName": "",
+                                "accessionNumber": "PI 591808",
+                                "countryOfOriginCode": "",
+                                "defaultDisplayName": "JERRY",
+                                "acquisitionDate": "",
+                                "breedingMethodDbId": null,
+                                "biologicalStatusOfAccessionCode": 0,
+                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/102642/view",
+                                "germplasmName": "JERRY",
+                                "taxonIds": [],
+                                "donors": [],
+                                "instituteCode": "",
+                                "speciesAuthority": null,
+                                "germplasmSeedSource": "",
+                                "germplasmGenus": "Avena",
+                                "species": "Avena sativa",
+                                "germplasmDbId": 102642,
+                                "documentationURL": null,
+                                "pedigree": "VALLEY/ND810458",
+                                "synonyms": [
+                                    "ND870952",
+                                    "03C0701856"
+                                ],
+                                "germplasmSpecies": "Avena sativa",
+                                "genus": "Avena"
+                            }
+                        }
+                    }
+                ]
+            },
+            "syn_a": {
+                "search_term": "syn_a",
+                "search_routines": [],
+                "matches": []
+            },
+            "ogle": {
+                "search_term": "ogle",
+                "search_routines": [
+                    "exact",
+                    "substring"
+                ],
+                "matches": [
+                    {
+                        "search_routine": {
+                            "key": "exact",
+                            "name": "Exact Match",
+                            "weight": 100
+                        },
+                        "db_term": {
+                            "term": "OGLE",
+                            "type": "name",
+                            "record": {
+                                "germplasmName": "OGLE",
+                                "taxonIds": [],
+                                "acquisitionDate": "",
+                                "breedingMethodDbId": null,
+                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/97779/view",
+                                "biologicalStatusOfAccessionCode": 0,
+                                "accessionNumber": "CIav 9401,VIR 13904,CN 39352,PGR 16342,CN 43110,PGR 16405,CN 43171,CN 58321,PGR 12295,Ogle CIav9401,CIav 09401",
+                                "subtaxaAuthority": null,
+                                "instituteName": "",
+                                "commonCropName": "cultivated oat,oat",
+                                "defaultDisplayName": "OGLE",
+                                "countryOfOriginCode": "",
+                                "subtaxa": null,
+                                "typeOfGermplasmStorageCode": [],
+                                "seedSource": "",
+                                "germplasmDbId": 97779,
+                                "documentationURL": null,
+                                "pedigree": "UNNAMED336/BRAVE",
+                                "germplasmSpecies": "Avena sativa",
+                                "synonyms": [
+                                    "OGLE",
+                                    "TLVA5908",
+                                    "03C0700697",
+                                    "W87678",
+                                    "IL73-2664",
+                                    "RL 1475",
+                                    "Illinois 73-2664",
+                                    "AVE 2932",
+                                    "IL 73-2664",
+                                    "TLVA5829"
+                                ],
+                                "genus": "Avena",
+                                "speciesAuthority": null,
+                                "germplasmGenus": "Avena",
+                                "germplasmSeedSource": "",
+                                "species": "Avena sativa",
+                                "donors": [],
+                                "instituteCode": ""
+                            }
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "exact",
+                            "name": "Exact Match",
+                            "weight": 100
+                        },
+                        "db_term": {
+                            "term": "OGLE",
+                            "type": "synonym",
+                            "record": {
+                                "germplasmName": "OGLE",
+                                "taxonIds": [],
+                                "acquisitionDate": "",
+                                "breedingMethodDbId": null,
+                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/97779/view",
+                                "biologicalStatusOfAccessionCode": 0,
+                                "accessionNumber": "CIav 9401,VIR 13904,CN 39352,PGR 16342,CN 43110,PGR 16405,CN 43171,CN 58321,PGR 12295,Ogle CIav9401,CIav 09401",
+                                "subtaxaAuthority": null,
+                                "instituteName": "",
+                                "commonCropName": "cultivated oat,oat",
+                                "defaultDisplayName": "OGLE",
+                                "countryOfOriginCode": "",
+                                "subtaxa": null,
+                                "typeOfGermplasmStorageCode": [],
+                                "seedSource": "",
+                                "germplasmDbId": 97779,
+                                "documentationURL": null,
+                                "pedigree": "UNNAMED336/BRAVE",
+                                "germplasmSpecies": "Avena sativa",
+                                "synonyms": [
+                                    "OGLE",
+                                    "TLVA5908",
+                                    "03C0700697",
+                                    "W87678",
+                                    "IL73-2664",
+                                    "RL 1475",
+                                    "Illinois 73-2664",
+                                    "AVE 2932",
+                                    "IL 73-2664",
+                                    "TLVA5829"
+                                ],
+                                "genus": "Avena",
+                                "speciesAuthority": null,
+                                "germplasmGenus": "Avena",
+                                "germplasmSeedSource": "",
+                                "species": "Avena sativa",
+                                "donors": [],
+                                "instituteCode": ""
+                            }
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "substring",
+                            "name": "Substring Match",
+                            "weight": 60
+                        },
+                        "db_term": {
+                            "term": "Ogle CIav9401",
+                            "type": "accession_number",
+                            "record": {
+                                "germplasmName": "OGLE",
+                                "taxonIds": [],
+                                "acquisitionDate": "",
+                                "breedingMethodDbId": null,
+                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/97779/view",
+                                "biologicalStatusOfAccessionCode": 0,
+                                "accessionNumber": "CIav 9401,VIR 13904,CN 39352,PGR 16342,CN 43110,PGR 16405,CN 43171,CN 58321,PGR 12295,Ogle CIav9401,CIav 09401",
+                                "subtaxaAuthority": null,
+                                "instituteName": "",
+                                "commonCropName": "cultivated oat,oat",
+                                "defaultDisplayName": "OGLE",
+                                "countryOfOriginCode": "",
+                                "subtaxa": null,
+                                "typeOfGermplasmStorageCode": [],
+                                "seedSource": "",
+                                "germplasmDbId": 97779,
+                                "documentationURL": null,
+                                "pedigree": "UNNAMED336/BRAVE",
+                                "germplasmSpecies": "Avena sativa",
+                                "synonyms": [
+                                    "OGLE",
+                                    "TLVA5908",
+                                    "03C0700697",
+                                    "W87678",
+                                    "IL73-2664",
+                                    "RL 1475",
+                                    "Illinois 73-2664",
+                                    "AVE 2932",
+                                    "IL 73-2664",
+                                    "TLVA5829"
+                                ],
+                                "genus": "Avena",
+                                "speciesAuthority": null,
+                                "germplasmGenus": "Avena",
+                                "germplasmSeedSource": "",
+                                "species": "Avena sativa",
+                                "donors": [],
+                                "instituteCode": ""
+                            }
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "substring",
+                            "name": "Substring Match",
+                            "weight": 60
+                        },
+                        "db_term": {
+                            "term": "OGLE-C-1",
+                            "type": "name",
+                            "record": {
+                                "seedSource": "",
+                                "typeOfGermplasmStorageCode": [],
+                                "subtaxa": null,
+                                "defaultDisplayName": "OGLE-C-1",
+                                "countryOfOriginCode": "",
+                                "subtaxaAuthority": null,
+                                "commonCropName": "cultivated oat,oat",
+                                "instituteName": "",
+                                "accessionNumber": "",
+                                "biologicalStatusOfAccessionCode": 0,
+                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/98759/view",
+                                "breedingMethodDbId": null,
+                                "acquisitionDate": "",
+                                "taxonIds": [],
+                                "germplasmName": "OGLE-C-1",
+                                "instituteCode": "",
+                                "donors": [],
+                                "species": "Avena sativa",
+                                "germplasmGenus": "Avena",
+                                "germplasmSeedSource": "",
+                                "speciesAuthority": null,
+                                "genus": "Avena",
+                                "germplasmSpecies": "Avena sativa",
+                                "synonyms": [],
+                                "pedigree": "NA/NA",
+                                "germplasmDbId": 98759,
+                                "documentationURL": null
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
+```
+

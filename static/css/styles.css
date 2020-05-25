@@ -33,6 +33,18 @@ h4 {
   line-height: 60px; /* Vertically center the text there */
   background-color: #f5f5f5;
 }
+.footer-container {
+  width: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+.footer-brapi {
+  float: left;
+}
+.footer-source {
+  float: right;
+}
 
 .container {
   width: auto;
@@ -93,5 +105,9 @@ h4 {
 
 #brapi-logo {
   max-height: 20px;
-  margin: 5px;
+  margin-top: -5px;
+}
+#github-logo {
+  max-height: 30px;
+  margin-top: -7px;
 }

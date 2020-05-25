@@ -18,9 +18,17 @@
     <main role="main" class="container">
       <h1 class="mt-5">BrAPI Germplasm Search Tool</h1>
       <p class="lead">
-        This search tool will attempt to match a list of your germplasm names 
+        A search tool that will attempt to match a list of your germplasm names 
         to existing entries in a BrAPI-compliant database.
       </p>
+
+      <div class="alert alert-secondary d-flex d-flex-row">
+        <p class="mb-0">
+          For more information on the usage of the website, the publicly-available RESTful API, 
+          or installing the server &amp; website view the README document in the 
+          <a href="https://github.com/TriticeaeToolbox/BrAPI-germplasm-search">GitHub repository.</a>
+        </p>
+      </div>
 
 
       <!-- SEARCH CONTAINER -->
@@ -370,10 +378,23 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="container">
-        <span class="text-muted">This search tool is powered by <a href='https://brapi.org'>
-          <img id="brapi-logo" src="./img/brapi-logo.svg" title="The Breeding API">
-        </a></span>
+      <div class="footer-container">
+        <div class="footer-brapi">
+          <p class="text-muted mb-0">
+            <span class="d-none d-md-inline">Powered By&nbsp;</span>
+            <a href="https://brapi.org" style="display: inline">
+              <img id="brapi-logo" src="./img/brapi-logo.svg" title="The Breeding API">
+            </a>
+          </p>
+        </div>
+        <div class="footer-source">
+          <p class="text-muted mb-0">
+            <span class="d-none d-md-inline">Source Code Available&nbsp;</span>
+            <a href="https://github.com/TriticeaeToolbox/BrAPI-germplasm-search">
+              <img id="github-logo" src="./img/github-logo.png" title="GitHub">
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
 

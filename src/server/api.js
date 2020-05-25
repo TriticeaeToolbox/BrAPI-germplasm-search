@@ -94,9 +94,21 @@ router.get('/job/:id', function(req, res, next) {
 router.get('/cache', function(req, res, next) {
     let address = req.query.address;
 
-    // Address not provided
+    // Get all caches
     if ( !address ) {
-        response.error(res, 400, "Database address not provided as 'address' query param");
+        let rtn = [];
+        let keys = cache.keys();
+        for ( let i = 0; i < keys.length; i++ ) {
+            let info = cache.info(keys[i]);
+            let body = {
+                address: keys[i],
+                saved: info.saved,
+                terms: info.value.length
+            }
+            rtn.push(body);
+        }
+        response.success(res, rtn);
+        return next();
     }
 
     // Get cache info

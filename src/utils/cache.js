@@ -21,12 +21,11 @@ if ( config.cache.autoImport ) {
  * @param  {Object} value Value to cache
  */
 function put(key, value) {
-    let cache_key = _checksum(key);
     let info = {
         saved: new Date(),
         value: value
     }
-    cache.put(cache_key, info, TIMEOUT);
+    cache.put(key, info, TIMEOUT);
     if ( config.cache.autoExport ) {
         exportJSON();
     }
@@ -38,8 +37,7 @@ function put(key, value) {
  * @return {Object}     Value from cache
  */
 function get(key) {
-    let cache_key = _checksum(key);
-    return cache.get(cache_key).value;
+    return cache.get(key).value;
 }
 
 /**
@@ -49,8 +47,7 @@ function get(key) {
  */
 function info(key) {
     if ( isCached(key) ) {
-        let cache_key = _checksum(key);
-        return cache.get(cache_key);
+        return cache.get(key);
     }
     else {
         return undefined;
@@ -63,9 +60,17 @@ function info(key) {
  * @return {Boolean}     true if there is a cached value
  */
 function isCached(key) {
-    let cache_key = _checksum(key);
     let keys = cache.keys();
-    return keys.includes(cache_key);
+    return keys.includes(key);
+}
+
+
+/**
+ * Get all of the keys used by the cache
+ * @return {string[]} Cache keys
+ */
+function keys() {
+    return cache.keys();
 }
 
 
@@ -102,21 +107,12 @@ function exportJSON(path) {
 }
 
 
-/**
- * Generate an md5 checksum of the value
- * @param  {string} value Value to checksum
- * @return {string}       Checksum of value
- */
-function _checksum(value) {
-    return md5(value);
-}
-
-
 module.exports = {
     put: put,
     get: get,
     info: info,
     isCached: isCached,
+    keys: keys,
     import: importJSON,
     export: exportJSON
 }

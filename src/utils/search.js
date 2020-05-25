@@ -93,10 +93,7 @@ function search(search_terms, db_terms, config, progress, callback) {
     for ( let i = 0; i < search_terms.length; i++ ) {
         matches[search_terms[i]] = {
             search_term: search_terms[i],
-            search_routines: {
-                keys: [],
-                names: []
-            },
+            search_routines: [],
             matches: []
         }
     }
@@ -157,10 +154,10 @@ function _performSearch(db_terms, matches, config, progress, callback) {
         if ( matches.hasOwnProperty(key) ) {
             let match = matches[key];
             match.matches.sort(function(a, b) {
-                if (a.weight < b.weight) return 1;
-                if (a.weight > b.weight) return -1;
-                if (a.record.germplasmName > b.record.germplasmName) return 1;
-                if (a.record.germplasmName < b.record.germplasmName) return -1;
+                if (a.search_routine.weight < b.search_routine.weight) return 1;
+                if (a.search_routine.weight > b.search_routine.weight) return -1;
+                if (a.db_term.record.germplasmName > b.db_term.record.germplasmName) return 1;
+                if (a.db_term.record.germplasmName < b.db_term.record.germplasmName) return -1;
             });
             rtn[key] = match;
         }
@@ -227,7 +224,7 @@ function _isExactMatch(dt, st) {
 function _isPunctuationMatch(dt, mt) {
     let _dt = dt.replace(/[^A-Z0-9]/gi, '');
     let _mt = mt.replace(/[^A-Z0-9]/gi, '');
-    return _dt === _mt;
+    return dt !== mt && _dt === _mt;
 }
 
 /**
@@ -237,7 +234,7 @@ function _isPunctuationMatch(dt, mt) {
  * @return {Boolean}    true if a match
  */
 function _isSubstringMatch(dt, mt) {
-    return dt.includes(mt);
+    return dt !== mt && dt.includes(mt);
 }
 
 /**
@@ -271,34 +268,19 @@ function _isEditDistanceMatch(dt, mt, config) {
  */
 function _addMatch(routine_name, routine_key, weight, match, db_term) {
     
-    // Check if the germplasm is already matched with the search term
-    let add = true;
-    for ( let i = 0; i < match.matches.length; i++ ) {
-        if ( match.matches[i].record.germplasmDbId === db_term.record.germplasmDbId ) {
-            add = false;
-        }
-    }
-
-    // Add the germplasm...
-    if ( add ) {
-
-        // Add routine, if not already listed
-        if ( !match.search_routines.keys.includes(routine_key) ) {
-            match.search_routines.keys.push(routine_key);
-            match.search_routines.names.push(routine_name);
-        }
-
-        // Add match info
-        match.matches.push({
-            routine_key: routine_key,
-            routine_name: routine_name,
-            weight: weight,
-            db_term: db_term.term,
-            db_term_type: db_term.type,
+    // Add match info
+    match.matches.push({
+        search_routine: {
+            key: routine_key,
+            name: routine_name,
+            weight: weight
+        },
+        db_term: {
+            term: db_term.term,
+            type: db_term.type,
             record: db_term.record
-        });
-
-    }
+        }
+    });
 
     // Return the updated match
     return match;

@@ -347,91 +347,107 @@ function displayMatches(matches) {
     console.log("MATCHES:");
     console.log(matches);
 
+    // Set icons
+    let icons = {
+        "x": '<svg class="bi bi-x-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/></svg>',
+        "dash": '<svg class="bi bi-dash-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="orange" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>',
+        "check": '<svg class="bi bi-check-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/></svg>'
+    }
+
     // Build Table HTML
     let html = "";
     for ( term in matches ) {
         if ( matches.hasOwnProperty(term) ) {
             let match = matches[term];
+
+            // Set summary info
+            let search_term = match.search_term;
+            let match_type = "";
+            let match_icon = "";
+            if ( match.matches.length === 0 ) {
+                match_type = "None";
+                match_icon = icons["x"];
+            }
+            else if ( match.matches.length === 1 && match.search_routines.length === 1 && match.search_routines[0] === 'exact' ) {
+                match_type = "Exact";
+                match_icon = icons["check"];
+            }
+            else if ( match.matches.length > 0 ) {
+                match_type = "Potential";
+                match_icon = icons["dash"];
+            }
+
+            // BUILD HTML
             html += "<tr>";
             
-            // Germplasm Name
-            html += "<td>" + match.term + "</td>";
+            // Search Term
+            html += "<td>" + search_term + "</td>";
 
-            // Match Type...
+            // Match Type
             html += "<td>";
-
-            // ...Icon
-            if ( match.matchType === 'none' || match.matches.length === 0 ) {
-                html += '<svg class="bi bi-x-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg">';
-                html += '<path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>';
-                html += '<path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/>';
-                html += '<path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/>';
-                html += '</svg>';
-            }
-            else if ( match.matchType === 'extended' || match.matches.length > 1 ) {
-                html += '<svg class="bi bi-dash-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="orange" xmlns="http://www.w3.org/2000/svg">';
-                html += '<path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>';
-                html += '<path fill-rule="evenodd" d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>';
-                html += '</svg>';
-            }
-            else if ( match.matches.length === 1 ) {
-                html += '<svg class="bi bi-check-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">';
-                html += '<path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>';
-                html += '<path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/>';
-                html += '</svg>';
-            }
-            
-
-            // ...Text
-            if ( match.matchType === 'exact' ) {
-                html += "&nbsp;&nbsp;Exact Match"
-            }
-
-            // ... Synonym Match
-            else if ( match.matchType === 'synonym' ) {
-                html += "&nbsp;&nbsp;Synonym Match"
-            }
-
-            // ...No Match
-            else if ( match.matchType === 'none' ) {
-                html += "&nbsp;&nbsp;No Matches"
-            }
-
-            // ...Extended Search Match
-            else if ( match.matchType === 'extended' ) {
-                html += "&nbsp;&nbsp;Potential Matches"
-            }
-
+            html += match_icon;
+            html += "&nbsp;&nbsp;";
+            html += match_type;
             html += "</td>";
 
             // Database Matches
-            html += "<td>"
+            html += "<td style='padding-top: 2px'>"
+            let prev_search_routine = undefined;
             for ( let i = 0; i < match.matches.length; i++ ) {
-                html += "<input type='radio' ";
-                html += "name='" + match.term + "' ";
-                html += "value='" + match.matches[i].germplasmName + "'";
-                if ( match.matches.length === 1 && match.matchType !== "extended" ) html += " checked";
-                html += ">&nbsp;&nbsp;";
-                html += "<a href='#' onclick='displayGermplasm(\"" + term + "\", " + i + ")'>";
-                html += match.matches[i].germplasmName;
-                html += "</a>"
-                if ( match.matches[i].synonyms && match.matches[i].synonyms.length > 0 ) {
-                    for ( let j = 0; j < match.matches[i].synonyms.length; j++ ) {
-                        html += '<span class="synonym-badge badge badge-secondary">';
-                        html += match.matches[i].synonyms[j];
-                        html += '</span>';
-                    }
+                let m = match.matches[i];
+
+                // Set search routine header
+                let search_routine_header = "";
+                if ( m.search_routine.key !== prev_search_routine ) {
+                    prev_search_routine = m.search_routine.key;
+                    search_routine_header = "<h4 class='search-routine-header'>" + m.search_routine.name + "</h4>";
                 }
-                                
-                html += "<br />"
+
+                // Get Match Info
+                let search_term = match.search_term;
+                let germplasm_name = match.matches[i].db_term.record.germplasmName;
+                let db_term_type = match.matches[i].db_term.type;
+                let db_term_match = match.matches[i].db_term.term;
+
+                // Set HTML variables
+                let input_name = search_term;
+                let input_value = i;
+                let input_checked = match_type === "Exact" ? " checked" : "";
+                let label = germplasm_name;
+
+                // Add HTML
+                html += search_routine_header;
+                html += "<input type='radio' ";
+                html += "name='" + input_name + "' ";
+                html += "value='" + input_value + "' ";
+                html += input_checked;
+                html += ">&nbsp;&nbsp;";
+                html += "<a href='#' onclick='displayGermplasm(\"" + search_term + "\", " + i + ")'>";
+                html += germplasm_name;
+                html += "</a>";
+
+                // Add synonyms and accession numbers if they're the matching term
+                if ( db_term_type === "synonym" ) {
+                    html += '<span class="match-badge badge badge-info">';
+                    html += db_term_match;
+                    html += '</span>';
+                }
+                else if ( db_term_type === "accession_number" ) {
+                    html += '<span class="match-badge badge badge-secondary">';
+                    html += db_term_match;
+                    html += '</span>';
+                }
+
+
+                html += "<br />";
             }
             if ( match.matches.length > 0 ) {
-                html += "<input type='radio' name='" + match.term + "' value=''";
-                if ( match.matches.length !== 1 || match.matchType === 'extended' ) html += " checked";
-                html += ">&nbsp;&nbsp;NO MATCHES";
+                html += "<input type='radio' name='" + match.search_term + "' value='' style='margin-top: 12px'";
+                if ( match.matches.length > 1 || match_type !== "Exact" ) html += " checked";
+                html += ">&nbsp;&nbsp;NO MATCH";
             }
-            html += "</td>";
 
+            html += "</td>";
             html += "</tr>";
         }
     }
@@ -448,7 +464,8 @@ function displayMatches(matches) {
  */
 function displayGermplasm(term, i) {
     let match = MATCHES[term].matches[i];
-    $("#germplasmModal-title").html(match.germplasmName);
+    let record = match.db_term.record;
+    $("#germplasmModal-title").html(record.germplasmName);
 
     let html = "<table class='table table-striped'>";
     html += "<thead class='thead-light'>";
@@ -457,13 +474,13 @@ function displayGermplasm(term, i) {
     html += "<th>Value</th>";
     html += "</tr>";
     html += "<tbody>";
-    let props = Object.getOwnPropertyNames(match).sort();
+    let props = Object.getOwnPropertyNames(record).sort();
     for ( let i = 0; i < props.length; i++ ) {
         let prop = props[i];
         if ( prop !== "__response" ) {
             html += "<tr>";
             html += "<td style='word-break:break-all'>" + prop + "</td>";
-            html += "<td style='word-break:break-all'>" + JSON.stringify(match[prop]).replace("\"\"", "") + "</td>";
+            html += "<td style='word-break:break-all'>" + JSON.stringify(record[prop]).replace("\"\"", "") + "</td>";
             html += "</tr>";
         }
     }
@@ -479,15 +496,16 @@ function displayGermplasm(term, i) {
  * Generate and download the Matches file
  */
 function downloadMatches() {
-    let headers = ["germplasm_name", "database_match"];
+    let headers = ["search_term", "database_name"];
     let rows = [];
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
             let match = MATCHES[term];
-            if ( match.matchType !== "none" ) {
+            if ( match.matches.length > 0 ) {
                 let selected = $("input[name='" + term + "']:checked").val();
                 if ( selected && selected !== "" ) {
-                    rows.push([term, selected]);
+                    let db_name = match.matches[parseInt(selected)].db_term.record.germplasmName;
+                    rows.push([term, db_name]);
                 }
             }
         }
@@ -500,12 +518,12 @@ function downloadMatches() {
  * Generate and download the No Matches file
  */
 function downloadNoMatches() {
-    let headers = ["germplasm_name"];
+    let headers = ["search_term"];
     let rows = [];
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
             let match = MATCHES[term];
-            if ( match.matchType === "none" ) {
+            if ( match.matches.length === 0 ) {
                 rows.push([term]);
             }
             else {
@@ -524,24 +542,30 @@ function downloadNoMatches() {
  * Generate and download the entire match dataset
  */
 function downloadAll() {
-    let headers = ["germplasm_name", "match_type", "database_match", "other_suggestions"];
+    let headers = ["search_term", "is_match", "database_name", "database_term", "database_term_type", "search_routine"];
     let rows = [];
+
+    // Parse each search term
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
             let match = MATCHES[term];
-            let database_match = "";
-            let other_suggestions = "";
-            if ( match.matchType !== "none" ) {
-                database_match = $("input[name='" + term + "']:checked").val();
-                let o = [];
-                for ( let i = 0; i < match.matches.length; i++ ) {
-                    if ( match.matches[i].germplasmName !== database_match ) {
-                        o.push(match.matches[i].germplasmName);
-                    }
-                }
-                other_suggestions = o.join(', ');
+            let selected = $("input[name='" + term + "']:checked").val();
+
+            // Add each of the potential database terms
+            for ( let i = 0; i < match.matches.length; i++ ) {
+                let m = match.matches[i];
+                let database_name = m.db_term.record.germplasmName
+                let database_term = m.db_term.term;
+                let database_term_type = m.db_term.type;
+                let search_routine = m.search_routine.key;
+                let is_selected = selected && selected !== "" && parseInt(selected) === i ? 'true' : 'false';
+                rows.push([term, is_selected, database_name, database_term, database_term_type, search_routine]);
             }
-            rows.push([term, match.matchType, database_match, other_suggestions]);
+
+            // Add row for no match
+            if ( match.matches.length === 0 ) {
+                rows.push([term, 'false', '', '', '', 'none']);
+            }
         }
     }
     downloadCSV(headers, rows, "allMatchData");

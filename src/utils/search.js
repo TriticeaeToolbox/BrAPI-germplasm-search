@@ -268,6 +268,11 @@ function _isEditDistanceMatch(dt, mt, config) {
  */
 function _addMatch(routine_name, routine_key, weight, match, db_term) {
     
+    // Add Search Routine
+    if ( !match.search_routines.includes(routine_key) ) {
+        match.search_routines.push(routine_key);
+    }
+
     // Add match info
     match.matches.push({
         search_routine: {

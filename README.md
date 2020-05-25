@@ -43,3 +43,33 @@ and properties found in this file will override the default values.
       - **punctuation:** find matches that are the same after non-alphanumeric characters are removed (default: `false`)
       - **edit_distance:** find matches where the edit distance between terms is within the max edit distance (default: `false`)
       - **max_edit_distance:** the maximum number of changes for the edit distance comparison (default: `2`)
+      
+## Website Usage
+
+The website can accept a number of query params that can be used to set 
+the initial search parameters.
+
+**Available Query Params:**
+
+The following query params will set the initial database properties:
+  - **db:** set the selected database by database index or name
+  - **db_address:** the BrAPI database address (will set the selected database to 'Custom')
+  - **db_version:** the BrAPI database version (will set the selected database to 'Custom')
+  - **db_auth_token:** the BrAPI database auth token (will set the selected database to 'Custom')
+  - **db_call_limit:** the BrAPI database call limit (will set the selected database to 'Custom')
+  - **force:** when set to `1`, `true` or `on` fresh germplasm records will be downloaded from the database (otherwise cached records will be used, if available)
+  
+The following query params use boolean values to toggle the initial search options
+(`1`, `true`, `on` = enabled; `0`, `false`, `off` = disabled):
+  - **name:** toggle the name database term type
+  - **synonyms:** toggle the synonyms database term type
+  - **accession_numbers:** toggle the accession numbers database term type
+  - **exact:** toggle the exact match search routine
+  - **substring:** toggle the substring match search routine
+  - **punctuation:** toggle the punctuation removal search routine
+  - **edit_distance:** toggle the edit distance comparison search routine
+  - **max_edit_distance:** (integer) set the max edit distance used by the edit distance comparison search routine
+ 
+ When the `auto` query param is set to `1`/`true`/`on` the search will start automatically
+ with the default and provided search parameters.
+  

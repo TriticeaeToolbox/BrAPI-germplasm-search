@@ -160,10 +160,10 @@ long running-task the request is added to a job queue and the response will incl
 **Body:**
 ```json
 {
-	"address": "http://localhost:8080/brapi/v1",
-	"version": "v1.3",
-  "auth_token": "",
-  "call_limit": 10
+    "address": "http://localhost:8080/brapi/v1",
+    "version": "v1.3",
+    "auth_token": "",
+    "call_limit": 10
 }
 ```
 
@@ -186,20 +186,27 @@ long running-task the request is added to a job queue and the response will incl
 **Body:**
 ```json
 {
-	"database": {
-		"address": "http://localhost:8081/brapi/v1",
-		"version": "v1.3"
-	},
-	"terms": ["JERRY", "syn_a", "ogle"],
-	"config": {
-		"search_routines": {
-			"name": true,
-			"punctuation": true,
-			"substring": true,
-			"edit_distance": false,
-			"max_edit_distance": 3
-		}
-	}
+    "database": {
+        "address": "http://localhost:8081/brapi/v1",
+        "version": "v1.3",
+        "auth_token": "",
+        "call_limit": 10
+    },
+    "terms": ["JERRY", "syn_a", "ogle"],
+    "config": {
+        "database_terms": {
+            "name": true,
+            "synonyms": true,
+            "accession_numbers": true
+        },
+        "search_routines": {
+            "name": true,
+            "punctuation": true,
+            "substring": true,
+            "edit_distance": false,
+            "max_edit_distance": 2
+        }
+    }
 }
 ```
 
@@ -213,10 +220,12 @@ long running-task the request is added to a job queue and the response will incl
 }
 ```
 
-### `GET` `/job/:id[?results=true|false]` - Get Job Status
+### `GET` `/job/:id[?results=false]` - Get Job Status
 
-Get the status of the specified job (status, message, progress) and optionally return 
-the results of the job when it is complete.
+Get the status of the specified job (status, message, progress) and the results 
+of a completed job. The results can be optionally disabled in the response, which 
+is recommended for jobs that are updating the germplasm cache if you don't actually 
+need the generated database terms (the response with the results is fairly large).
 
 A job can have one of the following statuses:
   - **pending:** the job has been added but not yet started
@@ -224,7 +233,7 @@ A job can have one of the following statuses:
   - **complete:** the job has finished and will include the results if `results=true`
   - **removed:** the job no longer exists
   
-**Response:**
+**Running Response:**
 ```json
 {
     "status": "running",

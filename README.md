@@ -69,6 +69,8 @@ The following query params use boolean values to toggle the initial search optio
   - **punctuation:** toggle the punctuation removal search routine
   - **edit_distance:** toggle the edit distance comparison search routine
   - **max_edit_distance:** (integer) set the max edit distance used by the edit distance comparison search routine
+
+The `term` query param can be used one or more times to specify the search term(s).
  
 When the `auto` query param is set to `1`/`true`/`on` the search will start automatically
 with the default and provided search parameters.

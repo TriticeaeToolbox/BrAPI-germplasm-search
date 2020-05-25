@@ -247,7 +247,7 @@ function _isSubstringMatch(dt, mt) {
  */
 function _isEditDistanceMatch(dt, mt, config) {
     let ed = getEditDistance(dt, mt);
-    return ed <= config.search_routines.max_edit_distance;
+    return ed > 0 && ed <= config.search_routines.max_edit_distance;
 }
 
 

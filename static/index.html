@@ -22,7 +22,10 @@
         to existing entries in a BrAPI-compliant database.
       </p>
 
-      <div class="alert alert-secondary d-flex d-flex-row">
+      <div id="info-alert" class="alert alert-secondary">
+        <button id="info-alert-button" type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <p class="mb-0">
           For more information on the usage of the website, the publicly-available RESTful API, 
           or installing the server &amp; website view the README document in the 
@@ -478,7 +481,13 @@
         $("#download-no-matches").click(downloadNoMatches);
         $("#download-all").click(downloadAll);
         $("#matches-return").click(displaySearch);
-
+        $('#info-alert').on('closed.bs.alert', function () {
+          setCookie("info-alert", "dismissed");
+        });
+        if ( getCookie("info-alert") !== "dismissed" ) {
+          $("#info-alert").show();
+        }
+ 
         // Enable Tooltips
         $("[data-toggle='tooltip']").tooltip({delay: {"show": 500, "hide": 0}});
 

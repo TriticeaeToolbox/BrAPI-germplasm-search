@@ -422,7 +422,7 @@ function displayMatches(matches) {
                 html += "value='" + input_value + "' ";
                 html += input_checked;
                 html += ">&nbsp;&nbsp;";
-                html += "<a href='#' onclick='displayGermplasm(\"" + search_term + "\", " + i + ")'>";
+                html += "<a href='#' onclick='displayGermplasm(\"" + search_term + "\", " + i + "); return false;'>";
                 html += germplasm_name;
                 html += "</a>";
 
@@ -579,9 +579,9 @@ function downloadAll() {
  * @param  {String}     file    Name of the CSV file
  */
 function downloadCSV(headers, rows, file) {
-    let csv = "\"" + headers.join("\", \"") + "\"\n";
+    let csv = "\"" + headers.join("\",\"") + "\"\n";
     for ( let i = 0; i < rows.length; i++ ) {
-        csv += "\"" + rows[i].join("\", \"") + "\"\n";
+        csv += "\"" + rows[i].join("\",\"") + "\"\n";
     }
     let e = document.createElement("a");
     e.href = "data:text/csv;charset=utf-8," + encodeURI(csv);

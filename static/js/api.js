@@ -96,6 +96,18 @@ function getJobInfo(id, results, callback) {
 
 
 /**
+ * Get the record of the specified germplasm on the specified database
+ * @param {string} id Germplasm Database ID
+ * @param {string} address Database Address to query
+ * @param {function} callback Callback function(err, record)
+ */
+function getGermplasmRecord(id, address, callback) {
+    let path = "/germplasm/" + id + "?address=" + address;
+    _get(path, callback);
+}
+
+
+/**
  * Make a GET Request
  * @param  {string}   path     API Path
  * @param  {Function} callback Callback function(err, response)
@@ -162,7 +174,7 @@ function _request(method, path, body, callback) {
 
                 // Request Error
                 if ( resp.status === "error" ) {
-                    return callback(new Error("[" + resp.error.type + "] " + resp.error.message));
+                    return callback(new Error(resp.error.message));
                 }
 
                 // Request Success

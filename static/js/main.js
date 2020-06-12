@@ -238,7 +238,8 @@ function setupSearch() {
             punctuation: $("#include-punctuation").prop('checked'),
             edit_distance: $("#include-edit-distance").prop('checked'),
             max_edit_distance: $("#max-edit-distance").val()
-        }
+        },
+        return_records: false
     };
     
     // Get search terms
@@ -405,7 +406,8 @@ function displayMatches(matches) {
 
                 // Get Match Info
                 let search_term = match.search_term;
-                let germplasm_name = match.matches[i].db_term.record.germplasmName;
+                let germplasm_name = match.matches[i].db_term.germplasmName;
+                let germplasm_db_id = match.matches[i].db_term.germplasmDbId;
                 let db_term_type = match.matches[i].db_term.type;
                 let db_term_match = match.matches[i].db_term.term;
 
@@ -422,7 +424,7 @@ function displayMatches(matches) {
                 html += "value='" + input_value + "' ";
                 html += input_checked;
                 html += ">&nbsp;&nbsp;";
-                html += "<a href='#' onclick='displayGermplasm(\"" + search_term + "\", " + i + "); return false;'>";
+                html += "<a href='#' onclick='displayGermplasm(\"" + germplasm_name + "\", " + germplasm_db_id + "); return false;'>";
                 html += germplasm_name;
                 html += "</a>";
 
@@ -459,36 +461,44 @@ function displayMatches(matches) {
 
 /**
  * Display a modal dialog with the germplasm details
- * @param  {String} term The search term linked to the germplasm
- * @param  {int}    i    The index of the germplasm in the matches list
+ * @param  {String} name The database germplasm name
+ * @param  {int}    id   The databse germplasm id
  */
-function displayGermplasm(term, i) {
-    let match = MATCHES[term].matches[i];
-    let record = match.db_term.record;
-    $("#germplasmModal-title").html(record.germplasmName);
-
-    let html = "<table class='table table-striped'>";
-    html += "<thead class='thead-light'>";
-    html += "<tr>";
-    html += "<th>Property</th>";
-    html += "<th>Value</th>";
-    html += "</tr>";
-    html += "<tbody>";
-    let props = Object.getOwnPropertyNames(record).sort();
-    for ( let i = 0; i < props.length; i++ ) {
-        let prop = props[i];
-        if ( prop !== "__response" ) {
-            html += "<tr>";
-            html += "<td style='word-break:break-all'>" + prop + "</td>";
-            html += "<td style='word-break:break-all'>" + JSON.stringify(record[prop]).replace("\"\"", "") + "</td>";
-            html += "</tr>";
-        }
-    }
-    html += "</tbody>";
-    html += "</table>";
-    $("#germplasmModal-details").html(html);
-
+function displayGermplasm(name, id) {
+    $("#germplasmModal-title").html(name);
+    $("#germplasmModal-details").html("<p>Loading Germplasm Details...</p>");
     $("#germplasmModal").modal("show");
+
+    getGermplasmRecord(id, "https://wheat.triticeaetoolbox.org/brapi/v1", function(err, record) {
+        let html = "";
+        if ( err || !record ) {
+            console.log(err);
+            html += "<p><strong>Could not get germplasm record</strong></p>"
+            html += "<code>" + err + "</code>";
+        }
+        else {
+            html += "<table class='table table-striped'>";
+            html += "<thead class='thead-light'>";
+            html += "<tr>";
+            html += "<th>Property</th>";
+            html += "<th>Value</th>";
+            html += "</tr>";
+            html += "<tbody>";
+            let props = Object.getOwnPropertyNames(record).sort();
+            for ( let i = 0; i < props.length; i++ ) {
+                let prop = props[i];
+                if ( prop !== "__response" ) {
+                    html += "<tr>";
+                    html += "<td style='word-break:break-all'>" + prop + "</td>";
+                    html += "<td style='word-break:break-all'>" + JSON.stringify(record[prop]).replace("\"\"", "") + "</td>";
+                    html += "</tr>";
+                }
+            }
+            html += "</tbody>";
+            html += "</table>";
+        }
+        $("#germplasmModal-details").html(html);
+    });
 }
 
 

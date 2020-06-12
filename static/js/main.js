@@ -514,7 +514,7 @@ function downloadMatches() {
             if ( match.matches.length > 0 ) {
                 let selected = $("input[name='" + term + "']:checked").val();
                 if ( selected && selected !== "" ) {
-                    let db_name = match.matches[parseInt(selected)].db_term.record.germplasmName;
+                    let db_name = match.matches[parseInt(selected)].db_term.germplasmName;
                     rows.push([term, db_name]);
                 }
             }
@@ -564,7 +564,7 @@ function downloadAll() {
             // Add each of the potential database terms
             for ( let i = 0; i < match.matches.length; i++ ) {
                 let m = match.matches[i];
-                let database_name = m.db_term.record.germplasmName
+                let database_name = m.db_term.germplasmName
                 let database_term = m.db_term.term;
                 let database_term_type = m.db_term.type;
                 let search_routine = m.search_routine.key;

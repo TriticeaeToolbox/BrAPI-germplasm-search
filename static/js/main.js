@@ -469,7 +469,8 @@ function displayGermplasm(name, id) {
     $("#germplasmModal-details").html("<p>Loading Germplasm Details...</p>");
     $("#germplasmModal").modal("show");
 
-    getGermplasmRecord(id, "https://wheat.triticeaetoolbox.org/brapi/v1", function(err, record) {
+    let address = $("#database-address").val();
+    getGermplasmRecord(id, address, function(err, record) {
         let html = "";
         if ( err || !record ) {
             console.log(err);

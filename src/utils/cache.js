@@ -37,7 +37,12 @@ function put(key, value) {
  * @return {Object}     Value from cache
  */
 function get(key) {
-    return cache.get(key).value;
+    if ( isCached(key) ) {
+        return cache.get(key).value;
+    }
+    else {
+        return undefined;
+    }
 }
 
 /**

@@ -43,6 +43,7 @@ and properties found in this file will override the default values.
       - **punctuation:** find matches that are the same after non-alphanumeric characters are removed (default: `false`)
       - **edit_distance:** find matches where the edit distance between terms is within the max edit distance (default: `false`)
       - **max_edit_distance:** the maximum number of changes for the edit distance comparison (default: `2`)
+    - **return_records:** when `true` the search results will include the full germplasm record of each math (default: `false`)
       
 ## Website Usage
 
@@ -179,6 +180,49 @@ long running-task the request is added to a job queue and the response will incl
 }
 ```
 
+
+### `GET` `/germplasm/:id?address=` - Get Germplasm Record
+
+Get the cached record of the specified germplasm from the specified database.
+The germplasm is specified by its `germplasmDbId` and the database is 
+specified by its BrAPI address.
+
+**Response:** `/germplasm/218808?address=https://wheat.triticeaetoolbox.org/brapi/v1`
+```json
+{
+    "status": "success",
+    "response": {
+        "instituteName": "National Small Grains Collection",
+        "breedingMethodDbId": null,
+        "subtaxaAuthority": null,
+        "germplasmPUI": "PI 367088,http://triticumbase.sgn.cornell.edu/stock/218808/view",
+        "germplasmGenus": "Triticum",
+        "typeOfGermplasmStorageCode": [],
+        "germplasmName": "1755",
+        "biologicalStatusOfAccessionCode": 0,
+        "countryOfOriginCode": "",
+        "defaultDisplayName": "1755",
+        "instituteCode": "NSGC",
+        "germplasmSeedSource": "",
+        "seedSource": "",
+        "genus": "Triticum",
+        "acquisitionDate": "",
+        "donors": [],
+        "pedigree": "NA/NA",
+        "speciesAuthority": null,
+        "subtaxa": null,
+        "species": "Triticum aestivum",
+        "synonyms": [],
+        "germplasmSpecies": "Triticum aestivum",
+        "accessionNumber": "",
+        "documentationURL": null,
+        "germplasmDbId": 218808,
+        "taxonIds": [],
+        "commonCropName": "Canadian hard winter wheat,bread wheat,common wheat,wheat"
+    }
+}
+```
+
 ### `POST` `/search` - Start Search
 
 Start a germplasm search on the database, terms and search options provided in the request body.  Since this is 
@@ -207,7 +251,8 @@ long running-task the request is added to a job queue and the response will incl
             "substring": true,
             "edit_distance": false,
             "max_edit_distance": 2
-        }
+        },
+        "return_records": false
     }
 }
 ```
@@ -265,11 +310,12 @@ A job can have one of the following statuses:
 {
     "status": "complete",
     "job": {
-        "id": "5500da49-5a3c-4e69-8106-8095055dbe40",
+        "id": "a4de882a-f818-45bd-8f56-7bc14bf18355",
         "results": {
             "JERRY": {
                 "search_term": "JERRY",
                 "search_routines": [
+                    "edit_distance",
                     "exact"
                 ],
                 "matches": [
@@ -282,50 +328,241 @@ A job can have one of the following statuses:
                         "db_term": {
                             "term": "JERRY",
                             "type": "name",
-                            "record": {
-                                "subtaxa": null,
-                                "typeOfGermplasmStorageCode": [],
-                                "seedSource": "",
-                                "commonCropName": "cultivated oat,oat",
-                                "subtaxaAuthority": null,
-                                "instituteName": "",
-                                "accessionNumber": "PI 591808",
-                                "countryOfOriginCode": "",
-                                "defaultDisplayName": "JERRY",
-                                "acquisitionDate": "",
-                                "breedingMethodDbId": null,
-                                "biologicalStatusOfAccessionCode": 0,
-                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/102642/view",
-                                "germplasmName": "JERRY",
-                                "taxonIds": [],
-                                "donors": [],
-                                "instituteCode": "",
-                                "speciesAuthority": null,
-                                "germplasmSeedSource": "",
-                                "germplasmGenus": "Avena",
-                                "species": "Avena sativa",
-                                "germplasmDbId": 102642,
-                                "documentationURL": null,
-                                "pedigree": "VALLEY/ND810458",
-                                "synonyms": [
-                                    "ND870952",
-                                    "03C0701856"
-                                ],
-                                "germplasmSpecies": "Avena sativa",
-                                "genus": "Avena"
-                            }
+                            "germplasmName": "JERRY",
+                            "germplasmDbId": 102642
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "DERBY",
+                            "type": "name",
+                            "germplasmName": "DERBY",
+                            "germplasmDbId": 87209
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "JURY",
+                            "type": "name",
+                            "germplasmName": "JURY",
+                            "germplasmDbId": 100529
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "LARRY",
+                            "type": "name",
+                            "germplasmName": "LARRY",
+                            "germplasmDbId": 92923
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "LEROY",
+                            "type": "name",
+                            "germplasmName": "LEROY",
+                            "germplasmDbId": 91474
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "TERRA",
+                            "type": "name",
+                            "germplasmName": "TERRA",
+                            "germplasmDbId": 91600
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "TERRY",
+                            "type": "name",
+                            "germplasmName": "TERRY",
+                            "germplasmDbId": 96502
                         }
                     }
                 ]
             },
-            "syn_a": {
-                "search_term": "syn_a",
-                "search_routines": [],
-                "matches": []
+            "bess": {
+                "search_term": "bess",
+                "search_routines": [
+                    "edit_distance",
+                    "substring"
+                ],
+                "matches": [
+                    {
+                        "search_routine": {
+                            "key": "substring",
+                            "name": "Substring Match",
+                            "weight": 60
+                        },
+                        "db_term": {
+                            "term": "BESSIN",
+                            "type": "name",
+                            "germplasmName": "BESSIN",
+                            "germplasmDbId": 86489
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "BESSIN",
+                            "type": "name",
+                            "germplasmName": "BESSIN",
+                            "germplasmDbId": 86489
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "BETA",
+                            "type": "name",
+                            "germplasmName": "BETA",
+                            "germplasmDbId": 85221
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "BUSSY",
+                            "type": "name",
+                            "germplasmName": "BUSSY",
+                            "germplasmDbId": 87899
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "MESA",
+                            "type": "name",
+                            "germplasmName": "MESA",
+                            "germplasmDbId": 92662
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "NES",
+                            "type": "name",
+                            "germplasmName": "NES",
+                            "germplasmDbId": 85095
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "WEST",
+                            "type": "name",
+                            "germplasmName": "WEST",
+                            "germplasmDbId": 92406
+                        }
+                    }
+                ]
+            },
+            "syn-a": {
+                "search_term": "syn-a",
+                "search_routines": [
+                    "edit_distance"
+                ],
+                "matches": [
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "SANNA",
+                            "type": "name",
+                            "germplasmName": "SANNA",
+                            "germplasmDbId": 97512
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "SONJA",
+                            "type": "name",
+                            "germplasmName": "SONJA",
+                            "germplasmDbId": 94470
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "SYLVA",
+                            "type": "name",
+                            "germplasmName": "SYLVA",
+                            "germplasmDbId": 90414
+                        }
+                    }
+                ]
             },
             "ogle": {
                 "search_term": "ogle",
                 "search_routines": [
+                    "edit_distance",
                     "exact",
                     "substring"
                 ],
@@ -339,148 +576,8 @@ A job can have one of the following statuses:
                         "db_term": {
                             "term": "OGLE",
                             "type": "name",
-                            "record": {
-                                "germplasmName": "OGLE",
-                                "taxonIds": [],
-                                "acquisitionDate": "",
-                                "breedingMethodDbId": null,
-                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/97779/view",
-                                "biologicalStatusOfAccessionCode": 0,
-                                "accessionNumber": "CIav 9401,VIR 13904,CN 39352,PGR 16342,CN 43110,PGR 16405,CN 43171,CN 58321,PGR 12295,Ogle CIav9401,CIav 09401",
-                                "subtaxaAuthority": null,
-                                "instituteName": "",
-                                "commonCropName": "cultivated oat,oat",
-                                "defaultDisplayName": "OGLE",
-                                "countryOfOriginCode": "",
-                                "subtaxa": null,
-                                "typeOfGermplasmStorageCode": [],
-                                "seedSource": "",
-                                "germplasmDbId": 97779,
-                                "documentationURL": null,
-                                "pedigree": "UNNAMED336/BRAVE",
-                                "germplasmSpecies": "Avena sativa",
-                                "synonyms": [
-                                    "OGLE",
-                                    "TLVA5908",
-                                    "03C0700697",
-                                    "W87678",
-                                    "IL73-2664",
-                                    "RL 1475",
-                                    "Illinois 73-2664",
-                                    "AVE 2932",
-                                    "IL 73-2664",
-                                    "TLVA5829"
-                                ],
-                                "genus": "Avena",
-                                "speciesAuthority": null,
-                                "germplasmGenus": "Avena",
-                                "germplasmSeedSource": "",
-                                "species": "Avena sativa",
-                                "donors": [],
-                                "instituteCode": ""
-                            }
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "exact",
-                            "name": "Exact Match",
-                            "weight": 100
-                        },
-                        "db_term": {
-                            "term": "OGLE",
-                            "type": "synonym",
-                            "record": {
-                                "germplasmName": "OGLE",
-                                "taxonIds": [],
-                                "acquisitionDate": "",
-                                "breedingMethodDbId": null,
-                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/97779/view",
-                                "biologicalStatusOfAccessionCode": 0,
-                                "accessionNumber": "CIav 9401,VIR 13904,CN 39352,PGR 16342,CN 43110,PGR 16405,CN 43171,CN 58321,PGR 12295,Ogle CIav9401,CIav 09401",
-                                "subtaxaAuthority": null,
-                                "instituteName": "",
-                                "commonCropName": "cultivated oat,oat",
-                                "defaultDisplayName": "OGLE",
-                                "countryOfOriginCode": "",
-                                "subtaxa": null,
-                                "typeOfGermplasmStorageCode": [],
-                                "seedSource": "",
-                                "germplasmDbId": 97779,
-                                "documentationURL": null,
-                                "pedigree": "UNNAMED336/BRAVE",
-                                "germplasmSpecies": "Avena sativa",
-                                "synonyms": [
-                                    "OGLE",
-                                    "TLVA5908",
-                                    "03C0700697",
-                                    "W87678",
-                                    "IL73-2664",
-                                    "RL 1475",
-                                    "Illinois 73-2664",
-                                    "AVE 2932",
-                                    "IL 73-2664",
-                                    "TLVA5829"
-                                ],
-                                "genus": "Avena",
-                                "speciesAuthority": null,
-                                "germplasmGenus": "Avena",
-                                "germplasmSeedSource": "",
-                                "species": "Avena sativa",
-                                "donors": [],
-                                "instituteCode": ""
-                            }
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "substring",
-                            "name": "Substring Match",
-                            "weight": 60
-                        },
-                        "db_term": {
-                            "term": "Ogle CIav9401",
-                            "type": "accession_number",
-                            "record": {
-                                "germplasmName": "OGLE",
-                                "taxonIds": [],
-                                "acquisitionDate": "",
-                                "breedingMethodDbId": null,
-                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/97779/view",
-                                "biologicalStatusOfAccessionCode": 0,
-                                "accessionNumber": "CIav 9401,VIR 13904,CN 39352,PGR 16342,CN 43110,PGR 16405,CN 43171,CN 58321,PGR 12295,Ogle CIav9401,CIav 09401",
-                                "subtaxaAuthority": null,
-                                "instituteName": "",
-                                "commonCropName": "cultivated oat,oat",
-                                "defaultDisplayName": "OGLE",
-                                "countryOfOriginCode": "",
-                                "subtaxa": null,
-                                "typeOfGermplasmStorageCode": [],
-                                "seedSource": "",
-                                "germplasmDbId": 97779,
-                                "documentationURL": null,
-                                "pedigree": "UNNAMED336/BRAVE",
-                                "germplasmSpecies": "Avena sativa",
-                                "synonyms": [
-                                    "OGLE",
-                                    "TLVA5908",
-                                    "03C0700697",
-                                    "W87678",
-                                    "IL73-2664",
-                                    "RL 1475",
-                                    "Illinois 73-2664",
-                                    "AVE 2932",
-                                    "IL 73-2664",
-                                    "TLVA5829"
-                                ],
-                                "genus": "Avena",
-                                "speciesAuthority": null,
-                                "germplasmGenus": "Avena",
-                                "germplasmSeedSource": "",
-                                "species": "Avena sativa",
-                                "donors": [],
-                                "instituteCode": ""
-                            }
+                            "germplasmName": "OGLE",
+                            "germplasmDbId": 97779
                         }
                     },
                     {
@@ -492,35 +589,112 @@ A job can have one of the following statuses:
                         "db_term": {
                             "term": "OGLE-C-1",
                             "type": "name",
-                            "record": {
-                                "seedSource": "",
-                                "typeOfGermplasmStorageCode": [],
-                                "subtaxa": null,
-                                "defaultDisplayName": "OGLE-C-1",
-                                "countryOfOriginCode": "",
-                                "subtaxaAuthority": null,
-                                "commonCropName": "cultivated oat,oat",
-                                "instituteName": "",
-                                "accessionNumber": "",
-                                "biologicalStatusOfAccessionCode": 0,
-                                "germplasmPUI": "https://oat.triticeaetoolbox.org/stock/98759/view",
-                                "breedingMethodDbId": null,
-                                "acquisitionDate": "",
-                                "taxonIds": [],
-                                "germplasmName": "OGLE-C-1",
-                                "instituteCode": "",
-                                "donors": [],
-                                "species": "Avena sativa",
-                                "germplasmGenus": "Avena",
-                                "germplasmSeedSource": "",
-                                "speciesAuthority": null,
-                                "genus": "Avena",
-                                "germplasmSpecies": "Avena sativa",
-                                "synonyms": [],
-                                "pedigree": "NA/NA",
-                                "germplasmDbId": 98759,
-                                "documentationURL": null
-                            }
+                            "germplasmName": "OGLE-C-1",
+                            "germplasmDbId": 98759
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "COLE",
+                            "type": "name",
+                            "germplasmName": "COLE",
+                            "germplasmDbId": 91920
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "GLEN",
+                            "type": "name",
+                            "germplasmName": "GLEN",
+                            "germplasmDbId": 96127
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "NILE",
+                            "type": "name",
+                            "germplasmName": "NILE",
+                            "germplasmDbId": 91960
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "NOBLE",
+                            "type": "name",
+                            "germplasmName": "NOBLE",
+                            "germplasmDbId": 92256
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "OBEE",
+                            "type": "name",
+                            "germplasmName": "OBEE",
+                            "germplasmDbId": 92326
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "OTEE",
+                            "type": "name",
+                            "germplasmName": "OTEE",
+                            "germplasmDbId": 96291
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "OTOE",
+                            "type": "name",
+                            "germplasmName": "OTOE",
+                            "germplasmDbId": 92754
+                        }
+                    },
+                    {
+                        "search_routine": {
+                            "key": "edit_distance",
+                            "name": "Edit Distance Comparision",
+                            "weight": 10
+                        },
+                        "db_term": {
+                            "term": "YALE",
+                            "type": "name",
+                            "germplasmName": "YALE",
+                            "germplasmDbId": 97530
                         }
                     }
                 ]

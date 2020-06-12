@@ -262,5 +262,38 @@ router.post('/search', function(req, res, next) {
     }
 });
 
+/**
+ * Get the record of the specified germplasm
+ * @param  {Object}   req   Express Request
+ * @param  {Object}   res   Express Response
+ * @param  {Function} next  Express handler stack callback
+ */
+router.get('/germplasm/:id', function(req, res, next) {
+    let id = req.params.id;
+    let address = req.query.address;
+
+    // Check params
+    if ( !address ) {
+        response.error(res, 400, "Database address not provided as 'address' as a query param");
+        return next();
+    }
+
+    // Get the cache
+    let terms = cache.get(address);
+
+    // Find a matching term
+    for ( let i = 0; i < terms.length; i++ ) {
+        if ( terms[i].record && terms[i].record.germplasmDbId.toString() === id ) {
+            let record = terms[i].record;
+            response.success(res, record);
+            return next();
+        }
+    }
+
+    // No terms in the cache for the address
+    response.error(res, 404, "No database record found for the requested germplasm [" + id + "]");
+    return next();
+});
+
 
 module.exports = router;

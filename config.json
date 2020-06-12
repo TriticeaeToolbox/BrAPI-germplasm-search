@@ -32,6 +32,7 @@
             "punctuation": false,
             "edit_distance": false,
             "max_edit_distance": 2
-        }
+        },
+        "return_records": false
     }
 }

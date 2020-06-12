@@ -52,6 +52,7 @@ const SEARCH_ROUTINES = [
  *         punctuation = find matches that are the same with special characters removed
  *         edit_distance = find matches that have an edit distance <= max_edit_distance
  *         max_edit_distance = the max edit distance for a match
+ *      return_records = true to include germplasm records with matches
  * @param  {String[]}   search_terms  List of germplasm names to find matches for
  * @param  {Object[]}   db_terms      The database terms to perform the search on
  * @param  {Object}     [config]      Search configuration properties
@@ -148,7 +149,7 @@ function _performSearch(db_terms, matches, config, progress, callback) {
         }
     }
 
-    // Sort the matches
+    // Sort and set the record of the matches
     let rtn = {};
     for ( let key in matches ) {
         if ( matches.hasOwnProperty(key) ) {
@@ -159,6 +160,16 @@ function _performSearch(db_terms, matches, config, progress, callback) {
                 if (a.db_term.record.germplasmName > b.db_term.record.germplasmName) return 1;
                 if (a.db_term.record.germplasmName < b.db_term.record.germplasmName) return -1;
             });
+
+            // Remove record if not requested
+            let m = match.matches;
+            if ( !config.return_records ) {
+                for ( let i = 0; i < m.length; i++ ) {
+                    m[i].db_term.record = undefined;
+                }
+            }
+            match.matches = m;
+
             rtn[key] = match;
         }
     }
@@ -283,6 +294,8 @@ function _addMatch(routine_name, routine_key, weight, match, db_term) {
         db_term: {
             term: db_term.term,
             type: db_term.type,
+            germplasmName: db_term.record.germplasmName,
+            germplasmDbId: db_term.record.germplasmDbId,
             record: db_term.record
         }
     });

@@ -117,14 +117,26 @@ function search(search_terms, db_terms, config, progress, callback) {
  */
 function _performSearch(db_terms, matches, config, progress, callback) {
 
-    // Loop through DB Terms...
-    for ( let i = 0; i < db_terms.length; i++ ) {
-        let db_term = db_terms[i];
+    // Chuck DB Terms
+    let chunks = _chunkArray(db_terms, 1000);
+
+    // Start processing the first chunk
+    _processChunk();
+    
+    /**
+     * Process the chunk of DB Terms
+     * @param int index Chunk Index
+     */
+    function _processChunk(index) {
+
+        // Get the current chunk
+        index = index ? index : 0;
+        let chunk = chunks[index];
 
         // Update Progress
-        let count = i+1;
-        let total = db_terms.length;
-        if ( progress && count % 500 === 0 ) {
+        let count = index+1;
+        let total = chunks.length;
+        if ( progress ) {
             progress(
                 {
                     title: "Performing Search...",
@@ -134,48 +146,71 @@ function _performSearch(db_terms, matches, config, progress, callback) {
             );
         }
 
-        // Only search on included DB term types...
-        if ( _isDBTermTypeIncluded(db_term.type, config) ) {
-            
-            // Loop through Search Terms...
-            for ( let key in matches ) {
-                if ( matches.hasOwnProperty(key) ) {
-                    let match = matches[key];
+        // Loop through DB Terms...
+        for ( let i = 0; i < chunk.length; i++ ) {
+            let db_term = chunk[i];
+            if ( _isDBTermTypeIncluded(db_term.type, config) ) {
+                
+                // Loop through Search Terms...
+                for ( let key in matches ) {
+                    if ( matches.hasOwnProperty(key) ) {
+                        let match = matches[key];
 
-                    // Run the Search Routines
-                    matches[key] = _runSearchRoutines(db_term, match, config);
+                        // Run the Search Routines
+                        matches[key] = _runSearchRoutines(db_term, match, config);
+                    }
                 }
+
             }
         }
-    }
-
-    // Sort and set the record of the matches
-    let rtn = {};
-    for ( let key in matches ) {
-        if ( matches.hasOwnProperty(key) ) {
-            let match = matches[key];
-            match.matches.sort(function(a, b) {
-                if (a.search_routine.weight < b.search_routine.weight) return 1;
-                if (a.search_routine.weight > b.search_routine.weight) return -1;
-                if (a.db_term.record.germplasmName > b.db_term.record.germplasmName) return 1;
-                if (a.db_term.record.germplasmName < b.db_term.record.germplasmName) return -1;
+        
+        // PROCESS NEXT CHUNK
+        if ( index < chunks.length-1 ) {
+            setImmediate(function() {
+                _processChunk(index+1);
             });
-
-            // Remove record if not requested
-            let m = match.matches;
-            if ( !config.return_records ) {
-                for ( let i = 0; i < m.length; i++ ) {
-                    m[i].db_term.record = undefined;
-                }
-            }
-            match.matches = m;
-
-            rtn[key] = match;
+        }
+        else {
+            _finish();
         }
     }
 
-    // Return the sorted matches
-    return callback(rtn);
+    /**
+     * Finish the search: 
+     *  sort the matches, 
+     *  remove records (if not requested), 
+     *  return to the callacbk
+     */
+    function _finish() {
+
+        // Sort and set the record of the matches
+        let rtn = {};
+        for ( let key in matches ) {
+            if ( matches.hasOwnProperty(key) ) {
+                let match = matches[key];
+                match.matches.sort(function(a, b) {
+                    if (a.search_routine.weight < b.search_routine.weight) return 1;
+                    if (a.search_routine.weight > b.search_routine.weight) return -1;
+                    if (a.db_term.record.germplasmName > b.db_term.record.germplasmName) return 1;
+                    if (a.db_term.record.germplasmName < b.db_term.record.germplasmName) return -1;
+                });
+
+                // Remove record if not requested
+                let m = match.matches;
+                if ( !config.return_records ) {
+                    for ( let i = 0; i < m.length; i++ ) {
+                        m[i].db_term.record = undefined;
+                    }
+                }
+                match.matches = m;
+
+                rtn[key] = match;
+            }
+        }
+
+        // Return the sorted matches
+        return callback(rtn);
+    }
 }
 
 
@@ -325,6 +360,23 @@ function _isDBTermTypeIncluded(type, config) {
         return false;
     }
 }
+
+
+/**
+ * Split an array into separate chunks
+ * @param {Array} arr Array to separate into chunks
+ * @param {int} size Max size of the chunks
+ */
+function _chunkArray(arr, size) {
+    var index = 0;
+    var arrayLength = arr.length;
+    var tempArray = [];
+    for ( let index = 0; index < arrayLength; index += size ) {
+        let myChunk = arr.slice(index, index+size);
+        tempArray.push(myChunk);
+    }
+    return tempArray;
+};
 
 
 

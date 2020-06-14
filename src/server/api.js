@@ -216,33 +216,33 @@ router.post('/search', function(req, res, next) {
         if ( force || !db_terms || db_terms.length === 0 ) {
             
             // Get Fresh DB Terms
-            getDBTerms(database, true, function(status, progress) {
-                queue.setMessage(id, status.title, status.subtitle);
-                queue.setProgress(id, progress);
-            }, function(db_terms) {
-                
-                // Search on the DB Terms
-                _search(id, terms, db_terms, search_config);
+            // Then search on the DB Terms
+            getDBTerms(database, true, 
+                function(status, progress) {
+                    queue.setMessage(id, status.title, status.subtitle);
+                    queue.setProgress(id, progress);
+                }, 
+                function(db_terms) {
+                    _search(id, terms, db_terms, search_config);
+                }
+            );
 
-            });
         }
 
-        // Use the cached db terms...
+        // Use the Cached DB Terms to search on
         else {
-
-            // Search on the DB terms
             _search(id, terms, db_terms, search_config);
-
         }
 
     });
 
-    // Star the Job
-    queue.start(id);
-
     // Return a queued response
     response.queued(res, id);
-    return next();
+    next();
+    
+    // Start the Job
+    queue.start(id);
+    return;
 
 
     /**
@@ -253,12 +253,15 @@ router.post('/search', function(req, res, next) {
      * @param  {Object}     search_config Search Parameters
      */
     function _search(id, terms, db_terms, search_config) {
-        search(terms, db_terms, search_config, function(status, progress) {
-            queue.setMessage(id, status.title, status.subtitle);
-            queue.setProgress(id, progress);
-        }, function(matches) {
-            queue.complete(id, matches);
-        });
+        search(terms, db_terms, search_config, 
+            function(status, progress) {
+                queue.setMessage(id, status.title, status.subtitle);
+                queue.setProgress(id, progress);
+            },
+            function(matches) {
+                queue.complete(id, matches);
+            }
+        );
     }
 });
 

@@ -30,12 +30,12 @@ function add(f) {
  * @param  {string} id Job ID
  */
 function start(id) {
-    if ( QUEUE.hasOwnProperty(id) ) {
-        QUEUE[id].function();
-        if ( QUEUE[id].status === "pending" ) {
-            QUEUE[id].status = "running";
-            _update(id);
-        }
+    if ( QUEUE.hasOwnProperty(id) && QUEUE[id].status === "pending" ) {
+        QUEUE[id].status = "running";
+        _update(id);
+        process.nextTick(function() {
+            QUEUE[id].function();
+        });
     }
 }
 

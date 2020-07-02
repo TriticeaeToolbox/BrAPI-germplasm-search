@@ -12,6 +12,12 @@
             "address": "https://oat.triticeaetoolbox.org/brapi/v1",
             "version": "v1.3",
             "call_limit": 10
+        },
+        {
+            "name": "T3/Barley",
+            "address": "https://barley.triticeaetoolbox.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10
         }
     ],
     "cache": {

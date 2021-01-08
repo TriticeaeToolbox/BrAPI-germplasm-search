@@ -595,7 +595,7 @@ function downloadCSV(headers, rows, file) {
         csv += "\"" + rows[i].join("\",\"") + "\"\n";
     }
     let e = document.createElement("a");
-    e.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+    e.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
     e.target = "_blank";
     e.download = file + ".csv";
     e.click();

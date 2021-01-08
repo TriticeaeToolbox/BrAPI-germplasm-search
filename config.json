@@ -18,6 +18,12 @@
             "address": "https://barley.triticeaetoolbox.org/brapi/v1",
             "version": "v1.3",
             "call_limit": 10
+        },
+        {
+            "name": "Cassavabase",
+            "address": "https://cassavabase.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10
         }
     ],
     "cache": {

@@ -230,12 +230,15 @@ function _runSearchRoutines(db_term, match, config) {
         let routine = SEARCH_ROUTINES[i];
 
         if ( config.search_routines[routine.key] === true ) {
-            let isMatch = routine.search(dt, mt, config);
+            let results = routine.search(dt, mt, config);
+            let isMatch = typeof results === 'object' && results !== null ? results.isMatch : results;
+            let properties = typeof results === 'object' && results !== null ? results.properties : undefined;
             if ( isMatch ) {
                 match = _addMatch(
                     routine.name,
                     routine.key, 
                     routine.weight,
+                    properties,
                     match,
                     db_term
                 );
@@ -293,7 +296,12 @@ function _isSubstringMatch(dt, mt) {
  */
 function _isEditDistanceMatch(dt, mt, config) {
     let ed = getEditDistance(dt, mt);
-    return ed > 0 && ed <= config.search_routines.max_edit_distance;
+    return {
+        isMatch: ed > 0 && ed <= config.search_routines.max_edit_distance,
+        properties: {
+            edit_distance: ed
+        }
+    }
 }
 
 
@@ -307,12 +315,13 @@ function _isEditDistanceMatch(dt, mt, config) {
  * if it is not already in the list of matches
  * @param  {string} routine_name  Search routine name that found the match
  * @param  {string} routine_key   Search routine key that found the match
- * @param  {weight} weight   Search routine weight
+ * @param  {int}    weight        Search routine weight
+ * @param  {Object} properties    Search routine result properties
  * @param  {Object} match    Match Object to modify
  * @param  {Object} db_term  DB Term Object of the match
  * @return {Object}          Modified Match Object
  */
-function _addMatch(routine_name, routine_key, weight, match, db_term) {
+function _addMatch(routine_name, routine_key, weight, properties, match, db_term) {
     
     // Add Search Routine
     if ( !match.search_routines.includes(routine_key) ) {
@@ -324,7 +333,8 @@ function _addMatch(routine_name, routine_key, weight, match, db_term) {
         search_routine: {
             key: routine_key,
             name: routine_name,
-            weight: weight
+            weight: weight,
+            properties: properties
         },
         db_term: {
             term: db_term.term,

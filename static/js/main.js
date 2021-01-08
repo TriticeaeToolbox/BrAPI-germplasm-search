@@ -553,7 +553,7 @@ function downloadNoMatches() {
  * Generate and download the entire match dataset
  */
 function downloadAll() {
-    let headers = ["search_term", "is_match", "database_name", "database_term", "database_term_type", "search_routine"];
+    let headers = ["search_term", "is_match", "database_name", "database_term", "database_term_type", "search_routine", "search_routine_properties"];
     let rows = [];
 
     // Parse each search term
@@ -569,8 +569,14 @@ function downloadAll() {
                 let database_term = m.db_term.term;
                 let database_term_type = m.db_term.type;
                 let search_routine = m.search_routine.key;
+                let search_routine_properties = [];
+                if ( m.search_routine.properties ) {
+                    for ( const [key, value] of Object.entries(m.search_routine.properties) ) {
+                        search_routine_properties.push(key + "=" + value);
+                    }
+                }
                 let is_selected = selected && selected !== "" && parseInt(selected) === i ? 'true' : 'false';
-                rows.push([term, is_selected, database_name, database_term, database_term_type, search_routine]);
+                rows.push([term, is_selected, database_name, database_term, database_term_type, search_routine, search_routine_properties.join(";")]);
             }
 
             // Add row for no match

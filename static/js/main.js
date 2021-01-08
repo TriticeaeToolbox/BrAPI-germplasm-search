@@ -553,7 +553,7 @@ function downloadNoMatches() {
  * Generate and download the entire match dataset
  */
 function downloadAll() {
-    let headers = ["search_term", "is_match", "database_name", "database_term", "database_term_type", "search_routine", "search_routine_properties"];
+    let headers = ["search_term", "has_match", "is_match", "database_name", "database_term", "database_term_type", "search_routine", "search_routine_properties"];
     let rows = [];
 
     // Parse each search term
@@ -561,6 +561,7 @@ function downloadAll() {
         if ( MATCHES.hasOwnProperty(term) ) {
             let match = MATCHES[term];
             let selected = $("input[name='" + term + "']:checked").val();
+            let has_match = selected && selected !== "" && parseInt(selected) >= 0 ? 'true' : 'false';
 
             // Add each of the potential database terms
             for ( let i = 0; i < match.matches.length; i++ ) {
@@ -576,12 +577,12 @@ function downloadAll() {
                     }
                 }
                 let is_selected = selected && selected !== "" && parseInt(selected) === i ? 'true' : 'false';
-                rows.push([term, is_selected, database_name, database_term, database_term_type, search_routine, search_routine_properties.join(";")]);
+                rows.push([term, has_match, is_selected, database_name, database_term, database_term_type, search_routine, search_routine_properties.join(";")]);
             }
 
             // Add row for no match
             if ( match.matches.length === 0 ) {
-                rows.push([term, 'false', '', '', '', 'none']);
+                rows.push([term, 'false', 'false', '', '', '', 'none', '']);
             }
         }
     }

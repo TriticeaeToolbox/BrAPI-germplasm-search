@@ -27,10 +27,11 @@
         }
     ],
     "cache": {
-        "timeout": 1209600000,
-        "export": "./cache.json",
-        "autoImport": true,
-        "autoExport": true
+        "base": "_cache",
+        "name": "servers",
+        "duration": 1209600000,
+        "memory": true,
+        "persist": true
     },
     "search": {
         "database_terms": {

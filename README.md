@@ -27,11 +27,12 @@ and properties found in this file will override the default values.
     - **version:** Database version string (vx.y)
     - **auth_token:** BrAPI auth token, if one is required for the `/germplasm` call
     - **call_limit:** The max number of simultaneous connections
-  - **cache:** an object of options for the cache of downloaded germplasm records
-    - **timeout:** the max amount of time to store the cache (ms) (default: `1209600000`)
-    - **export:** the location of the exported cache file (relative to the project root directory) (default: `./cache.json`)
-    - **autoImport:** when `true` the cache will automatically import the export file on start (default: `true`)
-    - **autoExport:** when `true` the cache will automatically export the cache to the export file on update (default: `true`)
+  - **cache:** `persistent-cache` options
+    - **base:** The base directory where persistent-cache will save its caches.
+    - **name:** The name of the cache. Determines the name of the created folder where the data is stored, which is just base + name.
+    - **duration:** The amount of milliseconds a cache entry should be valid for. If not set, cache entries are not invalidated (stay until deleted).
+    - **memory:** The amount of milliseconds a cache entry should be valid for. If not set, cache entries are not invalidated (stay until deleted).
+    - **persist:** Whether the cache should be persistent, aka if it should write its data to the disk for later use or not. Set this to false to create a memory-only cache.
   - **search:** an object default search options (all of these can be overriden as parameters to individual search queries
     - **database_terms:** the database terms to include in the search
       - **name:** germplasm name (default: `true`)
@@ -186,6 +187,8 @@ long running-task the request is added to a job queue and the response will incl
 Get the cached record of the specified germplasm from the specified database.
 The germplasm is specified by its `germplasmDbId` and the database is 
 specified by its BrAPI address.
+
+**NOTE:** The format of the record response will depend on the BrAPI version of the specified BrAPI server.
 
 **Response:** `/germplasm/218808?address=https://wheat.triticeaetoolbox.org/brapi/v1`
 ```json

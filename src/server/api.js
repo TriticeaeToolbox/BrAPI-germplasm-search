@@ -101,9 +101,9 @@ router.get('/cache', function(req, res, next) {
         for ( let i = 0; i < keys.length; i++ ) {
             let info = cache.info(keys[i]);
             let body = {
-                address: keys[i],
+                address: info.address,
                 saved: info.saved,
-                terms: info.value.length
+                terms: info.terms.length
             }
             rtn.push(body);
         }
@@ -117,8 +117,9 @@ router.get('/cache', function(req, res, next) {
     // Return cache info
     if ( info ) {
         let body = {
+            address: info.address,
             saved: info.saved,
-            terms: info.value.length
+            terms: info.terms.length
         }
         response.success(res, body);
         return next();

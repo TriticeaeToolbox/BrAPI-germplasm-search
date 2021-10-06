@@ -1,44 +1,36 @@
 'use strict';
 
-const fs = require('fs');
-const cache = require('memory-cache');
 const md5 = require('md5');
+const PersistentCache = require('persistent-cache');
 const config = require('./config.js');
 
-// Max time to keep the records in the cache (ms)
-const TIMEOUT = config.cache.timeout;
 
-
-// Automatically import on init
-if ( config.cache.autoImport ) {
-    importJSON();
-}
+// Setup Cache Options
+const cache = PersistentCache(config.cache);
 
 
 /**
- * Put the value into the memory cache
- * @param  {string} key   Key of cache value
- * @param  {Object} value Value to cache
+ * Save the terms for the specified server in the cache
+ * @param  {string} address Server address
+ * @param  {Object} terms   Terms to save
  */
-function put(key, value) {
+function put(address, terms) {
     let info = {
+        address: address,
         saved: new Date(),
-        value: value
+        terms: terms
     }
-    cache.put(key, info, TIMEOUT);
-    if ( config.cache.autoExport ) {
-        exportJSON();
-    }
+    cache.putSync(md5(address), info);
 }
 
 /**
- * Get the value from the memory cache
- * @param  {string} key Key of cached value
- * @return {Object}     Value from cache
+ * Get the terms for the specifed server from the cache
+ * @param  {string} address Server address
+ * @return {Object}         Saved terms
  */
-function get(key) {
-    if ( isCached(key) ) {
-        return cache.get(key).value;
+function get(address) {
+    if ( isCached(address) ) {
+        return cache.getSync(md5(address)).terms;
     }
     else {
         return undefined;
@@ -46,13 +38,13 @@ function get(key) {
 }
 
 /**
- * Get cached value and metadata info
- * @param  {string} key Key of cached value
- * @return {Object}     Cached info{saved, value}
+ * Get cached terms and metadata info
+ * @param  {string} address Server address
+ * @return {Object}         Cached info{address, saved, terms}
  */
-function info(key) {
-    if ( isCached(key) ) {
-        return cache.get(key);
+function info(address) {
+    if ( isCached(address) ) {
+        return cache.getSync(md5(address));
     }
     else {
         return undefined;
@@ -60,13 +52,13 @@ function info(key) {
 }
 
 /**
- * Check if there is a cached value for the specified key
- * @param  {string}  key Key of cached value
- * @return {Boolean}     true if there is a cached value
+ * Check if there is a cached value for the specified server
+ * @param  {string}  address Server address
+ * @return {Boolean}         true if there is cached info
  */
-function isCached(key) {
-    let keys = cache.keys();
-    return keys.includes(key);
+function isCached(address) {
+    let keys = cache.keysSync();
+    return keys.includes(md5(address));
 }
 
 
@@ -75,40 +67,7 @@ function isCached(key) {
  * @return {string[]} Cache keys
  */
 function keys() {
-    return cache.keys();
-}
-
-
-/**
- * Import the cache from a JSON file
- * @param  {string} [path] Path to a JSON file of an exported cache
- */
-function importJSON(path) {
-    path = path ? path : config.cache.export;
-    try {
-        if ( fs.existsSync(path) ) {
-            let data = fs.readFileSync(path);
-            cache.importJson(data.toString());
-        }
-    }
-    catch(e) {
-        console.log(e);
-    }
-}
-
-/**
- * Export the cache to a JSON file
- * @param  {string} [path] Path of a JSON file to write the exported cache to
- */
-function exportJSON(path) {
-    path = path ? path : config.cache.export;
-    try {
-        let data = cache.exportJson();
-        fs.writeFileSync(path, data);
-    }
-    catch(e) {
-        console.log(e);
-    }
+    return cache.keysSync();
 }
 
 
@@ -117,7 +76,5 @@ module.exports = {
     get: get,
     info: info,
     isCached: isCached,
-    keys: keys,
-    import: importJSON,
-    export: exportJSON
+    keys: keys
 }

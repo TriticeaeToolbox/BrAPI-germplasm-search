@@ -131,6 +131,9 @@ function setDatabaseProperties(props, callback) {
  * @param {Function} [callback] Callback function()
  */
 function setCacheInfo(db_address, callback) {
+    $("#cache-available-info").hide();
+    $("#cache-unavailable-info").hide();
+    $("#cache-loading-info").show();
     getCacheInfo(db_address, function(err, info) {
         if ( db_address === $("#database-address").val() ) {
             if ( info && info.saved && info.terms && parseInt(info.terms) > 0 ) {
@@ -140,12 +143,14 @@ function setCacheInfo(db_address, callback) {
                 $("#download-records").prop("checked", force || false);
                 $("#cache-available-info-saved").html(saved.toLocaleString());
                 $("#cache-available-info-terms").html(info.terms);
+                $("#cache-loading-info").hide();
                 $("#cache-unavailable-info").hide();
                 $("#cache-available-info").show();
             }
             else {
                 $("#download-records").attr("disabled", true);
                 $("#download-records").prop("checked", true);
+                $("#cache-loading-info").hide();
                 $("#cache-available-info").hide();
                 $("#cache-unavailable-info").show();
             }

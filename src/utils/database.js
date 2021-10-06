@@ -77,6 +77,8 @@ function getDBTerms(database, force, progress, callback) {
  * @param  {Function} callback Callback function(db_terms)
  */
 function _getFreshDBTerms(brapi, progress, callback) {
+    let brapi_version = parseInt(brapi.brapi.version.major);
+
     if ( progress ) {
         progress({
             title: "Getting germplasm entries from the database", 
@@ -108,30 +110,72 @@ function _getFreshDBTerms(brapi, progress, callback) {
             let record = datum;
             delete record.__response;
 
-            // Collect DB Terms
-            db_terms.push({
-                term: datum.germplasmName.trim(),
-                type: "name",
-                record: record
-            });
-            for ( let i = 0; i < datum.synonyms.length; i++ ) {
+            // DB Terms to collect from the response
+            let names = [];
+            let synonyms = [];
+            let accession_numbers = [];
+
+            // Collect DB Terms BrAPI v1
+            if ( brapi_version === 1 ) {
+                let gn = datum.germplasmName;
+                let dn = datum.defaultDisplayName;
+                let syns = datum.synonyms;
+                let an = datum.accessionNumber;
+                let ans = an && an !== '' ? an.split(',') : [];
+
+                names.push(gn);
+                if ( gn.toUpperCase() !== dn.toUpperCase() ) {
+                    names.push(dn);
+                }
+                synonyms = syns;
+                accession_numbers = ans;
+            }
+
+            // Collect DB Terms for BrAPI v2
+            else if ( brapi_version === 2 ) {
+                let gn = datum.germplasmName;
+                let dn = datum.defaultDisplayName;
+                let syns = datum.synonyms;
+                let an = datum.accessionNumber;
+                let ans = an && an !== '' ? an.split(',') : [];
+
+                names.push(gn);
+                if ( gn.toUpperCase() !== dn.toUpperCase() ) {
+                    names.push(dn);
+                }
+                syns.forEach(function(syn) {
+                    synonyms.push(syn.synonym)
+                });
+                accession_numbers = ans;
+            }
+
+            // Unsupported BrAPI version
+            else {
+                throw("Unsupported BrAPI Version " + JSON.stringify(brapi.brapi.version));
+            }
+
+            // Add DB Terms to Results
+            names.forEach(function(name) {
                 db_terms.push({
-                    term: datum.synonyms[i].trim(),
+                    term: name.trim(),
+                    type: "name",
+                    record: record
+                });
+            });
+            synonyms.forEach(function(synonym) {
+                db_terms.push({
+                    term: synonym.trim(),
                     type: "synonym",
                     record: record
                 });
-            }
-            let an = datum.accessionNumber.trim();
-            if ( an && an !== "" ) {
-                let ans = an.split(',');
-                for ( let i = 0; i < ans.length; i++ ) {
-                    db_terms.push({
-                        term: ans[i].trim(),
-                        type: "accession_number",
-                        record: record
-                    });
-                }
-            }
+            });
+            accession_numbers.forEach(function(accession_number) {
+                db_terms.push({
+                    term: accession_number.trim(),
+                    type: "accession_number",
+                    record: record
+                });
+            });
         })
         .all(function(resp) {
             return callback(db_terms);

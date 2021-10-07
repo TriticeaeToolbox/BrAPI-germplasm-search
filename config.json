@@ -31,7 +31,8 @@
         "name": "servers",
         "duration": 1209600000,
         "memory": true,
-        "persist": true
+        "persist": true,
+        "auto_update": "* * 2 * * 0"
     },
     "search": {
         "database_terms": {

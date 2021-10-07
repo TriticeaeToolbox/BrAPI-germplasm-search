@@ -3,8 +3,10 @@
 
 const path = require('path');
 const express = require('express');
-const config = require('../utils/config.js');
+const cron = require('node-cron');
 const api = require('./api.js');
+const config = require('../utils/config.js');
+const cache_update = require('../utils/cache_update.js');
 
 // Initialize the Server
 let server = express();
@@ -22,3 +24,8 @@ server.use(express.static(path.resolve(__dirname, '../../static')));
 server.listen(config.port, function() {
     console.log("Server running on port " + config.port + "...");
 });
+
+// Schedule Auto-Update Service
+if ( config.cache.auto_update ) {
+    cron.schedule(config.cache.auto_update, cache_update);
+}

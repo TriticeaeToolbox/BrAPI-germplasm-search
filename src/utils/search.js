@@ -2,37 +2,7 @@
 
 const extend = require('deep-extend');
 const DEFAULT_CONFIG = require('./config.js').search;
-const getEditDistance = require('./editdistance.js');
-
-
-// Search Routine Info
-const SEARCH_ROUTINES = [
-    {
-        "name": "Exact Match",
-        "key": "exact",
-        "weight": 100,
-        "search": _isExactMatch
-    },
-    {
-        "name": "Remove Punctuation",
-        "key": "punctuation",
-        "weight": 80,
-        "search": _isPunctuationMatch
-    },
-    {
-        "name": "Substring Match",
-        "key": "substring",
-        "weight": 60,
-        "search": _isSubstringMatch
-    },
-    {
-        "name": "Edit Distance Comparision",
-        "key": "edit_distance",
-        "weight": 10,
-        "search": _isEditDistanceMatch
-    }
-];
-
+const SEARCH_ROUTINES = require('../search');
 
 /**
  * Search the BrAPI database terms for germplasm entries that match the specified search 
@@ -248,62 +218,6 @@ function _runSearchRoutines(db_term, match, config) {
 
     return match;
 }
-
-
-
-// ==== SEARCH ROUTINE TESTS ==== //
-
-
-/**
- * Perform an exact match test on the terms
- * @param  {string}  dt database term
- * @param  {string}  mt match term
- * @return {Boolean}    true if a match
- */
-function _isExactMatch(dt, st) {
-    return dt === st;
-}
-
-/**
- * Perform a punctuation removal match test on the terms
- * @param  {string}  dt database term
- * @param  {string}  mt match term
- * @return {Boolean}    true if a match
- */
-function _isPunctuationMatch(dt, mt) {
-    let _dt = dt.replace(/[^A-Z0-9]/gi, '');
-    let _mt = mt.replace(/[^A-Z0-9]/gi, '');
-    return dt !== mt && _dt === _mt;
-}
-
-/**
- * Perform a substring match test on the terms
- * @param  {string}  dt database term
- * @param  {string}  st search term
- * @return {Boolean}    true if a match
- */
-function _isSubstringMatch(dt, mt) {
-    return dt !== mt && dt.includes(mt);
-}
-
-/**
- * Perform an edit distance match test on the terms
- * Perform an exact match test on the terms
- * @param  {string}  dt database term
- * @param  {string}  st search term
- * @param  {Object}  config search config
- * @return {Boolean}    true if a match
- */
-function _isEditDistanceMatch(dt, mt, config) {
-    let ed = getEditDistance(dt, mt);
-    return {
-        isMatch: ed > 0 && ed <= config.search_routines.max_edit_distance,
-        properties: {
-            edit_distance: ed
-        }
-    }
-}
-
 
 
 

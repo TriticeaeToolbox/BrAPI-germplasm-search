@@ -191,7 +191,7 @@ router.post('/search', function(req, res, next) {
     let database = req.body.database;
     let force = req.body.force && ( req.body.force === 'true' || req.body.force === true );
     let terms = req.body.terms;
-    let search_config = req.body.config
+    let search_config = req.body.config;
 
     // Check params
     if ( !database ) {

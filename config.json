@@ -41,10 +41,22 @@
         },
         "search_routines": {
             "exact": true,
-            "substring": false,
             "punctuation": false,
-            "edit_distance": false,
-            "max_edit_distance": 2
+            "substring": false,
+            "prefix": false,
+            "edit_distance": false
+        },
+        "search_routine_options": {
+            "prefix": {
+                "prefixes": [],
+                "find_db_prefixes": true,
+                "prefix_length_min": 2,
+                "prefix_length_max": 5,
+                "threshold": 250
+            },
+            "edit_distance": {
+                "max_edit_distance": 2
+            }
         },
         "return_records": false
     }

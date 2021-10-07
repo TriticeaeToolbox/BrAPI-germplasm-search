@@ -259,14 +259,69 @@
           </div>
 
           <div class="custom-control custom-switch">
-            <input id="include-edit-distance" class="custom-control-input" type="checkbox">
-            <label class="custom-control-label" for="include-edit-distance">
-              Edit Distance Comparison
-              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Calculate the edit distance (the number of character changes, insertions, or deletions) between your search term and the database terms. Include germplasm records where the edit distance is <= the max edit distance.">
+            <input id="include-prefix" class="custom-control-input" type="checkbox">
+            <label class="custom-control-label" for="include-prefix">
+              Remove Prefixes
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Compare database and search terms with common prefixes removed">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
-            <div class="input-group mb-3 mt-2">
+            <div id="include-prefix-opts" class="mb-3 mt-2" style="display:none">
+              
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Custom Prefixes<br />(one per line)</span>
+                </div>
+                <textarea id="prefixes" class="form-control" aria-label="prefixes"></textarea>
+              </div>
+
+              <div class="custom-control custom-switch">
+                <input id="find-db-prefixes" class="custom-control-input" type="checkbox" checked>
+                <label class="custom-control-label" for="find-db-prefixes">
+                  Find Common Prefixes in Database Terms
+                </label>
+              </div>
+
+              <div id="find-db-prefixes-opts" class="well">
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Min Prefix Length</span>
+                  </div>
+                  <input id="prefix-length-min" class="form-control" type="number" min="1" value="2">
+                </div>
+                <p style="font-size: 80%; text-align: right">the minimum length of a prefix for it to count</p>
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Max Prefix Length</span>
+                  </div>
+                  <input id="prefix-length-max" class="form-control" type="number" min="1" value="5">
+                </div>
+                <p style="font-size: 80%; text-align: right">the maximum length of a prefix for it to count</p>
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Threshold</span>
+                  </div>
+                  <input id="threshold" class="form-control" type="number" min="1" value="250">
+                </div>
+                <p style="font-size: 80%; text-align: right">the minimum number of times a prefix occurs before it counts</p>
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="custom-control custom-switch">
+            <input id="include-edit-distance" class="custom-control-input" type="checkbox">
+            <label class="custom-control-label" for="include-edit-distance">
+              Edit Distance Comparison
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Calculate the edit distance (the number of character changes, insertions, or deletions) between your search term and the database terms. Include germplasm records where the edit distance is &lt;= the max edit distance.">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
+            <div id="include-edit-distance-opts" class="input-group mb-3 mt-2" style="display:none">
               <div class="input-group-prepend">
                 <span class="input-group-text">Max Edit Distance</span>
               </div>
@@ -471,10 +526,22 @@
                     },
                     search_routines: {
                       exact: q('exact'),
-                      substring: q('substring'),
                       punctuation: q('punctuation'),
+                      substring: q('substring'),
+                      prefix: q('prefix'),
                       edit_distance: q('edit_distance'),
-                      max_edit_distance: q('max_edit_distance')
+                    },
+                    search_routine_options: {
+                      prefix: {
+                        prefixes: q('prefixes', true),
+                        find_db_prefixes: q('find_db_prefixes'),
+                        prefix_length_min: q('prefix_length_min'),
+                        prefix_length_max: q('prefix_length_max'),
+                        threshold: q('threshold')
+                      },
+                      edit_distance: {
+                        max_edit_distance: q('max_edit_distance')
+                      }
                     },
                     terms: q('term', true)
                   }
@@ -491,6 +558,7 @@
 
         // Set Click Listeners
         $("#edit-database").click(toggleEditDatabase);
+        $(".custom-control-input").click(toggleSearchRoutine);
         $("#search").click(setupSearch);
         $("#error-return").click(displaySearch);
         $("#download-matches").click(downloadMatches);

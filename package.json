@@ -31,8 +31,10 @@
     "@solgenomics/brapijs": "github:solgenomics/BrAPI-js#v2.0.0",
     "deep-extend": "^0.6.0",
     "express": "^4.17.1",
+    "flat": "^5.0.2",
     "md5": "^2.3.0",
     "persistent-cache": "^1.1.1",
+    "trie-prefix-tree": "^1.5.1",
     "uuid": "^8.0.0"
   }
 }

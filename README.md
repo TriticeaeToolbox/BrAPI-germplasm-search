@@ -40,10 +40,19 @@ and properties found in this file will override the default values.
       - **accession_numbers:** germplasm accession numbers (default: `true`)
     - **search_routines:** the search routines to use in the search
       - **exact:** find exact matches between search and database terms (default: `true`)
-      - **substring:** find database terms that contain the search term (default: `false`)
       - **punctuation:** find matches that are the same after non-alphanumeric characters are removed (default: `false`)
+      - **substring:** find database terms that contain the search term (default: `false`)
+      - **prefix:** find matches that are the same when prefixes have been removed (default: `false`)
       - **edit_distance:** find matches where the edit distance between terms is within the max edit distance (default: `false`)
-      - **max_edit_distance:** the maximum number of changes for the edit distance comparison (default: `2`)
+    - **search_routine_options:** additional options used for individual search routines
+      - **prefix:**
+        - **prefixes:** default prefixes to include (default: `[]`)
+        - **find_db_prefixes:** scan the database terms to find common prefixes (default: `true`)
+        - **prefix_length_min:** when finding db prefixes, the minimum length of a prefix to include (default: `2`)
+        - **prefix_length_max:** when finding db prefixes, the maximum length of a prefix to include (default: `5`)
+        - **threshold:** when finding db prefixes, the minimum number of times a prefix is used before it is included (default: `250`)
+      - **edit_distance:**
+        - **max_edit_distance:** the maximum number of changes for the edit distance comparison (default: `2`)
     - **return_records:** when `true` the search results will include the full germplasm record of each math (default: `false`)
       
 ## Website Usage
@@ -67,9 +76,17 @@ The following query params use boolean values to toggle the initial search optio
   - **synonyms:** toggle the synonyms database term type
   - **accession_numbers:** toggle the accession numbers database term type
   - **exact:** toggle the exact match search routine
-  - **substring:** toggle the substring match search routine
   - **punctuation:** toggle the punctuation removal search routine
+  - **substring:** toggle the substring match search routine
+  - **prefix:** toggle the prefix removal search routine
   - **edit_distance:** toggle the edit distance comparison search routine
+
+The following query params set the values for specific search routine options
+  - **prefixes:** (array) used to set custom prefixes
+  - **find_db_prefixes:** (boolean) used to toggle the function to find common prefixes from the database terms
+  - **prefix_length_min:** (integer) when finding database prefixes, set the minimum length of a prefix
+  - **prefix_length_max:** (integer) when finding database prefixes, set the maximum length of a prefix
+  - **threshold:** (integer) when finding database prefixes, set the min number of times a prefix occurs before it counts
   - **max_edit_distance:** (integer) set the max edit distance used by the edit distance comparison search routine
 
 The `term` query param can be used one or more times to specify the search term(s).
@@ -252,8 +269,20 @@ long running-task the request is added to a job queue and the response will incl
             "name": true,
             "punctuation": true,
             "substring": true,
-            "edit_distance": false,
-            "max_edit_distance": 2
+            "prefix": false,
+            "edit_distance": false
+        },
+        "search_routine_options": {
+            "prefix": {
+                "prefixes": [],
+                "find_db_prefixes": true,
+                "prefix_length_min": 2,
+                "prefix_length_max": 5,
+                "threshold": 250
+            }
+            "edit_distance": {
+                "max_edit_distance": 2
+            }
         },
         "return_records": false
     }

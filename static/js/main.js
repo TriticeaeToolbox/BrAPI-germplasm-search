@@ -169,11 +169,27 @@ function setOptions(opts) {
     _toggle("#include-synonyms", opts.database_terms.synonyms);
     _toggle("#include-accession-numbers", opts.database_terms.accession_numbers);
     _toggle("#include-exact", opts.search_routines.exact);
-    _toggle("#include-substring", opts.search_routines.substring);
     _toggle("#include-punctuation", opts.search_routines.punctuation);
+    _toggle("#include-substring", opts.search_routines.substring);
+    _toggle("#include-prefix", opts.search_routines.prefix);
     _toggle("#include-edit-distance", opts.search_routines.edit_distance);
-    if ( opts.search_routines.max_edit_distance ) {
-        $("#max-edit-distance").val(opts.search_routines.max_edit_distance)
+    if ( opts.search_routine_options.prefix.prefixes && opts.search_routine_options.prefix.prefixes.length > 0 ) {
+        $("#prefixes").val(opts.search_routine_options.prefix.prefixes.join('\n'));
+    }
+    if ( opts.search_routine_options.prefix.find_db_prefixes ) {
+        _toggle("#find-db-prefixes", opts.search_routine_options.prefix.find_db_prefixes);
+    }
+    if ( opts.search_routine_options.prefix.prefix_length_min ) {
+        $("#prefix-length-min").val(opts.search_routine_options.prefix.prefix_length_min);
+    }
+    if ( opts.search_routine_options.prefix.prefix_length_max ) {
+        $("#prefix-length-max").val(opts.search_routine_options.prefix.prefix_length_max);
+    }
+    if ( opts.search_routine_options.prefix.threshold ) {
+        $("#threshold").val(opts.search_routine_options.prefix.threshold);
+    }
+    if ( opts.search_routine_options.edit_distance.max_edit_distance ) {
+        $("#max-edit-distance").val(opts.search_routine_options.edit_distance.max_edit_distance)
     }
     if ( opts.terms && opts.terms.length > 0 ) {
         $("#input-terms").val(opts.terms.join('\n'));
@@ -190,9 +206,11 @@ function setOptions(opts) {
         if ( val ) {
             if ( ['true', '1', 'on'].includes(val.toLowerCase()) ) {
                 $(el).prop('checked', true);
+                $(el + "-opts").show();
             }
             else if ( ['false', '0', 'off'].includes(val.toLowerCase()) ) {
                 $(el).prop('checked', false);
+                $(el + "-opts").hide();
             }
         }
     }
@@ -207,6 +225,20 @@ function toggleEditDatabase() {
     $("#database-settings").toggle();
 }
 
+/**
+ * Toggle the display of additional options when a switch is toggled
+ */
+function toggleSearchRoutine() {
+    let checked = $(this).prop('checked');
+    let id = $(this).attr('id');
+    let opts = "#" + id + "-opts";
+    if ( checked ) {
+        $(opts).show();
+    }
+    else {
+        $(opts).hide();
+    }
+}
 
 /**
  * Format the search parameters and start the search workflow
@@ -239,10 +271,22 @@ function setupSearch() {
         },
         search_routines: {
             exact: $("#include-exact").prop('checked'),
-            substring: $("#include-substring").prop('checked'),
             punctuation: $("#include-punctuation").prop('checked'),
-            edit_distance: $("#include-edit-distance").prop('checked'),
-            max_edit_distance: $("#max-edit-distance").val()
+            substring: $("#include-substring").prop('checked'),
+            prefix: $("#include-prefix").prop('checked'),
+            edit_distance: $("#include-edit-distance").prop('checked')
+        },
+        search_routine_options: {
+            prefix: {
+                prefixes: $("#prefixes").val().replace(/\n/g, ",").split(','),
+                find_db_prefixes: $("#find-db-prefixes").prop('checked'),
+                prefix_length_min: $("#prefix-length-min").val(),
+                prefix_length_max: $("#prefix-length-max").val(),
+                threshold: $("#threshold").val()
+            },
+            edit_distance: {
+                max_edit_distance: $("#max-edit-distance").val()
+            }
         },
         return_records: false
     };

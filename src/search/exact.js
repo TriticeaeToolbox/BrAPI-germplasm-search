@@ -6,8 +6,8 @@
  * @param  {string}  mt match term
  * @return {Boolean}    true if a match
  */
- function search(dt, st) {
-    return dt === st;
+ function search(dt, mt) {
+    return dt === mt;
 }
 
 module.exports = {

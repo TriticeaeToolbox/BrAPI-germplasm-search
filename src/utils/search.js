@@ -18,10 +18,11 @@ const SEARCH_ROUTINES = require('../search');
  *         accession_numbers = true to include germplasm accession numbers
  *     search_routines:
  *         exact = find exact matches to db terms
- *         substring = find db terms that contain the search term
  *         punctuation = find matches that are the same with special characters removed
+ *         substring = find db terms that contain the search term
+ *         prefix = find matches that are the same when common prefixes are removed
  *         edit_distance = find matches that have an edit distance <= max_edit_distance
- *         max_edit_distance = the max edit distance for a match
+ *      search_routine_options: additional options for each of the search routines
  *      return_records = true to include germplasm records with matches
  * @param  {String[]}   search_terms  List of germplasm names to find matches for
  * @param  {Object[]}   db_terms      The database terms to perform the search on
@@ -50,7 +51,6 @@ function search(search_terms, db_terms, config, progress, callback) {
     // Check for required parameters
     if ( !search_terms || search_terms.length === 0 ) {
         throw("Search terms are required");
-        return;
     }
     else if ( !db_terms || db_terms.length === 0 ) {
         throw("DB terms are required");
@@ -69,11 +69,33 @@ function search(search_terms, db_terms, config, progress, callback) {
         }
     }
 
-    // Reset progress
-    if ( progress ) progress({title: "Performing Search...", subtitle: ""}, 0);
+    // Perform the Setup
+    if ( progress ) progress({title: "Performing Search Setup...", subtitle: ""}, 0);
+    let setup = _performSetup(db_terms, matches, config)
 
     // Perform the Search
-    _performSearch(db_terms, matches, config, progress, callback);
+    if ( progress ) progress({title: "Performing Search...", subtitle: ""}, 0);
+    _performSearch(db_terms, matches, config, setup, progress, callback);
+}
+
+
+/**
+ * Perform the setup for any of the enabled search routines
+ * @param {Object[]}   db_terms List of database terms
+ * @param {Object}     matches  Search terms and their match results
+ * @param {Object}     config   Search configuration options
+ * @returns {Object}            Object of setup results for each search routine
+ */
+function _performSetup(db_terms, matches, config) {
+    let setup = {};
+    for (let i = 0; i < SEARCH_ROUTINES.length; i++ ) {
+        let routine = SEARCH_ROUTINES[i];
+        if ( config.search_routines[routine.key] === true && routine.setup ) {
+            let s = routine.setup(db_terms, matches, config.search_routine_options[routine.key]);
+            setup[routine.key] = s;
+        }
+    }
+    return setup;
 }
 
 
@@ -82,10 +104,11 @@ function search(search_terms, db_terms, config, progress, callback) {
  * @param  {Object[]}   db_terms List of database terms
  * @param  {Object}     matches  Search terms and their match results
  * @param  {Object}     config   Search configuration options
+ * @param  {Object}     setup    Search setup results
  * @param  {Function}   progress Progress function(status, progress)
  * @param  {Function}   callback Callback function(matches)
  */
-function _performSearch(db_terms, matches, config, progress, callback) {
+function _performSearch(db_terms, matches, config, setup, progress, callback) {
 
     // Chuck DB Terms
     let chunks = _chunkArray(db_terms, 1000);
@@ -127,7 +150,7 @@ function _performSearch(db_terms, matches, config, progress, callback) {
                         let match = matches[key];
 
                         // Run the Search Routines
-                        matches[key] = _runSearchRoutines(db_term, match, config);
+                        matches[key] = _runSearchRoutines(db_term, match, config, setup);
                     }
                 }
 
@@ -190,9 +213,10 @@ function _performSearch(db_terms, matches, config, progress, callback) {
  * @param  {Object} db_term DB Term Object
  * @param  {Object} match   Match Term Object
  * @param  {Object} config  Search Config
+ * @param  {Object} setup   Search Setup results
  * @return {Object}         Modified Match Object
  */
-function _runSearchRoutines(db_term, match, config) {
+function _runSearchRoutines(db_term, match, config, setup) {
     let dt = db_term.term.toUpperCase();
     let mt = match.search_term.toUpperCase();
 
@@ -200,7 +224,7 @@ function _runSearchRoutines(db_term, match, config) {
         let routine = SEARCH_ROUTINES[i];
 
         if ( config.search_routines[routine.key] === true ) {
-            let results = routine.search(dt, mt, config);
+            let results = routine.search(dt, mt, config.search_routine_options[routine.key], setup[routine.key]);
             let isMatch = typeof results === 'object' && results !== null ? results.isMatch : results;
             let properties = typeof results === 'object' && results !== null ? results.properties : undefined;
             if ( isMatch ) {

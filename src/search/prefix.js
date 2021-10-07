@@ -20,9 +20,9 @@ function setup(db_terms, matches, opts) {
     if ( opts.find_db_prefixes ) {
         let db_prefixes = _findPrefixes(
             dt_trie, 
-            opts.prefix_length_min, 
-            opts.prefix_length_max,
-            opts.threshold
+            parseInt(opts.prefix_length_min), 
+            parseInt(opts.prefix_length_max),
+            parseInt(opts.threshold)
         )
         prefixes = prefixes.concat(db_prefixes);
     }
@@ -72,6 +72,16 @@ function _findPrefixesLength(tree, max) {
 }
 
 
+/**
+ * Perform a search that removes common prefixes from the database 
+ * and search terms and returns a match if the values with the 
+ * prefixes removed match
+ * @param  {string}  dt    database term
+ * @param  {string}  st    search term
+ * @param  {Object}  opts  search routine options
+ * @param  {Object}  setup search routine setup parameters
+ * @return {Object}        match results with properties
+ */
 function search(dt, mt, opts, setup) {
     dt = dt.toLowerCase();
     mt = mt.toLowerCase();

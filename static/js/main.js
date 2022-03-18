@@ -1,6 +1,6 @@
 let MATCHES = {};
 let EDIT_DATABASE_TOGGLED = false;
-let MAX_SEARCH_TERMS = 1000;
+let MAX_SEARCH_TERMS = 5000;
 
 /**
  * Set the Database Selection menu options

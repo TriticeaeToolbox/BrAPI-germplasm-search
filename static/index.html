@@ -347,6 +347,7 @@
         <p><strong>Search Terms:</strong></p>
         <p class="text-muted">Enter your list of germplasm names (newline or comma-separated)</p>
         <textarea id="input-terms" class="form-control" rows="15"></textarea>
+        <p class="text-muted" style="font-size: 80%;"><em><strong>Max Search Terms:</strong> <span id="input-terms-max"></span></em></p>
 
         <br /><br /><br />
 
@@ -574,6 +575,9 @@
  
         // Enable Tooltips
         $("[data-toggle='tooltip']").tooltip({delay: {"show": 500, "hide": 0}});
+
+        // Set Max Search Terms
+        $("#input-terms-max").html(MAX_SEARCH_TERMS);
 
       });
     </script>

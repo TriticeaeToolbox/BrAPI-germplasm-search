@@ -341,399 +341,1056 @@ A job can have one of the following statuses:
 **Search Response:** `?results=true`
 ```json
 {
-    "status": "complete",
-    "job": {
-        "id": "a4de882a-f818-45bd-8f56-7bc14bf18355",
-        "results": {
-            "JERRY": {
-                "search_term": "JERRY",
-                "search_routines": [
-                    "edit_distance",
-                    "exact"
-                ],
-                "matches": [
-                    {
-                        "search_routine": {
-                            "key": "exact",
-                            "name": "Exact Match",
-                            "weight": 100
-                        },
-                        "db_term": {
-                            "term": "JERRY",
-                            "type": "name",
-                            "germplasmName": "JERRY",
-                            "germplasmDbId": 102642
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "DERBY",
-                            "type": "name",
-                            "germplasmName": "DERBY",
-                            "germplasmDbId": 87209
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "JURY",
-                            "type": "name",
-                            "germplasmName": "JURY",
-                            "germplasmDbId": 100529
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "LARRY",
-                            "type": "name",
-                            "germplasmName": "LARRY",
-                            "germplasmDbId": 92923
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "LEROY",
-                            "type": "name",
-                            "germplasmName": "LEROY",
-                            "germplasmDbId": 91474
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "TERRA",
-                            "type": "name",
-                            "germplasmName": "TERRA",
-                            "germplasmDbId": 91600
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "TERRY",
-                            "type": "name",
-                            "germplasmName": "TERRY",
-                            "germplasmDbId": 96502
-                        }
-                    }
-                ]
-            },
-            "bess": {
-                "search_term": "bess",
-                "search_routines": [
-                    "edit_distance",
-                    "substring"
-                ],
-                "matches": [
-                    {
-                        "search_routine": {
-                            "key": "substring",
-                            "name": "Substring Match",
-                            "weight": 60
-                        },
-                        "db_term": {
-                            "term": "BESSIN",
-                            "type": "name",
-                            "germplasmName": "BESSIN",
-                            "germplasmDbId": 86489
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "BESSIN",
-                            "type": "name",
-                            "germplasmName": "BESSIN",
-                            "germplasmDbId": 86489
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "BETA",
-                            "type": "name",
-                            "germplasmName": "BETA",
-                            "germplasmDbId": 85221
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "BUSSY",
-                            "type": "name",
-                            "germplasmName": "BUSSY",
-                            "germplasmDbId": 87899
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "MESA",
-                            "type": "name",
-                            "germplasmName": "MESA",
-                            "germplasmDbId": 92662
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "NES",
-                            "type": "name",
-                            "germplasmName": "NES",
-                            "germplasmDbId": 85095
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "WEST",
-                            "type": "name",
-                            "germplasmName": "WEST",
-                            "germplasmDbId": 92406
-                        }
-                    }
-                ]
-            },
-            "syn-a": {
-                "search_term": "syn-a",
-                "search_routines": [
-                    "edit_distance"
-                ],
-                "matches": [
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "SANNA",
-                            "type": "name",
-                            "germplasmName": "SANNA",
-                            "germplasmDbId": 97512
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "SONJA",
-                            "type": "name",
-                            "germplasmName": "SONJA",
-                            "germplasmDbId": 94470
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "SYLVA",
-                            "type": "name",
-                            "germplasmName": "SYLVA",
-                            "germplasmDbId": 90414
-                        }
-                    }
-                ]
-            },
-            "ogle": {
-                "search_term": "ogle",
-                "search_routines": [
-                    "edit_distance",
-                    "exact",
-                    "substring"
-                ],
-                "matches": [
-                    {
-                        "search_routine": {
-                            "key": "exact",
-                            "name": "Exact Match",
-                            "weight": 100
-                        },
-                        "db_term": {
-                            "term": "OGLE",
-                            "type": "name",
-                            "germplasmName": "OGLE",
-                            "germplasmDbId": 97779
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "substring",
-                            "name": "Substring Match",
-                            "weight": 60
-                        },
-                        "db_term": {
-                            "term": "OGLE-C-1",
-                            "type": "name",
-                            "germplasmName": "OGLE-C-1",
-                            "germplasmDbId": 98759
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "COLE",
-                            "type": "name",
-                            "germplasmName": "COLE",
-                            "germplasmDbId": 91920
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "GLEN",
-                            "type": "name",
-                            "germplasmName": "GLEN",
-                            "germplasmDbId": 96127
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "NILE",
-                            "type": "name",
-                            "germplasmName": "NILE",
-                            "germplasmDbId": 91960
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "NOBLE",
-                            "type": "name",
-                            "germplasmName": "NOBLE",
-                            "germplasmDbId": 92256
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "OBEE",
-                            "type": "name",
-                            "germplasmName": "OBEE",
-                            "germplasmDbId": 92326
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "OTEE",
-                            "type": "name",
-                            "germplasmName": "OTEE",
-                            "germplasmDbId": 96291
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "OTOE",
-                            "type": "name",
-                            "germplasmName": "OTOE",
-                            "germplasmDbId": 92754
-                        }
-                    },
-                    {
-                        "search_routine": {
-                            "key": "edit_distance",
-                            "name": "Edit Distance Comparision",
-                            "weight": 10
-                        },
-                        "db_term": {
-                            "term": "YALE",
-                            "type": "name",
-                            "germplasmName": "YALE",
-                            "germplasmDbId": 97530
-                        }
-                    }
-                ]
-            }
+  "status": "complete",
+  "job": {
+    "id": "de5b5f37-8229-4cb8-b360-2f2552200aa5",
+    "results": {
+      "JERRY": {
+        "search_term": "JERRY",
+        "exactMatch": "JERRY",
+        "search_routines": [
+          "edit_distance",
+          "exact",
+          "substring"
+        ],
+        "matches": {
+          "AC_PERCY": {
+            "germplasmName": "AC_PERCY",
+            "germplasmDbId": 94029,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Percy",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "GARRY|CIAV6662": {
+            "germplasmName": "GARRY|CIAV6662",
+            "germplasmDbId": 90462,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Garry",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "DERBY": {
+            "germplasmName": "DERBY",
+            "germplasmDbId": 87209,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "DERBY",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Derby",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "JURY": {
+            "germplasmName": "JURY",
+            "germplasmDbId": 100529,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "JURY",
+                  "type": "name"
+                }
+              }
+            ]
+          },
+          "JERRY": {
+            "germplasmName": "JERRY",
+            "germplasmDbId": 102642,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "exact",
+                  "name": "Exact Match",
+                  "weight": 100
+                },
+                "db_term": {
+                  "term": "JERRY",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "exact",
+                  "name": "Exact Match",
+                  "weight": 100
+                },
+                "db_term": {
+                  "term": "Jerry",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "GG Jerry (oat)",
+                  "type": "accession_number"
+                }
+              }
+            ]
+          },
+          "LEROY": {
+            "germplasmName": "LEROY",
+            "germplasmDbId": 91474,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "LEROY",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "LEROY",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Leroy",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "LARRY": {
+            "germplasmName": "LARRY",
+            "germplasmDbId": 92923,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "LARRY",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Larry",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "TERRA": {
+            "germplasmName": "TERRA",
+            "germplasmDbId": 91600,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "TERRA",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Terra",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "TERRY": {
+            "germplasmName": "TERRY",
+            "germplasmDbId": 96502,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 1
+                  }
+                },
+                "db_term": {
+                  "term": "TERRY",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 1
+                  }
+                },
+                "db_term": {
+                  "term": "Terry",
+                  "type": "synonym"
+                }
+              }
+            ]
+          }
         }
+      },
+      "syn_a": {
+        "search_term": "syn_a",
+        "exactMatch": false,
+        "search_routines": [
+          "edit_distance"
+        ],
+        "matches": {
+          "SANNA": {
+            "germplasmName": "SANNA",
+            "germplasmDbId": 97512,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "SANNA",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Sanna",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "SYLVA": {
+            "germplasmName": "SYLVA",
+            "germplasmDbId": 90414,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "SYLVA",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Sylva",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "SONJA": {
+            "germplasmName": "SONJA",
+            "germplasmDbId": 94470,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "SONJA",
+                  "type": "name"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "ogle": {
+        "search_term": "ogle",
+        "exactMatch": "OGLE",
+        "search_routines": [
+          "edit_distance",
+          "substring",
+          "exact"
+        ],
+        "matches": {
+          "ADELAAR|PI180946": {
+            "germplasmName": "ADELAAR|PI180946",
+            "germplasmDbId": 87607,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Eagle",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "GLEN": {
+            "germplasmName": "GLEN",
+            "germplasmDbId": 96127,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "GLEN",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "GLEN",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Glen",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "DALE|PI265444": {
+            "germplasmName": "DALE|PI265444",
+            "germplasmDbId": 88266,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Dale",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "COLE": {
+            "germplasmName": "COLE",
+            "germplasmDbId": 91920,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "COLE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "COLE",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Cole",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "EAGLE|PI264257": {
+            "germplasmName": "EAGLE|PI264257",
+            "germplasmDbId": 85246,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "EAGLE",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Eagle",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "Opale": {
+            "germplasmName": "Opale",
+            "germplasmDbId": 436643,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Opale",
+                  "type": "name"
+                }
+              }
+            ]
+          },
+          "Ogle_1040": {
+            "germplasmName": "Ogle_1040",
+            "germplasmDbId": 438859,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "Ogle_1040",
+                  "type": "name"
+                }
+              }
+            ]
+          },
+          "Ogle-C": {
+            "germplasmName": "Ogle-C",
+            "germplasmDbId": 438943,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Ogle-C",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "Ogle-C",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "GG Ogle-C (oat)",
+                  "type": "accession_number"
+                }
+              }
+            ]
+          },
+          "Ocre": {
+            "germplasmName": "Ocre",
+            "germplasmDbId": 526378,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Ocre",
+                  "type": "name"
+                }
+              }
+            ]
+          },
+          "ORN|PI197720": {
+            "germplasmName": "ORN|PI197720",
+            "germplasmDbId": 86732,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Aigle",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Eagle",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Orne",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "OBEE": {
+            "germplasmName": "OBEE",
+            "germplasmDbId": 92326,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "OBEE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Obee",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "OTOE": {
+            "germplasmName": "OTOE",
+            "germplasmDbId": 92754,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "OTOE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "OTOE",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Otoe",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "OTEE": {
+            "germplasmName": "OTEE",
+            "germplasmDbId": 96291,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "OTEE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "OTEE",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Otee",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "OGLE": {
+            "germplasmName": "OGLE",
+            "germplasmDbId": 97779,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "exact",
+                  "name": "Exact Match",
+                  "weight": 100
+                },
+                "db_term": {
+                  "term": "OGLE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "OGLE (ck)",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "exact",
+                  "name": "Exact Match",
+                  "weight": 100
+                },
+                "db_term": {
+                  "term": "Ogle",
+                  "type": "synonym"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "GG Ogle (oat)",
+                  "type": "accession_number"
+                }
+              }
+            ]
+          },
+          "OGLE-C-1": {
+            "germplasmName": "OGLE-C-1",
+            "germplasmDbId": 98759,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "substring",
+                  "name": "Substring Match",
+                  "weight": 60
+                },
+                "db_term": {
+                  "term": "OGLE-C-1",
+                  "type": "name"
+                }
+              }
+            ]
+          },
+          "NILE": {
+            "germplasmName": "NILE",
+            "germplasmDbId": 91960,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "NILE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Nile",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "NOBLE": {
+            "germplasmName": "NOBLE",
+            "germplasmDbId": 92256,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "NOBLE",
+                  "type": "name"
+                }
+              },
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Noble",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "PALESTINE|PI80721": {
+            "germplasmName": "PALESTINE|PI80721",
+            "germplasmDbId": 85364,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "PALE",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "SIXTY_DAY|CIAV1887": {
+            "germplasmName": "SIXTY_DAY|CIAV1887",
+            "germplasmDbId": 90444,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "Cole",
+                  "type": "synonym"
+                }
+              }
+            ]
+          },
+          "YALE": {
+            "germplasmName": "YALE",
+            "germplasmDbId": 97530,
+            "matched_db_terms": [
+              {
+                "search_routine": {
+                  "key": "edit_distance",
+                  "name": "Edit Distance Comparison",
+                  "weight": 10,
+                  "properties": {
+                    "edit_distance": 2
+                  }
+                },
+                "db_term": {
+                  "term": "YALE",
+                  "type": "name"
+                }
+              }
+            ]
+          }
+        }
+      }
     }
+  }
 }
 ```
 

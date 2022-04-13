@@ -42,7 +42,7 @@ and properties found in this file will override the default values.
     - **search_routines:** the search routines to use in the search
       - **exact:** find exact matches between search and database terms (default: `true`)
       - **punctuation:** find matches that are the same after non-alphanumeric characters are removed (default: `false`)
-      - **substring:** find database terms that contain the search term (default: `false`)
+      - **substring:** find database terms that contain the search term or are contained within the search term (default: `false`)
       - **prefix:** find matches that are the same when prefixes have been removed (default: `false`)
       - **edit_distance:** find matches where the edit distance between terms is within the max edit distance (default: `false`)
     - **search_routine_options:** additional options used for individual search routines

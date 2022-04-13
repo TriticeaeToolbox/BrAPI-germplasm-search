@@ -7,7 +7,7 @@
  * @return {Boolean}    true if a match
  */
  function search(dt, mt) {
-    return dt !== mt && dt.includes(mt);
+    return dt !== mt && (dt.includes(mt) || mt.includes(dt));
 }
 
 module.exports = {

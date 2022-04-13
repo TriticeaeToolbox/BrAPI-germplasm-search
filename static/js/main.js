@@ -407,9 +407,6 @@ function displayMatches(results) {
         if ( results.hasOwnProperty(term) ) {
             let result = results[term];
 
-            console.log("===> " + term);
-            console.log(result);
-
             // Set summary info
             let search_term = result.search_term;
             let exact_match = result.exact_match;
@@ -466,7 +463,7 @@ function displayMatches(results) {
                     // DB Entry Header
                     let checked = exact_match && exact_match === germplasmName ? "checked" : "";
                     html += "<h4 class='db-entry-header'>";
-                    html += "<input type='radio' name='" + search_term + "' value='" + germplasmDbId + "' " + checked + ">&nbsp;&nbsp;";
+                    html += "<input type='radio' name='" + search_term + "' data-id='" + germplasmDbId + "' data-name='" + germplasmName + "' " + checked + ">&nbsp;&nbsp;";
                     html += "<a href='#' onclick='displayGermplasm(\"" + germplasmName + "\", " + germplasmDbId + "); return false;'>";
                     html += germplasmName;
                     html += "</a>";
@@ -492,7 +489,7 @@ function displayMatches(results) {
             // No Match
             let checked = match_count === 0 || !exact_match ? 'checked' : '';
             html += "<h4 class='db-entry-header'>";
-            html += "<input type='radio' name='" + search_term + "' value='' " + checked + ">&nbsp;&nbsp;";
+            html += "<input type='radio' name='" + search_term + "' data-id='' data-name='' " + checked + ">&nbsp;&nbsp;";
             html += "NO MATCH";
             html += "</h4>";
 
@@ -576,13 +573,9 @@ function downloadMatches() {
     let rows = [];
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
-            let match = MATCHES[term];
-            if ( match.matches.length > 0 ) {
-                let selected = $("input[name='" + term + "']:checked").val();
-                if ( selected && selected !== "" ) {
-                    let db_name = match.matches[parseInt(selected)].db_term.germplasmName;
-                    rows.push([term, db_name]);
-                }
+            let selected = $("input[name='" + term + "']:checked").data("name");
+            if ( selected && selected !== "" ) {
+                rows.push([term, selected]);
             }
         }
     }
@@ -598,15 +591,9 @@ function downloadNoMatches() {
     let rows = [];
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
-            let match = MATCHES[term];
-            if ( match.matches.length === 0 ) {
+            let selected = $("input[name='" + term + "']:checked").data("name");
+            if ( !selected || selected === "" ) {
                 rows.push([term]);
-            }
-            else {
-                let selected = $("input[name='" + term + "']:checked").val();
-                if ( !selected || selected === "" ) {
-                    rows.push([term]);
-                }
             }
         }
     }
@@ -625,29 +612,39 @@ function downloadAll() {
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
             let match = MATCHES[term];
-            let selected = $("input[name='" + term + "']:checked").val();
-            let has_match = selected && selected !== "" && parseInt(selected) >= 0 ? 'true' : 'false';
+            let selected = $("input[name='" + term + "']:checked").data("name");
+            let has_match = selected && selected !== "" ? 'true' : 'false';
+            let match_count = Object.keys(match.matches).length;
 
             // Add each of the potential database terms
-            for ( let i = 0; i < match.matches.length; i++ ) {
-                let m = match.matches[i];
-                let database_name = m.db_term.germplasmName
-                let database_term = m.db_term.term;
-                let database_term_type = m.db_term.type;
-                let search_routine = m.search_routine.key;
-                let search_routine_properties = [];
-                if ( m.search_routine.properties ) {
-                    for ( const [key, value] of Object.entries(m.search_routine.properties) ) {
-                        search_routine_properties.push(key + "=" + value);
+            for ( mm in match.matches ) {
+                if ( match.matches.hasOwnProperty(mm) ) {
+                    let m = match.matches[mm];
+                    let database_name = m.germplasmName;
+                    let is_match = has_match === 'true' && selected === database_name;
+    
+                    // Add each of the matched terms
+                    for ( let i = 0; i < m.matched_db_terms.length; i++ ) {
+                        let d = m.matched_db_terms[i];
+                        let database_term = d.db_term.term;
+                        let database_term_type = d.db_term.type;
+                        let search_routine = d.search_routine.key;
+                        let search_routine_properties = [];
+                        if ( d.search_routine.properties ) {
+                            for ( const [key, value] of Object.entries(d.search_routine.properties) ) {
+                                search_routine_properties.push(key + "=" + value);
+                            }
+                        }
+    
+                        // Build Row
+                        rows.push([term, has_match, is_match, database_name, database_term, database_term_type, search_routine, search_routine_properties.join(";")]);
                     }
                 }
-                let is_selected = selected && selected !== "" && parseInt(selected) === i ? 'true' : 'false';
-                rows.push([term, has_match, is_selected, database_name, database_term, database_term_type, search_routine, search_routine_properties.join(";")]);
-            }
-
-            // Add row for no match
-            if ( match.matches.length === 0 ) {
-                rows.push([term, 'false', 'false', '', '', '', 'none', '']);
+    
+                // Add row for no match
+                if ( match_count === 0 ) {
+                    rows.push([term, 'false', 'false', '', '', '', 'none', '']);
+                }
             }
         }
     }

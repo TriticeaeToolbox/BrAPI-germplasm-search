@@ -64,8 +64,9 @@ function search(search_terms, db_terms, config, progress, callback) {
     for ( let i = 0; i < search_terms.length; i++ ) {
         matches[search_terms[i]] = {
             search_term: search_terms[i],
+            exactMatch: false,
             search_routines: [],
-            matches: []
+            matches: {}
         }
     }
 
@@ -170,7 +171,6 @@ function _performSearch(db_terms, matches, config, setup, progress, callback) {
 
     /**
      * Finish the search: 
-     *  sort the matches, 
      *  remove records (if not requested), 
      *  return to the callacbk
      */
@@ -181,21 +181,15 @@ function _performSearch(db_terms, matches, config, setup, progress, callback) {
         for ( let key in matches ) {
             if ( matches.hasOwnProperty(key) ) {
                 let match = matches[key];
-                match.matches.sort(function(a, b) {
-                    if (a.search_routine.weight < b.search_routine.weight) return 1;
-                    if (a.search_routine.weight > b.search_routine.weight) return -1;
-                    if (a.db_term.record.germplasmName > b.db_term.record.germplasmName) return 1;
-                    if (a.db_term.record.germplasmName < b.db_term.record.germplasmName) return -1;
-                });
 
                 // Remove record if not requested
-                let m = match.matches;
                 if ( !config.return_records ) {
-                    for ( let i = 0; i < m.length; i++ ) {
-                        m[i].db_term.record = undefined;
+                    for ( let m in match.matches ) {
+                        if ( match.matches.hasOwnProperty(m) ) {
+                            match.matches[m].record = undefined
+                        }
                     }
                 }
-                match.matches = m;
 
                 rtn[key] = match;
             }
@@ -266,8 +260,23 @@ function _addMatch(routine_name, routine_key, weight, properties, match, db_term
         match.search_routines.push(routine_key);
     }
 
+    // Set Exact Match Flag
+    if ( routine_key === 'exact' ) {
+        match.exactMatch = db_term.record.germplasmName;
+    }
+
+    // Create Match for DB Term
+    if ( !match.matches.hasOwnProperty(db_term.record.germplasmName) ) {
+        match.matches[db_term.record.germplasmName] = {
+            germplasmName: db_term.record.germplasmName,
+            germplasmDbId: db_term.record.germplasmDbId,
+            record: db_term.record,
+            matched_db_terms: []
+        }
+    }
+
     // Add match info
-    match.matches.push({
+    match.matches[db_term.record.germplasmName].matched_db_terms.push({
         search_routine: {
             key: routine_key,
             name: routine_name,
@@ -277,9 +286,6 @@ function _addMatch(routine_name, routine_key, weight, properties, match, db_term
         db_term: {
             term: db_term.term,
             type: db_term.type,
-            germplasmName: db_term.record.germplasmName,
-            germplasmDbId: db_term.record.germplasmDbId,
-            record: db_term.record
         }
     });
 

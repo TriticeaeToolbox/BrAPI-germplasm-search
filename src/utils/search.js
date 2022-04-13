@@ -64,7 +64,7 @@ function search(search_terms, db_terms, config, progress, callback) {
     for ( let i = 0; i < search_terms.length; i++ ) {
         matches[search_terms[i]] = {
             search_term: search_terms[i],
-            exactMatch: false,
+            exact_match: false,
             search_routines: [],
             matches: {}
         }
@@ -262,7 +262,7 @@ function _addMatch(routine_name, routine_key, weight, properties, match, db_term
 
     // Set Exact Match Flag
     if ( routine_key === 'exact' ) {
-        match.exactMatch = db_term.record.germplasmName;
+        match.exact_match = db_term.record.germplasmName;
     }
 
     // Create Match for DB Term

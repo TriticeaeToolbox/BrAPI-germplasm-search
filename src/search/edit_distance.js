@@ -21,7 +21,7 @@ const getEditDistance = require('../utils/editdistance.js');
 }
 
 module.exports = {
-    name: "Edit Distance Comparison",
+    name: "Edit Distance",
     key: "edit_distance",
     weight: 10,
     search: search

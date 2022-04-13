@@ -1,6 +1,12 @@
 let MATCHES = {};
 let EDIT_DATABASE_TOGGLED = false;
 let MAX_SEARCH_TERMS = 5000;
+const ICONS = {
+    "x": '<svg class="bi bi-x-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/></svg>',
+    "dash": '<svg class="bi bi-dash-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="orange" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>',
+    "check": '<svg class="bi bi-check-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/></svg>',
+    "check_multiple": '<svg class="bi bi-check2-all" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg"><path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"/><path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z"/></svg>'
+}
 
 /**
  * Set the Database Selection menu options
@@ -389,46 +395,54 @@ function updateProgress(title, status, progress) {
 
 
 /**
- * Display the matches from the search
- * @param  {Object} matches Search matches
+ * Display the results from the search
+ * @param  {Object} results Search results
  */
-function displayMatches(matches) {
-    MATCHES = matches;
-    console.log("MATCHES:");
-    console.log(matches);
-
-    // Set icons
-    let icons = {
-        "x": '<svg class="bi bi-x-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/></svg>',
-        "dash": '<svg class="bi bi-dash-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="orange" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>',
-        "check": '<svg class="bi bi-check-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/></svg>'
-    }
+function displayMatches(results) {
+    MATCHES = results;
 
     // Build Table HTML
     let html = "";
-    for ( term in matches ) {
-        if ( matches.hasOwnProperty(term) ) {
-            let match = matches[term];
+    for ( term in results ) {
+        if ( results.hasOwnProperty(term) ) {
+            let result = results[term];
+
+            console.log("===> " + term);
+            console.log(result);
 
             // Set summary info
-            let search_term = match.search_term;
+            let search_term = result.search_term;
+            let exact_match = result.exact_match;
+            let matches = result.matches;
+            let match_count = Object.keys(matches).length;
+
+            // Set Match Type
+            let match_key = "";
             let match_type = "";
             let match_icon = "";
-            if ( match.matches.length === 0 ) {
+            if ( match_count === 0 ) {
+                match_key = "none";
                 match_type = "None";
-                match_icon = icons["x"];
+                match_icon = ICONS["x"];
             }
-            else if ( match.matches.length === 1 && match.search_routines.length === 1 && match.search_routines[0] === 'exact' ) {
+            else if ( exact_match && match_count === 1 ) {
+                match_key = "exact";
                 match_type = "Exact";
-                match_icon = icons["check"];
+                match_icon = ICONS["check"];
             }
-            else if ( match.matches.length > 0 ) {
+            else if ( exact_match && match_count > 1 ) {
+                match_key = "exact_potential";
+                match_type = "Exact &amp; Potential";
+                match_icon = ICONS["check_multiple"];
+            }
+            else if ( match_count > 0 ) {
+                match_key = "potential";
                 match_type = "Potential";
-                match_icon = icons["dash"];
+                match_icon = ICONS["dash"];
             }
 
             // BUILD HTML
-            html += "<tr>";
+            html += "<tr class='match-row match-row-" + match_key + "'>";
             
             // Search Term
             html += "<td>" + search_term + "</td>";
@@ -442,61 +456,45 @@ function displayMatches(matches) {
 
             // Database Matches
             html += "<td style='padding-top: 2px'>"
-            let prev_search_routine = undefined;
-            for ( let i = 0; i < match.matches.length; i++ ) {
-                let m = match.matches[i];
+            for ( db_match in result.matches ) {
+                if ( result.matches.hasOwnProperty(db_match) ) {
+                    let m = result.matches[db_match];
+                    let germplasmName = m.germplasmName;
+                    let germplasmDbId = m.germplasmDbId;
+                    let matched_db_terms = m.matched_db_terms;
 
-                // Set search routine header
-                let search_routine_header = "";
-                if ( m.search_routine.key !== prev_search_routine ) {
-                    prev_search_routine = m.search_routine.key;
-                    search_routine_header = "<h4 class='search-routine-header'>" + m.search_routine.name + "</h4>";
+                    // DB Entry Header
+                    let checked = exact_match && exact_match === germplasmName ? "checked" : "";
+                    html += "<h4 class='db-entry-header'>";
+                    html += "<input type='radio' name='" + search_term + "' value='" + germplasmDbId + "' " + checked + ">&nbsp;&nbsp;";
+                    html += "<a href='#' onclick='displayGermplasm(\"" + germplasmName + "\", " + germplasmDbId + "); return false;'>";
+                    html += germplasmName;
+                    html += "</a>";
+                    html += "</h4>";
+
+                    // Matches
+                    html += "<ul class='db-terms'>";
+                    for ( let i = 0; i < matched_db_terms.length; i++ ) {
+                        let t = matched_db_terms[i];
+                        let b = t.db_term.type === 'name' ? 'primary' : t.db_term.type === 'synonym' ? 'info' : 'secondary';
+                        let r = t.search_routine.key === 'exact' ? 'success' : 'warning';
+                        html += "<li>";
+                        html += "<strong>" + t.db_term.term + "</strong>&nbsp;";
+                        html += "<span class='match-badge badge badge-" + b + "'>" + t.db_term.type + "</span>&nbsp;";
+                        html += "<span class='match-badge badge badge-" + r + "'>" + t.search_routine.name + "</span>";
+                        html += "</li>";
+                    }
+                    html += "</ul>";
+
                 }
-
-                // Get Match Info
-                let search_term = match.search_term;
-                let germplasm_name = match.matches[i].db_term.germplasmName;
-                let germplasm_db_id = match.matches[i].db_term.germplasmDbId;
-                let db_term_type = match.matches[i].db_term.type;
-                let db_term_match = match.matches[i].db_term.term;
-
-                // Set HTML variables
-                let input_name = search_term;
-                let input_value = i;
-                let input_checked = match_type === "Exact" ? " checked" : "";
-                let label = germplasm_name;
-
-                // Add HTML
-                html += search_routine_header;
-                html += "<input type='radio' ";
-                html += "name='" + input_name + "' ";
-                html += "value='" + input_value + "' ";
-                html += input_checked;
-                html += ">&nbsp;&nbsp;";
-                html += "<a href='#' onclick='displayGermplasm(\"" + germplasm_name + "\", " + germplasm_db_id + "); return false;'>";
-                html += germplasm_name;
-                html += "</a>";
-
-                // Add synonyms and accession numbers if they're the matching term
-                if ( db_term_type === "synonym" ) {
-                    html += '<span class="match-badge badge badge-info">';
-                    html += db_term_match;
-                    html += '</span>';
-                }
-                else if ( db_term_type === "accession_number" ) {
-                    html += '<span class="match-badge badge badge-secondary">';
-                    html += db_term_match;
-                    html += '</span>';
-                }
-
-
-                html += "<br />";
             }
-            if ( match.matches.length > 0 ) {
-                html += "<input type='radio' name='" + match.search_term + "' value='' style='margin-top: 12px'";
-                if ( match.matches.length > 1 || match_type !== "Exact" ) html += " checked";
-                html += ">&nbsp;&nbsp;NO MATCH";
-            }
+
+            // No Match
+            let checked = match_count === 0 || !exact_match ? 'checked' : '';
+            html += "<h4 class='db-entry-header'>";
+            html += "<input type='radio' name='" + search_term + "' value='' " + checked + ">&nbsp;&nbsp;";
+            html += "NO MATCH";
+            html += "</h4>";
 
             html += "</td>";
             html += "</tr>";
@@ -507,6 +505,24 @@ function displayMatches(matches) {
 
     displayContainer("results");
 }
+
+
+/**
+ * Filter the results table by match type
+ */
+function filterSearch() {
+    let type = $(this).data('match-type');
+    $('.btn-match-filter').attr('disabled', false);
+    $(this).attr('disabled', true);
+    if ( type === 'all' ) {
+        $('.match-row').show();
+    }
+    else {
+        $('.match-row').hide();
+        $('.match-row-' + type).show();
+    }
+}
+
 
 /**
  * Display a modal dialog with the germplasm details

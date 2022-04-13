@@ -347,7 +347,7 @@ A job can have one of the following statuses:
     "results": {
       "JERRY": {
         "search_term": "JERRY",
-        "exactMatch": "JERRY",
+        "exact_match": "JERRY",
         "search_routines": [
           "edit_distance",
           "exact",
@@ -361,7 +361,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -381,7 +381,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -401,7 +401,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -415,7 +415,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -435,7 +435,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -494,7 +494,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -508,7 +508,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -522,7 +522,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -542,7 +542,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -556,7 +556,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -576,7 +576,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -590,7 +590,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -610,7 +610,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 1
@@ -624,7 +624,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 1
@@ -641,7 +641,7 @@ A job can have one of the following statuses:
       },
       "syn_a": {
         "search_term": "syn_a",
-        "exactMatch": false,
+        "exact_match": false,
         "search_routines": [
           "edit_distance"
         ],
@@ -653,7 +653,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -667,7 +667,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -687,7 +687,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -701,7 +701,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -721,7 +721,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -738,7 +738,7 @@ A job can have one of the following statuses:
       },
       "ogle": {
         "search_term": "ogle",
-        "exactMatch": "OGLE",
+        "exact_match": "OGLE",
         "search_routines": [
           "edit_distance",
           "substring",
@@ -752,7 +752,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -772,7 +772,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -786,7 +786,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -800,7 +800,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -820,7 +820,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -840,7 +840,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -854,7 +854,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -868,7 +868,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -888,7 +888,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -902,7 +902,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -922,7 +922,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -959,7 +959,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1001,7 +1001,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1021,7 +1021,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1035,7 +1035,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1049,7 +1049,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1069,7 +1069,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1083,7 +1083,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1103,7 +1103,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1117,7 +1117,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1131,7 +1131,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1151,7 +1151,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1165,7 +1165,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1179,7 +1179,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1266,7 +1266,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1280,7 +1280,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1300,7 +1300,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1314,7 +1314,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1334,7 +1334,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1354,7 +1354,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2
@@ -1374,7 +1374,7 @@ A job can have one of the following statuses:
               {
                 "search_routine": {
                   "key": "edit_distance",
-                  "name": "Edit Distance Comparison",
+                  "name": "Edit Distance",
                   "weight": 10,
                   "properties": {
                     "edit_distance": 2

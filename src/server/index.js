@@ -15,6 +15,11 @@ let server = express();
 server.use(express.json());
 
 // Set API Routes
+server.use('/api', function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    return next();
+});
 server.use('/api', api);
 
 // Set Static Resources

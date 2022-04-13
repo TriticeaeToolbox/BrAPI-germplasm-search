@@ -59,6 +59,7 @@
                 "max_edit_distance": 2
             }
         },
-        "return_records": false
+        "return_records": false,
+        "case_sensitive": false
     }
 }

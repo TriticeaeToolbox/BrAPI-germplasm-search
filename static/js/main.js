@@ -294,7 +294,8 @@ function setupSearch() {
                 max_edit_distance: $("#max-edit-distance").val()
             }
         },
-        return_records: false
+        return_records: false,
+        case_sensitive: $("#options-case-sensitive").prop('checked')
     };
     
     // Get search terms

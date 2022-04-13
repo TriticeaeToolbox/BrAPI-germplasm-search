@@ -224,15 +224,14 @@
          
           <h4>Search Routines</h4>
           <p class="header-info">
-            Select the individual search routines that are used to find matches between your search terms and the selected 
-            database terms.  All matches are case-insensitive.
+            Select the individual search routines that are used to find matches between your search terms and the selected database terms
           </p>
           
           <div class="custom-control custom-switch">
             <input id="include-exact" class="custom-control-input" type="checkbox" checked>
             <label class="custom-control-label" for="include-exact">
               Exact Match
-              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find germplasm records where a database term is a case-insensitive exact match to your search term">
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Find germplasm records where a database term is an exact match to your search term">
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
@@ -338,6 +337,21 @@
                 <option value="10">10</option>
               </select>
             </div>
+          </div>
+
+          <br />
+
+          <h4>Additional Options</h4>
+          <p class="header-info">Additional configuration options for the search</p>
+
+          <div class="custom-control custom-switch">
+            <input id="options-case-sensitive" class="custom-control-input" type="checkbox" checked>
+            <label class="custom-control-label" for="options-case-sensitive">
+              Case Sensitive
+              <svg class="bi bi-info-circle-fill search-option-info" width="1em" height="1em" viewBox="0 0 16 16" fill="black" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-title="Perform all of the search routines where matches will need to have the same letter-case in order to match">
+                <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+              </svg>
+            </label>
           </div>
         </div>
 

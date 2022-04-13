@@ -211,8 +211,8 @@ function _performSearch(db_terms, matches, config, setup, progress, callback) {
  * @return {Object}         Modified Match Object
  */
 function _runSearchRoutines(db_term, match, config, setup) {
-    let dt = db_term.term.toUpperCase();
-    let mt = match.search_term.toUpperCase();
+    let dt = config.case_sensitive ? db_term.term : db_term.term.toUpperCase();
+    let mt = config.case_sensitive ? match.search_term : match.search_term.toUpperCase();
 
     for ( let i = 0; i < SEARCH_ROUTINES.length; i++ ) {
         let routine = SEARCH_ROUTINES[i];
@@ -230,6 +230,24 @@ function _runSearchRoutines(db_term, match, config, setup) {
                     match,
                     db_term
                 );
+            }
+
+            // Perform a separate case-insensitive search, 
+            // when case_sensitive is enabled and there was no case-sensitive match
+            else if ( config.case_sensitive ) {
+                let ci_results = routine.search(dt.toUpperCase(), mt.toUpperCase(), config.search_routine_options[routine.key], setup[routine.key]);
+                let ci_isMatch = typeof ci_results === 'object' && ci_results !== null ? ci_results.isMatch : ci_results;
+                let ci_properties = typeof ci_results === 'object' && ci_results !== null ? ci_results.properties : undefined;
+                if ( ci_isMatch ) {
+                    match = _addMatch(
+                        routine.name + " - Case Insensitive",
+                        routine.key + "-case_insensitive",
+                        routine.weight,
+                        ci_properties,
+                        match,
+                        db_term
+                    );
+                }
             }
         }
     }

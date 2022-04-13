@@ -55,7 +55,8 @@ and properties found in this file will override the default values.
       - **edit_distance:**
         - **max_edit_distance:** the maximum number of changes for the edit distance comparison (default: `2`)
     - **return_records:** when `true` the search results will include the full germplasm record of each math (default: `false`)
-      
+    - **case_sensitive:** when `true` the search will performed with case sensitivity (default: `false`)  
+
 ## Website Usage
 
 The website can accept a number of query params that can be used to set 

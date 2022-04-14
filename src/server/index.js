@@ -18,6 +18,7 @@ server.use(express.json());
 server.use('/api', function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
+    res.setHeader('Access-Control-Allow-Methods', '*');
     return next();
 });
 server.use('/api', api);

@@ -97,9 +97,9 @@ router.get('/cache', function(req, res, next) {
     // Get all caches
     if ( !address ) {
         let rtn = [];
-        let keys = cache.keys();
-        for ( let i = 0; i < keys.length; i++ ) {
-            let info = cache.info(keys[i]);
+        let addresses = cache.addresses();
+        for ( let i = 0; i < addresses.length; i++ ) {
+            let info = cache.info(addresses[i]);
             let body = {
                 address: info.address,
                 saved: info.saved,

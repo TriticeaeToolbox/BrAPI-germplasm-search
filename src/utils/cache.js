@@ -63,11 +63,18 @@ function isCached(address) {
 
 
 /**
- * Get all of the keys used by the cache
- * @return {string[]} Cache keys
+ * Get all of the addresses in the cache
+ * @return {string[]} Addresses in cache
  */
-function keys() {
-    return cache.keysSync();
+function addresses() {
+    let keys = cache.keysSync();
+    let addresses = [];
+    for ( let i = 0; i < keys.length; i++ ) {
+        addresses.push(
+            cache.getSync(keys[i]).address
+        );
+    }
+    return addresses;
 }
 
 
@@ -76,5 +83,5 @@ module.exports = {
     get: get,
     info: info,
     isCached: isCached,
-    keys: keys
+    addresses: addresses
 }

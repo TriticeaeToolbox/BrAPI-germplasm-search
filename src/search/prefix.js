@@ -87,6 +87,11 @@ function search(dt, mt, opts, setup) {
     mt = mt.toLowerCase();
     let prefixes = setup.prefixes;
 
+    // Ignore exact matches
+    if ( dt.toUpperCase() === mt.toUpperCase() ) {
+        return false;
+    }
+
     // Find prefixes that are contained in the database and search terms
     let found = prefixes.filter(function(e) {
         return dt.startsWith(e.toLowerCase()) || mt.startsWith(e.toLowerCase());
@@ -116,7 +121,11 @@ function search(dt, mt, opts, setup) {
     return {
         isMatch: matching_prefixes.length > 0,
         properties: {
-            prefixes: matching_prefixes
+            prefix: matching_prefixes.length > 0 ? matching_prefixes.reduce(
+                function(a, b) {
+                    return a.length > b.length ? a : b;
+                }
+            ) : undefined
         }
     };
 }

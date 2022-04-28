@@ -7,7 +7,7 @@
  * @return {Boolean}    true if a match
  */
  function search(dt, mt) {
-    return dt !== mt && (dt.includes(mt) || mt.includes(dt));
+    return dt !== mt && (dt.includes(mt) || mt.includes(dt)) && dt.length >= 3 && mt.length >= 3;
 }
 
 module.exports = {

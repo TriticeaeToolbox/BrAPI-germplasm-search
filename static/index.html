@@ -187,6 +187,7 @@
         <p class="text-muted">Customize the parameters used to search the database</p>
         <div class="well">
 
+          <!-- Database Terms -->
           <h4>Database Terms</h4>
           <p class="header-info">Select the terms from the database to match to your search terms</p>
           
@@ -222,11 +223,13 @@
 
           <br />
          
+          <!-- Search Routines -->
           <h4>Search Routines</h4>
           <p class="header-info">
             Select the individual search routines that are used to find matches between your search terms and the selected database terms
           </p>
           
+          <!-- Exact Match -->
           <div class="custom-control custom-switch">
             <input id="include-exact" class="custom-control-input" type="checkbox" checked>
             <label class="custom-control-label" for="include-exact">
@@ -237,6 +240,7 @@
             </label>
           </div>
 
+          <!-- Remove Punctuation -->
           <div class="custom-control custom-switch">
             <input id="include-punctuation" class="custom-control-input" type="checkbox">
             <label class="custom-control-label" for="include-punctuation">
@@ -247,6 +251,7 @@
             </label>
           </div>
           
+          <!-- Substring Match -->
           <div class="custom-control custom-switch">
             <input id="include-substring" class="custom-control-input" type="checkbox">
             <label class="custom-control-label" for="include-substring">
@@ -255,8 +260,29 @@
                 <path fill-rule="evenodd" d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
               </svg>
             </label>
+            <div id="include-substring-opts" class="mb-3 mt-2" style="display:none">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Substring Length Min</span>
+                </div>
+                <select class="form-control" id="substring-length-min">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3" selected>3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+              <p style="font-size: 80%; text-align: right">the minimum length of a term for it to count as a substring match</p>
+            </div>
           </div>
 
+          <!-- Remove Prefixes -->
           <div class="custom-control custom-switch">
             <input id="include-prefix" class="custom-control-input" type="checkbox">
             <label class="custom-control-label" for="include-prefix">
@@ -312,6 +338,7 @@
             </div>
           </div>
 
+          <!-- Edit Distance Comparison -->
           <div class="custom-control custom-switch">
             <input id="include-edit-distance" class="custom-control-input" type="checkbox">
             <label class="custom-control-label" for="include-edit-distance">
@@ -341,6 +368,7 @@
 
           <br />
 
+          <!-- Additional Options -->
           <h4>Additional Options</h4>
           <p class="header-info">Additional configuration options for the search</p>
 
@@ -568,6 +596,9 @@
                       edit_distance: q('edit_distance'),
                     },
                     search_routine_options: {
+                      substring: {
+                        substring_length_min: q('substring_length_min')
+                      },
                       prefix: {
                         prefixes: q('prefixes', true),
                         find_db_prefixes: q('find_db_prefixes'),

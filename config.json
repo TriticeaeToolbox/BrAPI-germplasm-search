@@ -48,6 +48,9 @@
             "edit_distance": false
         },
         "search_routine_options": {
+            "substring": {
+                "substring_length_min": 3
+            },
             "prefix": {
                 "prefixes": [],
                 "find_db_prefixes": true,

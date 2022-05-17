@@ -46,6 +46,8 @@ and properties found in this file will override the default values.
       - **prefix:** find matches that are the same when prefixes have been removed (default: `false`)
       - **edit_distance:** find matches where the edit distance between terms is within the max edit distance (default: `false`)
     - **search_routine_options:** additional options used for individual search routines
+      - **substring:**
+        - **substring_length_min:** the minimum length of a term to be included as a substring match (default: `3`)
       - **prefix:**
         - **prefixes:** default prefixes to include (default: `[]`)
         - **find_db_prefixes:** scan the database terms to find common prefixes (default: `true`)
@@ -84,6 +86,7 @@ The following query params use boolean values to toggle the initial search optio
   - **edit_distance:** toggle the edit distance comparison search routine
 
 The following query params set the values for specific search routine options
+  - **substring_length_min:** (integer) the minimum length of a term to include it as a substring match
   - **prefixes:** (array) used to set custom prefixes
   - **find_db_prefixes:** (boolean) used to toggle the function to find common prefixes from the database terms
   - **prefix_length_min:** (integer) when finding database prefixes, set the minimum length of a prefix
@@ -275,6 +278,9 @@ long running-task the request is added to a job queue and the response will incl
             "edit_distance": false
         },
         "search_routine_options": {
+            "substring": {
+              "substring_length_min": 3
+            },
             "prefix": {
                 "prefixes": [],
                 "find_db_prefixes": true,

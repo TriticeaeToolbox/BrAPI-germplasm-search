@@ -15,6 +15,7 @@ const cache = PersistentCache(config.cache);
  * @param  {Object} terms   Terms to save
  */
 function put(address, terms) {
+    address = _cleanAddress(address);
     let info = {
         address: address,
         saved: new Date(),
@@ -29,6 +30,7 @@ function put(address, terms) {
  * @return {Object}         Saved terms
  */
 function get(address) {
+    address = _cleanAddress(address);
     if ( isCached(address) ) {
         return cache.getSync(md5(address)).terms;
     }
@@ -43,6 +45,7 @@ function get(address) {
  * @return {Object}         Cached info{address, saved, terms}
  */
 function info(address) {
+    address = _cleanAddress(address);
     if ( isCached(address) ) {
         return cache.getSync(md5(address));
     }
@@ -57,6 +60,7 @@ function info(address) {
  * @return {Boolean}         true if there is cached info
  */
 function isCached(address) {
+    address = _cleanAddress(address);
     let keys = cache.keysSync();
     return keys.includes(md5(address));
 }
@@ -70,11 +74,22 @@ function addresses() {
     let keys = cache.keysSync();
     let addresses = [];
     for ( let i = 0; i < keys.length; i++ ) {
+        console.log(keys[i]);
         addresses.push(
             cache.getSync(keys[i]).address
         );
     }
     return addresses;
+}
+
+
+/**
+ * Remove the trailing space from the address
+ * @param {string} address Address to clean
+ * @returns cleaned address
+ */
+function _cleanAddress(address) {
+    return address.replace(/\/$/, "");
 }
 
 

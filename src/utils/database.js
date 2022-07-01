@@ -2,9 +2,12 @@
 
 const BrAPI = require('@solgenomics/brapijs');
 const cache = require('./cache.js');
+const config = require('./config.js');
+
+const CACHE_CHUNK_SIZE = config.cache.chunk_size;
 
 /**
- * Get all germplasm records from a BrAPI database - use cached if available otherwise 
+ * Get cache info for germplasm records from a BrAPI database - use existing cache if available otherwise 
  * request fresh records from the database
  * Database Properties:
  *     {string}  address = (required) The address for the database BrAPI endpoints (ex: https://wheat.triticeaetoolbox.org/brapi/v1)
@@ -15,7 +18,7 @@ const cache = require('./cache.js');
  * @param  {Object}   database   BrAPI Database properties
  * @param  {boolean}  [force]    Ignore cached database terms and request fresh ones
  * @param  {Function} [progress] Progress callback({title, subtitle}, progress)
- * @param  {Function} callback   Callback function(db_terms)
+ * @param  {Function} callback   Callback function(cache_key, cache_count)
  */
 function getDBTerms(database, force, progress, callback) {
 
@@ -58,13 +61,12 @@ function getDBTerms(database, force, progress, callback) {
     
     // Return cached records, if available and allowed
     if ( !force && cache.isCached(cache_key) ) {
-        return callback(cache.get(cache_key));
+        return callback(cache_key, cache.getCount(cache_key));
     }
 
     // Get fresh germplasm records
-    _getFreshDBTerms(brapi, progress, function(db_terms) {
-        cache.put(cache_key, db_terms);
-        return callback(db_terms);
+    _getFreshDBTerms(brapi, cache_key, progress, function(cache_count) {
+        return callback(cache_key, cache_count);
     });
 }
 
@@ -72,11 +74,12 @@ function getDBTerms(database, force, progress, callback) {
 /**
  * Get fresh germplasm records from the database and parse out the 
  * terms to search on (database name, synonyms, etc)
- * @param  {BrAPI}    brapi    BrAPI Node
- * @param  {Function} progress Progress callback function
- * @param  {Function} callback Callback function(db_terms)
+ * @param  {BrAPI}    brapi     BrAPI Node
+ * @param  {String}   cache_key The base name of the cache to use
+ * @param  {Function} progress  Progress callback function
+ * @param  {Function} callback  Callback function(cache_key, cache_count)
  */
-function _getFreshDBTerms(brapi, progress, callback) {
+function _getFreshDBTerms(brapi, cache_key, progress, callback) {
     let brapi_version = parseInt(brapi.brapi.version.major);
 
     if ( progress ) {
@@ -86,9 +89,13 @@ function _getFreshDBTerms(brapi, progress, callback) {
         }, -1);
     }
 
+    // Clear the existing cache
+    cache.clear(cache_key);
+
     let count = 0;
     let total = undefined;
     let db_terms = [];
+    let cache_index = 0;
     
     brapi
         .germplasm({pageSize: 1000})
@@ -176,9 +183,17 @@ function _getFreshDBTerms(brapi, progress, callback) {
                     record: record
                 });
             });
+
+            if ( db_terms.length >= CACHE_CHUNK_SIZE ) {
+                cache_index++;
+                cache.put(cache_key, cache_index, db_terms);
+                db_terms = [];
+            }
         })
         .all(function(resp) {
-            return callback(db_terms);
+            cache_index++;
+            cache.put(cache_key, cache_index, db_terms);
+            return callback(cache_index);
         });
 }
 

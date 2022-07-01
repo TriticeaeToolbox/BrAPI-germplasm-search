@@ -103,7 +103,7 @@ router.get('/cache', function(req, res, next) {
             let body = {
                 address: info.address,
                 saved: info.saved,
-                terms: info.terms.length
+                terms: info.count
             }
             rtn.push(body);
         }
@@ -119,7 +119,7 @@ router.get('/cache', function(req, res, next) {
         let body = {
             address: info.address,
             saved: info.saved,
-            terms: info.terms.length
+            terms: info.count
         }
         response.success(res, body);
         return next();
@@ -164,8 +164,8 @@ router.put('/cache', function(req, res, next) {
         getDBTerms(database, true, function(status, progress) {
             queue.setMessage(id, status.title, status.subtitle);
             queue.setProgress(id, progress);
-        }, function(db_terms) {
-            queue.complete(id, db_terms);
+        }, function(cache_key, cache_count) {
+            queue.complete(id, {key: cache_key, count: cache_count});
         });
     });
 
@@ -210,8 +210,8 @@ router.post('/search', function(req, res, next) {
     // Add the Job to the Queue
     let id = queue.add(function() {
 
-        // Get DB Terms from the cache
-        let db_terms = cache.get(database.address);
+        // Check to see if there are any cached db terms
+        let db_terms = cache.get(database.address, 1);
         
         // Update the cache of db terms?
         if ( force || !db_terms || db_terms.length === 0 ) {
@@ -223,8 +223,8 @@ router.post('/search', function(req, res, next) {
                     queue.setMessage(id, status.title, status.subtitle);
                     queue.setProgress(id, progress);
                 }, 
-                function(db_terms) {
-                    _search(id, terms, db_terms, search_config);
+                function(cache_key, cache_count) {
+                    _search(id, terms, cache_key, cache_count, search_config);
                 }
             );
 
@@ -232,7 +232,7 @@ router.post('/search', function(req, res, next) {
 
         // Use the Cached DB Terms to search on
         else {
-            _search(id, terms, db_terms, search_config);
+            _search(id, terms, database.address, cache.getCount(database.address), search_config);
         }
 
     });
@@ -250,17 +250,82 @@ router.post('/search', function(req, res, next) {
      * Perform the database search
      * @param  {string}     id            Job ID
      * @param  {string[]}   terms         Search Terms
-     * @param  {Object}     db_terms      Database Terms
+     * @param  {String}     cache_key     Cache Key
+     * @param  {int}        cache_count   Cache Count
      * @param  {Object}     search_config Search Parameters
      */
-    function _search(id, terms, db_terms, search_config) {
-        search(terms, db_terms, search_config, 
+    function _search(id, terms, cache_key, cache_count, search_config) {
+        let cache_index = 1;
+        let rtn = {};
+        _run();
+
+        /**
+         * Start the search of the current chunk
+         */
+        function _run() {
+            _search_chuck(id, terms, cache_key, cache_count, cache_index, search_config, _finish);
+        }
+
+        /**
+         * Handle the return of the chunk's search
+         * @param {Object} matches chunk's matches
+         */
+        function _finish(matches) {
+            
+            // Process the chunk's matches
+            Object.keys(matches).forEach(function(key) {
+                if ( !rtn.hasOwnProperty(key) ) {
+                    rtn[key] = matches[key];
+                }
+                else {
+                    rtn[key].exact_match = !rtn[key].exact_match ? matches[key].exact_match : rtn[key].exact_match;
+                    rtn[key].search_routines = rtn[key].search_routines.concat(matches[key].search_routines).filter(_unique);
+                    rtn[key].matches = { ...rtn[key].matches, ...matches[key].matches };
+                }
+            });
+
+            // Start the next chunk, or finish
+            cache_index = cache_index + 1;
+            if ( cache_index <= cache_count ) {
+                _run();
+            }
+            else {
+                queue.complete(id, rtn);
+            }
+
+        }
+
+        /**
+         * Array filter - return unique values
+         */
+        function _unique(value, index, self) {
+            return self.indexOf(value) === index;
+        }
+    }
+
+    /**
+     * 
+     * @param  {string}     id            Job ID
+     * @param  {string[]}   terms         Search Terms
+     * @param  {String}     cache_key     Cache Key
+     * @param  {int}        cache_count   Cache Count
+     * @param  {int}        cache_index   Cache Index
+     * @param  {Object}     search_config Search Parameters
+     * @param  {Function}   callback      Callback function(matches)
+     */
+    function _search_chuck(id, terms, cache_key, cache_count, cache_index, search_config, callback) {
+        let ps = (100/cache_count)*cache_index-(100/cache_count);
+        let pe = (100/cache_count)*cache_index;
+        let pd = pe - ps;
+        let db_terms = cache.get(cache_key, cache_index);
+        search(terms, db_terms, search_config,
             function(status, progress) {
+                let p = ((progress/100) * pd) + ps;
                 queue.setMessage(id, status.title, status.subtitle);
-                queue.setProgress(id, progress);
+                queue.setProgress(id, p);
             },
             function(matches) {
-                queue.complete(id, matches);
+                return callback(matches);
             }
         );
     }
@@ -282,15 +347,20 @@ router.get('/germplasm/:id', function(req, res, next) {
         return next();
     }
 
-    // Get the cache
-    let terms = cache.get(address);
+    // Get the number of caches
+    let cache_count = cache.getCount(address);
+    
+    // Parse each cache
+    for ( let i = 1; i <= cache_count; i++ ) {
+        let terms = cache.get(address, i);
 
-    // Find a matching term
-    for ( let i = 0; i < terms.length; i++ ) {
-        if ( terms[i].record && terms[i].record.germplasmDbId.toString() === id ) {
-            let record = terms[i].record;
-            response.success(res, record);
-            return next();
+         // Find a matching term
+        for ( let i = 0; i < terms.length; i++ ) {
+            if ( terms[i].record && terms[i].record.germplasmDbId.toString() === id ) {
+                let record = terms[i].record;
+                response.success(res, record);
+                return next();
+            }
         }
     }
 

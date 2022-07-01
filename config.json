@@ -32,7 +32,8 @@
         "duration": 1209600000,
         "memory": true,
         "persist": true,
-        "auto_update": "* * 2 * * 0"
+        "auto_update": "* * 2 * * 0",
+        "chunk_size": 50000
     },
     "search": {
         "database_terms": {

@@ -33,7 +33,8 @@ and properties found in this file will override the default values.
     - **duration:** The amount of milliseconds a cache entry should be valid for. If not set, cache entries are not invalidated (stay until deleted).
     - **memory:** The amount of milliseconds a cache entry should be valid for. If not set, cache entries are not invalidated (stay until deleted).
     - **persist:** Whether the cache should be persistent, aka if it should write its data to the disk for later use or not. Set this to false to create a memory-only cache.
-    - **auto_update:** A cron-like format for scheduling an auto-update of the cache (default: Sundays at 2AM)
+    - **auto_update:** A cron-like format for scheduling an auto-update of the cache (default: Sundays at 2AM).
+    - **chunk_size:** The (max) number of items to store in each chunk of the cache for a single server (default: 50000).
   - **search:** an object default search options (all of these can be overriden as parameters to individual search queries
     - **database_terms:** the database terms to include in the search
       - **name:** germplasm name (default: `true`)

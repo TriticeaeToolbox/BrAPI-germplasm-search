@@ -56,8 +56,10 @@ function info(address) {
     let saved;
     for ( let i = 1; i <= count; i++ ) {
         let c = cache.getSync(md5(address)+'-'+i);
-        term_count = term_count + c.terms.length;
-        saved = !saved || c.saved < saved ? c.saved : saved
+        if ( c && c.terms && c.saved ) {
+            term_count = term_count + c.terms.length;
+            saved = !saved || c.saved < saved ? c.saved : saved
+        }
     }
     return {
         address: address,

@@ -249,6 +249,13 @@ specified by its BrAPI address.
 }
 ```
 
+### `GET` `/terms?address=&index=[&info=true]` - Get Database Terms
+
+Get all of the cached database terms (and their associated germplasm record) for 
+the specified database.  The terms are split by the cache chunk size.  Use the 
+`info=true` query param to get the cache info, including the number of chunks.
+
+
 ### `POST` `/search` - Start Search
 
 Start a germplasm search on the database, terms and search options provided in the request body.  Since this is 

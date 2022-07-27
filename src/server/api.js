@@ -369,5 +369,58 @@ router.get('/germplasm/:id', function(req, res, next) {
     return next();
 });
 
+/**
+ * Get all of the database terms and their associated germplasm records.
+ * The response is chunked by the cache chunk size.
+ * Query params:
+ *  - address: (required) the database brapi address
+ *  - index: (required, unless `info` is given) the chunk of terms to return
+ *  - info: (optional, boolean (true/1)) give the cache info (# of terms, chunks, etc) for the address
+ * @param  {Object}   req   Express Request
+ * @param  {Object}   res   Express Response
+ * @param  {Function} next  Express handler stack callback
+ */
+router.get('/terms', function(req, res, next) {
+    let address = req.query.address;
+    let index = req.query.index;
+    let info = req.query.info && ["true", "1"].includes(req.query.info.toString().toLocaleLowerCase());
+
+    // Check params
+    if ( !address ) {
+        response.error(res, 400, "Database address not provided as 'address' as a query param");
+        return next();
+    }
+    if ( !info && !index ) {
+        response.error(res, 400, "Cache index not provided as 'index' as a query param");
+        return next();
+    }
+
+    // Make sure cache exists
+    let exists = cache.isCached(address, index);
+    if ( !exists ) {
+        let index_str = index ? " [Index: " + index + "]" : "";
+        response.error(res, 404, "Database address is not cached on the server" + index_str);
+        return next();
+    }
+
+    // Return info
+    if ( info ) {
+        let cache_info = cache.info(address);
+        let cache_count = cache.getCount(address);
+        response.success(res, {
+            address: cache_info.address,
+            saved: cache_info.saved,
+            terms: cache_info.count,
+            chunks: cache_count
+        });
+        return next();
+    }
+
+    // Return the terms for the specified chunk
+    let terms = cache.get(address, index);
+    response.success(res, terms);
+    return next();
+});
+
 
 module.exports = router;

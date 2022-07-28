@@ -218,7 +218,8 @@ router.post('/search', function(req, res, next) {
                     terms.push({
                         term: t[j].term,
                         type: t[j].type,
-                        id: t[j].record.germplasmDbId
+                        id: t[j].record.germplasmDbId,
+                        name: t[j].record.germplasmName
                     });
                 }
             }

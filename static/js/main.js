@@ -438,6 +438,9 @@ function displayMatches(results) {
 
             // Set summary info
             let search_term = result.search_term;
+            let search_term_type = result.search_term_type;
+            let search_term_name = result.search_term_name;
+            let search_term_id = result.search_term_id;
             let exact_match = result.exact_match;
             let matches = result.matches;
             let match_count = Object.keys(matches).length;
@@ -471,7 +474,25 @@ function displayMatches(results) {
             html += "<tr class='match-row match-row-" + match_key + "'>";
             
             // Search Term
-            html += "<td>" + search_term + "</td>";
+            if ( search_term_type && search_term_name && search_term_id ) {
+                let t = search_term_type === 'name' ? 'primary' : search_term_type === 'synonym' ? 'info' : 'secondary';
+                html += "<td style='padding-top: 2px'>";
+                html += "<h4 class='db-entry-header'>";
+                html += "<a href='#' onclick='displayGermplasm(\"" + search_term_name + "\", " + search_term_id + "); return false;'>";
+                html += search_term_name;
+                html += "</a>";
+                html += "</h4>";
+                html += "<ul class='db-terms'>";
+                html += "<li>";
+                html += "<strong>" + search_term + "</strong>&nbsp;";
+                html += "<span class='match-badge badge badge-" + t + "'>" + search_term_type + "</span>&nbsp;";
+                html += "</li>";
+                html += "</ul>";
+                html += "</td>";
+            }
+            else {
+                html += "<td>" + search_term + "</td>";
+            }
 
             // Match Type
             html += "<td>";

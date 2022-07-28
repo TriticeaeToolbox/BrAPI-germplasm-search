@@ -67,6 +67,7 @@ function search(search_terms, db_terms, config, progress, callback) {
             search_term: st,
             search_term_type: typeof search_terms[i] === 'object' ? search_terms[i].type : undefined,
             search_term_id: typeof search_terms[i] === 'object' ? search_terms[i].id : undefined,
+            search_term_name: typeof search_terms[i] === 'object' ? search_terms[i].name : undefined,
             exact_match: false,
             search_routines: [],
             matches: {}
@@ -154,7 +155,9 @@ function _performSearch(db_terms, matches, config, setup, progress, callback) {
                         let match = matches[key];
 
                         // Run the Search Routines
-                        matches[key] = _runSearchRoutines(db_term, match, config, setup);
+                        if ( !match.search_term_type || _isDBTermTypeIncluded(match.search_term_type, config) ) {
+                            matches[key] = _runSearchRoutines(db_term, match, config, setup);
+                        }
                     }
                 }
 

@@ -192,6 +192,7 @@ router.post('/search', function(req, res, next) {
     let force = req.body.force && ( req.body.force === 'true' || req.body.force === true );
     let terms = req.body.terms;
     let search_config = req.body.config;
+    let full_database_search = search_config.full_database_search;
 
     // Check params
     if ( !database ) {
@@ -202,9 +203,26 @@ router.post('/search', function(req, res, next) {
         response.error(res, 400, "Database address not provided as 'database.address' in the request body");
         return next();
     }
-    if ( !terms || terms.length === 0 ) {
+    if ( !full_database_search && (!terms || terms.length === 0) ) {
         response.error(res, 400, "Search terms not provided as 'terms' in the request body");
         return next();
+    }
+
+    // Get all of the database terms for a full database search
+    if ( full_database_search ) {
+        terms = [];
+        for ( let i = 1; i <= cache.getCount(database.address); i++ ) {
+            let t = cache.get(database.address, i);
+            if ( t && t.length > 0 ) {
+                for ( let j = 0; j < t.length; j++ ) {
+                    terms.push({
+                        term: t[j].term,
+                        type: t[j].type,
+                        id: t[j].record.germplasmDbId
+                    });
+                }
+            }
+        }
     }
 
     // Add the Job to the Queue

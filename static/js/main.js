@@ -1,6 +1,7 @@
 let MATCHES = {};
 let EDIT_DATABASE_TOGGLED = false;
 let MAX_SEARCH_TERMS = 5000;
+let FULL_DATABASE_SEARCH = false;
 const ICONS = {
     "x": '<svg class="bi bi-x-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="red" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708-.708l7-7a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 000 .708l7 7a.5.5 0 00.708-.708l-7-7a.5.5 0 00-.708 0z" clip-rule="evenodd"/></svg>',
     "dash": '<svg class="bi bi-dash-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="orange" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>',
@@ -249,6 +250,26 @@ function toggleSearchRoutine() {
     }
 }
 
+
+/**
+ * Enable the Full Database Search
+ * - hide the user-entered search terms
+ * - display message that all db terms will be searched
+ * @param  {Boolean} [enabled] Enable the full database search
+ */
+function enableFullDatabaseSearch(enabled=true) {
+    FULL_DATABASE_SEARCH = enabled;
+    if ( enabled ) {
+        $("#input-terms-user").hide();
+        $("#input-terms-db").show();
+    }
+    else {
+        $("#input-terms-db").hide();
+        $("#input-terms-user").show();
+    }
+}
+
+
 /**
  * Format the search parameters and start the search workflow
  */
@@ -301,7 +322,8 @@ function setupSearch() {
             }
         },
         return_records: false,
-        case_sensitive: $("#options-case-sensitive").prop('checked')
+        case_sensitive: $("#options-case-sensitive").prop('checked'),
+        full_database_search: FULL_DATABASE_SEARCH
     };
     
     // Get search terms
@@ -346,10 +368,10 @@ function setupSearch() {
     }
 
     // Check number of search terms
-    if ( terms.length === 0 ) {
+    if ( !FULL_DATABASE_SEARCH && terms.length === 0 ) {
         return displayError("Please provide a list of germplasm names to search");
     }
-    else if ( terms.length > MAX_SEARCH_TERMS ) {
+    else if ( !FULL_DATABASE_SEARCH && terms.length > MAX_SEARCH_TERMS ) {
         return displayError("Please limit the number of germplasm search terms to a maximum of " + MAX_SEARCH_TERMS);
     }
 

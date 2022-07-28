@@ -24,11 +24,11 @@ const SEARCH_ROUTINES = require('../search');
  *         edit_distance = find matches that have an edit distance <= max_edit_distance
  *      search_routine_options: additional options for each of the search routines
  *      return_records = true to include germplasm records with matches
- * @param  {String[]}   search_terms  List of germplasm names to find matches for
- * @param  {Object[]}   db_terms      The database terms to perform the search on
- * @param  {Object}     [config]      Search configuration properties
- * @param  {Function}   [progress]    Callback function(status, progress) for updating search progress
- * @param  {Function}   callback      Callback function(matches)
+ * @param  {String[]||Object[]}   search_terms  List of germplasm names to find matches for
+ * @param  {Object[]}             db_terms      The database terms to perform the search on
+ * @param  {Object}               [config]      Search configuration properties
+ * @param  {Function}             [progress]    Callback function(status, progress) for updating search progress
+ * @param  {Function}             callback      Callback function(matches)
  */
 function search(search_terms, db_terms, config, progress, callback) {
 
@@ -62,8 +62,11 @@ function search(search_terms, db_terms, config, progress, callback) {
     // Set intial matches
     let matches = {}
     for ( let i = 0; i < search_terms.length; i++ ) {
-        matches[search_terms[i]] = {
-            search_term: search_terms[i],
+        let st = typeof search_terms[i] === 'object' ? search_terms[i].term : search_terms[i];
+        matches[st] = {
+            search_term: st,
+            search_term_type: typeof search_terms[i] === 'object' ? search_terms[i].type : undefined,
+            search_term_id: typeof search_terms[i] === 'object' ? search_terms[i].id : undefined,
             exact_match: false,
             search_routines: [],
             matches: {}
@@ -213,6 +216,11 @@ function _performSearch(db_terms, matches, config, setup, progress, callback) {
 function _runSearchRoutines(db_term, match, config, setup) {
     let dt = config.case_sensitive ? db_term.term : db_term.term.toUpperCase();
     let mt = config.case_sensitive ? match.search_term : match.search_term.toUpperCase();
+
+    // Exclude the same stock entry for full database searches
+    if ( match.search_term_id && match.search_term_id === db_term.record.germplasmDbId ) {
+        return match;
+    }
 
     for ( let i = 0; i < SEARCH_ROUTINES.length; i++ ) {
         let routine = SEARCH_ROUTINES[i];

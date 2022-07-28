@@ -387,9 +387,16 @@
 
         <!-- Search Term Input -->
         <p><strong>Search Terms:</strong></p>
-        <p class="text-muted">Enter your list of germplasm names (newline or comma-separated)</p>
-        <textarea id="input-terms" class="form-control" rows="15"></textarea>
-        <p class="text-muted" style="font-size: 80%;"><em><strong>Max Search Terms:</strong> <span id="input-terms-max"></span></em></p>
+        <div id="input-terms-user">
+          <p class="text-muted">Enter your list of germplasm names (newline or comma-separated)</p>
+          <textarea id="input-terms" class="form-control" rows="15"></textarea>
+          <p class="text-muted" style="font-size: 80%;"><em><strong>Max Search Terms:</strong> <span id="input-terms-max"></span></em></p>
+        </div>
+        <div id="input-terms-db" style="display:none">
+          <p>Each of the existing database terms will be searched against all of the other database terms (using the selected search options) 
+          to find possible duplicate entries.</p>
+          <p class="text-muted">This will take a long time.</p>
+        </div>
 
         <br /><br /><br />
 
@@ -613,6 +620,11 @@
                     terms: q('term', true)
                   }
                 );
+
+                // Enable the full-database search
+                if ( ['true', '1', 'on'].includes(q('full_database_search')) ) {
+                  enableFullDatabaseSearch();
+                }
 
                 // Auto start the search, if requested
                 if ( ['true', '1', 'on'].includes(q('auto')) ) {

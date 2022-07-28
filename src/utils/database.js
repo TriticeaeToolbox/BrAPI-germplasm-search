@@ -65,8 +65,8 @@ function getDBTerms(database, force, progress, callback) {
     }
 
     // Get fresh germplasm records
-    _getFreshDBTerms(brapi, cache_key, progress, function(cache_count) {
-        return callback(cache_key, cache_count);
+    _getFreshDBTerms(brapi, cache_key, progress, function(cache_count, term_count) {
+        return callback(cache_key, cache_count, term_count);
     });
 }
 
@@ -77,7 +77,7 @@ function getDBTerms(database, force, progress, callback) {
  * @param  {BrAPI}    brapi     BrAPI Node
  * @param  {String}   cache_key The base name of the cache to use
  * @param  {Function} progress  Progress callback function
- * @param  {Function} callback  Callback function(cache_key, cache_count)
+ * @param  {Function} callback  Callback function(cache_count, term_count)
  */
 function _getFreshDBTerms(brapi, cache_key, progress, callback) {
     let brapi_version = parseInt(brapi.brapi.version.major);
@@ -95,8 +95,9 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
     let count = 0;
     let total = undefined;
     let db_terms = [];
-    let cache_index = 0;
-    
+    let cache_index = 1;
+    let start_index = 1;
+    let end_index = 0;
     brapi
         .germplasm({pageSize: 1000})
         .each(function(datum, key) {
@@ -166,8 +167,9 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
                 db_terms.push({
                     term: name.trim(),
                     type: "name",
-                    record: record
+                    record: record,
                 });
+                end_index++;
             });
             synonyms.forEach(function(synonym) {
                 db_terms.push({
@@ -175,6 +177,7 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
                     type: "synonym",
                     record: record
                 });
+                end_index++;
             });
             accession_numbers.forEach(function(accession_number) {
                 db_terms.push({
@@ -182,18 +185,19 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
                     type: "accession_number",
                     record: record
                 });
+                end_index++;
             });
 
             if ( db_terms.length >= CACHE_CHUNK_SIZE ) {
-                cache_index++;
-                cache.put(cache_key, cache_index, db_terms);
+                cache.put(cache_key, cache_index, db_terms, start_index, end_index);
                 db_terms = [];
+                cache_index++;
+                start_index = end_index+1;
             }
         })
         .all(function(resp) {
-            cache_index++;
-            cache.put(cache_key, cache_index, db_terms);
-            return callback(cache_index);
+            cache.put(cache_key, cache_index, db_terms, start_index, end_index);
+            return callback(cache_index, end_index);
         });
 }
 

@@ -93,6 +93,7 @@ router.get('/job/:id', function(req, res, next) {
  */
 router.get('/cache', function(req, res, next) {
     let address = req.query.address;
+    let index = req.query.index;
 
     // Get all caches
     if ( !address ) {
@@ -102,6 +103,7 @@ router.get('/cache', function(req, res, next) {
             let info = cache.info(addresses[i]);
             let body = {
                 address: info.address,
+                chunks: info.chunks,
                 saved: info.saved,
                 terms: info.count
             }
@@ -112,14 +114,17 @@ router.get('/cache', function(req, res, next) {
     }
 
     // Get cache info
-    let info = cache.info(address);
-    
+    let info = cache.info(address, index);
+
     // Return cache info
     if ( info ) {
         let body = {
             address: info.address,
+            chunks: info.chunks,
             saved: info.saved,
-            terms: info.count
+            terms: info.count,
+            start: info.start,
+            end: info.end
         }
         response.success(res, body);
         return next();
@@ -164,8 +169,8 @@ router.put('/cache', function(req, res, next) {
         getDBTerms(database, true, function(status, progress) {
             queue.setMessage(id, status.title, status.subtitle);
             queue.setProgress(id, progress);
-        }, function(cache_key, cache_count) {
-            queue.complete(id, {key: cache_key, count: cache_count});
+        }, function(cache_key, cache_count, term_count) {
+            queue.complete(id, {key: cache_key, chunks: cache_count, terms: term_count});
         });
     });
 
@@ -193,6 +198,7 @@ router.post('/search', function(req, res, next) {
     let terms = req.body.terms;
     let search_config = req.body.config;
     let full_database_search = search_config.full_database_search;
+    let full_database_search_options = search_config.full_database_search_options;
 
     // Check params
     if ( !database ) {
@@ -208,18 +214,31 @@ router.post('/search', function(req, res, next) {
         return next();
     }
 
-    // Get all of the database terms for a full database search
+    // Get all of the database terms for a full database search.
+    // The database terms will be chunked by chunk_size and chunk_index.
+    // This chunk_size and chunk_index is independent of the cache chunk size and indices.
     if ( full_database_search ) {
         terms = [];
+        let chunk_size = parseInt(full_database_search_options.chunk_size);
+        let chunk_index = parseInt(full_database_search_options.chunk_index);
+        let start = (chunk_size*(chunk_index-1))+1;
+        let end = chunk_size*chunk_index;
+
         for ( let i = 1; i <= cache.getCount(database.address); i++ ) {
-            let t = cache.get(database.address, i);
-            if ( t && t.length > 0 ) {
-                for ( let j = 0; j < t.length; j++ ) {
+            let info = cache.info(database.address, i);
+            if ( (info.start <= start && info.end >= start) || (info.start <= end && info.end >= end) ) {
+                let t = cache.get(database.address, i);
+                let si = start <= info.start ? info.start : start;
+                let ei = end >= info.end ? info.end : end;
+                let sai = si - info.start;
+                let eai = ei - info.start;
+                let ta = terms.concat(t.slice(sai, eai+1));
+                for ( let j = 0; j < ta.length; j++ ) {
                     terms.push({
-                        term: t[j].term,
-                        type: t[j].type,
-                        id: t[j].record.germplasmDbId,
-                        name: t[j].record.germplasmName
+                        term: ta[j].term,
+                        type: ta[j].type,
+                        id: ta[j].record.germplasmDbId,
+                        name: ta[j].record.germplasmName
                     });
                 }
             }

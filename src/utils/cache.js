@@ -11,14 +11,19 @@ const cache = PersistentCache(config.cache);
 
 /**
  * Save the terms for the specified server in the cache
- * @param  {string} address Server address
- * @param  {int}    index   Cache index
- * @param  {Object} terms   Terms to save
+ * @param  {string} address     Server address
+ * @param  {int}    index       Cache index
+ * @param  {Object} terms       Terms to save
+ * @param  {int}    start       Term index of the first term
+ * @param  {int}    end         Term index of the last term
  */
-function put(address, index, terms) {
+function put(address, index, terms, start, end) {
     address = _cleanAddress(address);
     let info = {
         address: address,
+        index: index,
+        start: start,
+        end: end,
         saved: new Date(),
         terms: terms
     }
@@ -44,27 +49,41 @@ function get(address, index) {
 /**
  * Get cached terms and metadata info
  * @param  {string} address Server address
- * @return {Object}         Cached info{address, saved, count}
+ * @param  {int}    [index] Cache index
+ * @return {Object}         Cached info{address, chunks, saved, count, [start], [end]}
  */
-function info(address) {
+function info(address, index) {
     address = _cleanAddress(address);
-    if ( !isCached(address) ) {
+    if ( !isCached(address, index) ) {
         return undefined;
     }
-    let count = getCount(address);
-    let term_count = 0;
-    let saved;
-    for ( let i = 1; i <= count; i++ ) {
-        let c = cache.getSync(md5(address)+'-'+i);
-        if ( c && c.terms && c.saved ) {
-            term_count = term_count + c.terms.length;
-            saved = !saved || c.saved < saved ? c.saved : saved
+
+    // Get max number of terms
+    let chunks = getCount(address);
+    let m = cache.getSync(md5(address)+'-'+chunks);
+    let term_count = m.end;
+
+    // Get info for specific cache
+    if ( index ) {
+        let c = cache.getSync(md5(address)+'-'+index);
+        return {
+            address: address,
+            chunks: chunks,
+            saved: c.saved,
+            count: term_count,
+            start: c.start,
+            end: c.end
         }
     }
-    return {
-        address: address,
-        saved: saved,
-        count: term_count
+
+    // Get general info for all caches
+    else {
+        return {
+            address: address,
+            chunks: chunks,
+            saved: m.saved,
+            count: term_count
+        }
     }
 }
 

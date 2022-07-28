@@ -395,7 +395,12 @@
         <div id="input-terms-db" style="display:none">
           <p>Each of the existing database terms will be searched against all of the other database terms (using the selected search options) 
           to find possible duplicate entries.</p>
-          <p class="text-muted">This will take a long time.</p>
+          <p><strong>Total Number of DB/Search Terms:</strong> <span id="input-terms-db-total"></span></p>
+          <p><strong>Chunk Size:</strong> <input id="input-terms-db-chunk-size" type="number" value="10000"></p>
+          <p><strong>Total Chunks:</strong> <span id="input-terms-db-chunk-max"></span></p>
+          <p><strong>Chunk Index:</strong> <input id="input-terms-db-chunk-index" type="number" min="1" value="1"></p>
+          <br />
+          <p class="text-muted">This may take a long time.</p>
         </div>
 
         <br /><br /><br />
@@ -657,6 +662,11 @@
 
         // Set Max Search Terms
         $("#input-terms-max").html(MAX_SEARCH_TERMS);
+
+        // Listen to changes in Full DB Search Chunk Size
+        $("#input-terms-db-chunk-size").change(function() {
+          updateFullDatabaseSearchInfo()
+        });
 
       });
     </script>

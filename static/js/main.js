@@ -163,6 +163,9 @@ function setCacheInfo(db_address, callback) {
             }
             if ( callback ) return callback();
         }
+        if ( !err && info && info.terms ) {
+            updateFullDatabaseSearchInfo(info.terms);
+        }
     });
 }
 
@@ -271,6 +274,22 @@ function enableFullDatabaseSearch(enabled=true) {
 
 
 /**
+ * Update the Full Database Search Info
+ * - Set the total number of terms
+ * - Update the max number of chunks
+ * @param  {int} [count]  The max number of DB terms
+ */
+function updateFullDatabaseSearchInfo(count) {
+    if ( count ) $("#input-terms-db-total").html(count);
+    let total = parseInt($("#input-terms-db-total").html());
+    let chunk_size = parseInt($("#input-terms-db-chunk-size").val());
+    let chunk_max = Math.ceil(total/chunk_size);
+    $("#input-terms-db-chunk-max").html(chunk_max);
+    $("#input-terms-db-chunk-index").attr("max", chunk_max);
+}
+
+
+/**
  * Format the search parameters and start the search workflow
  */
 function setupSearch() {
@@ -323,7 +342,11 @@ function setupSearch() {
         },
         return_records: false,
         case_sensitive: $("#options-case-sensitive").prop('checked'),
-        full_database_search: FULL_DATABASE_SEARCH
+        full_database_search: FULL_DATABASE_SEARCH,
+        full_database_search_options: FULL_DATABASE_SEARCH ? {
+            chunk_size: $("#input-terms-db-chunk-size").val(),
+            chunk_index: $("#input-terms-db-chunk-index").val()
+        } : undefined
     };
     
     // Get search terms

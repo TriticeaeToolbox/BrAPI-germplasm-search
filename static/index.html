@@ -632,12 +632,12 @@
                 );
 
                 // Enable the full-database search
-                if ( ['true', '1', 'on'].includes(q('full_database_search')) ) {
+                if ( q('full_database_search') ) {
                   enableFullDatabaseSearch();
                 }
 
                 // Auto start the search, if requested
-                if ( ['true', '1', 'on'].includes(q('auto')) ) {
+                if ( q('auto') ) {
                   setupSearch();
                 }
               }

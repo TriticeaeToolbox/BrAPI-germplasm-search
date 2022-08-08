@@ -145,7 +145,7 @@ function setCacheInfo(db_address, callback) {
         if ( db_address === $("#database-address").val() ) {
             if ( info && info.saved && info.terms && parseInt(info.terms) > 0 ) {
                 let saved = new Date(info.saved);
-                let force = ['true', '1', 'on'].includes(q('force'));
+                let force = q('force');
                 $("#download-records").attr("disabled", false);
                 $("#download-records").prop("checked", force || false);
                 $("#cache-available-info-saved").html(saved.toLocaleString());
@@ -225,12 +225,12 @@ function setOptions(opts) {
      * @param  {string} val Initial value
      */
     function _toggle(el, val) {
-        if ( val ) {
-            if ( ['true', '1', 'on'].includes(val.toLowerCase()) ) {
+        if ( typeof val !== 'undefined' ) {
+            if ( val ) {
                 $(el).prop('checked', true);
                 $(el + "-opts").show();
             }
-            else if ( ['false', '0', 'off'].includes(val.toLowerCase()) ) {
+            else {
                 $(el).prop('checked', false);
                 $(el + "-opts").hide();
             }
@@ -796,7 +796,13 @@ function q(name, array) {
         return searchParams ? searchParams.getAll(name) : undefined;
     }
     else {
-        return searchParams ? searchParams.get(name) : undefined;
+        let value = searchParams.get(name);
+        if ( value ) {
+            if ( ['true', '1', 'on'].includes(value.toLowerCase()) ) return true;
+            if ( ['false', '0', 'off'].includes(value.toLowerCase()) ) return false;
+            return value;
+        }
+        return undefined;
     }
 }
 

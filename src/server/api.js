@@ -234,12 +234,14 @@ router.post('/search', function(req, res, next) {
                 let eai = ei - info.start;
                 let ta = terms.concat(t.slice(sai, eai+1));
                 for ( let j = 0; j < ta.length; j++ ) {
-                    terms.push({
-                        term: ta[j].term,
-                        type: ta[j].type,
-                        id: ta[j].record.germplasmDbId,
-                        name: ta[j].record.germplasmName
-                    });
+                    if ( _isDBTermTypeIncluded(ta[j].type, search_config) ) {
+                        terms.push({
+                            term: ta[j].term,
+                            type: ta[j].type,
+                            id: ta[j].record.germplasmDbId,
+                            name: ta[j].record.germplasmName
+                        });
+                    }
                 }
             }
         }
@@ -366,6 +368,27 @@ router.post('/search', function(req, res, next) {
                 return callback(matches);
             }
         );
+    }
+
+    /**
+     * Check if the specified DB Term type included in the search
+     * @param  {string}  type   DB Term Type (name, synonym, accession_number)
+     * @param  {Object}  config Search configuration
+     * @return {Boolean}        True if the db term type is included
+     */
+    function _isDBTermTypeIncluded(type, config) {
+        if ( type === 'name' ) {
+            return config.database_terms.name;
+        }
+        else if ( type === 'synonym' ) {
+            return config.database_terms.synonyms;
+        }
+        else if ( type === 'accession_number' ) {
+            return config.database_terms.accession_numbers;
+        }
+        else {
+            return false;
+        }
     }
 });
 

@@ -30,7 +30,6 @@ function setDatabases(selected, callback) {
     getDatabases(function(err, databases) {
         if ( err ) {
             console.log(err);
-            alert("Could not get database list.  Please refresh the page and try again.")
         }
 
         // Get the selected index
@@ -142,7 +141,7 @@ function setCacheInfo(db_address, callback) {
         if ( db_address === $("#database-address").val() ) {
             if ( info && info.saved && info.terms && parseInt(info.terms) > 0 ) {
                 let saved = new Date(info.saved);
-                let force = q('force');
+                let force = q('force', 'boolean');
                 $("#download-records").attr("disabled", false);
                 $("#download-records").prop("checked", force || false);
                 $("#cache-available-info-saved").html(saved.toLocaleString());
@@ -784,22 +783,21 @@ function displayContainer(name) {
 /**
  * Get a query param from the current URL
  * @param  {string}   name     Query param name
- * @param  {boolean}  [array]  True if the param should be parsed as an array
+ * @param  {string}  [type]    boolean or array
  * @return {string|string[]}   Query param value
  */
-function q(name, array) {
+function q(name, type) {
     let searchParams = new URLSearchParams(window.location.search);
-    if ( array ) {
+    if ( type === 'array' ) {
         return searchParams ? searchParams.getAll(name) : undefined;
     }
     else {
         let value = searchParams.get(name);
-        if ( value ) {
-            if ( ['true', '1', 'on'].includes(value.toLowerCase()) ) return true;
-            if ( ['false', '0', 'off'].includes(value.toLowerCase()) ) return false;
-            return value;
+        if ( value && type === 'boolean' ) {
+            if ( ['true', '1', 'on'].includes(value.toLowerCase()) ) value = true;
+            else if ( ['false', '0', 'off'].includes(value.toLowerCase()) ) value = false;
         }
-        return undefined;
+        return value;
     }
 }
 

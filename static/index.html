@@ -596,24 +596,24 @@
                 setOptions(
                   {
                     database_terms: {
-                      name: q('name'),
-                      synonyms: q('synonyms'),
-                      accession_numbers: q('accession_numbers')
+                      name: q('name', 'boolean'),
+                      synonyms: q('synonyms', 'boolean'),
+                      accession_numbers: q('accession_numbers', 'boolean')
                     },
                     search_routines: {
-                      exact: q('exact'),
-                      punctuation: q('punctuation'),
-                      substring: q('substring'),
-                      prefix: q('prefix'),
-                      edit_distance: q('edit_distance'),
+                      exact: q('exact', 'boolean'),
+                      punctuation: q('punctuation', 'boolean'),
+                      substring: q('substring', 'boolean'),
+                      prefix: q('prefix', 'boolean'),
+                      edit_distance: q('edit_distance', 'boolean'),
                     },
                     search_routine_options: {
                       substring: {
                         substring_length_min: q('substring_length_min')
                       },
                       prefix: {
-                        prefixes: q('prefixes', true),
-                        find_db_prefixes: q('find_db_prefixes'),
+                        prefixes: q('prefixes', 'array'),
+                        find_db_prefixes: q('find_db_prefixes', 'boolean'),
                         prefix_length_min: q('prefix_length_min'),
                         prefix_length_max: q('prefix_length_max'),
                         threshold: q('threshold')
@@ -622,22 +622,22 @@
                         max_edit_distance: q('max_edit_distance')
                       }
                     },
-                    case_sensitive: q('case_sensitive'),
+                    case_sensitive: q('case_sensitive', 'boolean'),
                     full_database_search_options: {
                       chunk_size: q('full_database_search_chunk_size'),
                       chunk_index: q('full_database_search_chunk_index')
                     },
-                    terms: q('term', true)
+                    terms: q('term', 'array')
                   }
                 );
 
                 // Enable the full-database search
-                if ( q('full_database_search') ) {
+                if ( q('full_database_search', 'boolean') ) {
                   enableFullDatabaseSearch();
                 }
 
                 // Auto start the search, if requested
-                if ( q('auto') ) {
+                if ( q('auto', 'boolean') ) {
                   setupSearch();
                 }
               }

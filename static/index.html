@@ -623,6 +623,10 @@
                       }
                     },
                     case_sensitive: q('case_sensitive'),
+                    full_database_search_options: {
+                      chunk_size: q('full_database_search_chunk_size'),
+                      chunk_index: q('full_database_search_chunk_index')
+                    },
                     terms: q('term', true)
                   }
                 );

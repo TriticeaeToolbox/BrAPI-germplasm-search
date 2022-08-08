@@ -205,6 +205,14 @@ function setOptions(opts) {
     if ( opts.search_routine_options.edit_distance.max_edit_distance ) {
         $("#max-edit-distance").val(opts.search_routine_options.edit_distance.max_edit_distance);
     }
+    if ( opts.full_database_search_options ) {
+        if ( opts.full_database_search_options.chunk_size ) {
+            $("#input-terms-db-chunk-size").val(opts.full_database_search_options.chunk_size);
+        }
+        if ( opts.full_database_search_options.chunk_index ) {
+            $("#input-terms-db-chunk-index").val(opts.full_database_search_options.chunk_index);
+        }
+    }
     if ( opts.terms && opts.terms.length > 0 ) {
         $("#input-terms").val(opts.terms.join('\n'));
     }

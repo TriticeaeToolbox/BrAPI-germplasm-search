@@ -74,6 +74,7 @@ The following query params will set the initial database properties:
   - **db_auth_token:** the BrAPI database auth token (will set the selected database to 'Custom')
   - **db_call_limit:** the BrAPI database call limit (will set the selected database to 'Custom')
   - **force:** when set to `1`, `true` or `on` fresh germplasm records will be downloaded from the database (otherwise cached records will be used, if available)
+  - **case_sensitive:** when set to `0`, `false`, or `off` the case sensitive search will be disabled
   
 The following query params use boolean values to toggle the initial search options
 (`1`, `true`, `on` = enabled; `0`, `false`, `off` = disabled):

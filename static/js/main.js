@@ -183,6 +183,7 @@ function setOptions(opts) {
     _toggle("#include-substring", opts.search_routines.substring);
     _toggle("#include-prefix", opts.search_routines.prefix);
     _toggle("#include-edit-distance", opts.search_routines.edit_distance);
+    _toggle("#options-case-sensitive", opts.case_sensitive);
     if ( opts.search_routine_options.substring.substring_length_min ) {
         $("#substring-length-min").val(opts.search_routine_options.substring.substring_length_min);
     }

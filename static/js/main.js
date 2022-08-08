@@ -70,15 +70,12 @@ function setDatabases(selected, callback) {
         // Set the Select listener
         $(select).change(_databaseChanged);
         $(settings_database_address).change(_databaseAddressChanged);
-        _databaseChanged();
-
-        // Return to callback
-        if ( callback ) return callback(databases);
+        _databaseChanged(callback);
 
         /**
          * Listener for selected database change
          */
-        function _databaseChanged() {
+        function _databaseChanged(callback) {
             let selected = $(select + " option:selected").val();
             if ( selected === 'custom' ) {
                 $(settings_inputs).val('');
@@ -94,15 +91,15 @@ function setDatabases(selected, callback) {
                 $(settings_database_auth_token).val(database.auth_token);
                 $(settings_database_call_limit).val(database.call_limit);
             }
-            _databaseAddressChanged();
+            _databaseAddressChanged(callback);
         }
 
         /**
          * Listener for database address change
          */
-        function _databaseAddressChanged() {
+        function _databaseAddressChanged(callback) {
             let db_address = $(settings_database_address).val();
-            setCacheInfo(db_address);
+            setCacheInfo(db_address, callback);
         }
 
     });

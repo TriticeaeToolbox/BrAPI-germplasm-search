@@ -655,7 +655,7 @@
         $("#download-all").click(downloadAll);
         $("#matches-return").click(displaySearch);
         $(".btn-match-filter").click(filterSearch);
-        $('#info-alert').on('closed.bs.alert', function () {
+        $('#info-alert').on('closed.bs.alert', () => {
           setCookie("info-alert", "dismissed");
         });
         if ( getCookie("info-alert") !== "dismissed" ) {
@@ -669,8 +669,8 @@
         $("#input-terms-max").html(MAX_SEARCH_TERMS);
 
         // Listen to changes in Full DB Search Chunk Size
-        $("#input-terms-db-chunk-size").change(function() {
-          updateFullDatabaseSearchInfo()
+        $("#input-terms-db-chunk-size").change(() => {
+          updateFullDatabaseSearchInfo($("#input-terms-db-total").data("count"))
         });
 
       });

@@ -157,11 +157,9 @@ function setCacheInfo(db_address, callback) {
                 $("#cache-available-info").hide();
                 $("#cache-unavailable-info").show();
             }
-            if ( callback ) return callback();
+            if ( callback ) callback();
         }
-        if ( !err && info && info.terms ) {
-            updateFullDatabaseSearchInfo(info.terms);
-        }
+        updateFullDatabaseSearchInfo(info?.terms);
     });
 }
 
@@ -285,12 +283,20 @@ function enableFullDatabaseSearch(enabled=true) {
  * @param  {int} [count]  The max number of DB terms
  */
 function updateFullDatabaseSearchInfo(count) {
-    if ( count ) $("#input-terms-db-total").html(count);
-    let total = parseInt($("#input-terms-db-total").html());
-    let chunk_size = parseInt($("#input-terms-db-chunk-size").val());
-    let chunk_max = Math.ceil(total/chunk_size);
-    $("#input-terms-db-chunk-max").html(chunk_max);
-    $("#input-terms-db-chunk-index").attr("max", chunk_max);
+    if ( count ) {
+        $("#input-terms-db-total").html(count);
+        $("#input-terms-db-total").data("count", count);
+        let total = parseInt($("#input-terms-db-total").html());
+        let chunk_size = parseInt($("#input-terms-db-chunk-size").val());
+        let chunk_max = Math.ceil(total/chunk_size);
+        $("#input-terms-db-chunk-max").html(chunk_max);
+        $("#input-terms-db-chunk-index").attr("max", chunk_max);
+    }
+    else {
+        $("#input-terms-db-total").html('Unknown (Update Cache)');
+        $("#input-terms-db-chunk-max").html('Unknown (Update Cache)');
+        $("#input-terms-db-chunk-index").attr("max", '999');
+    }
 }
 
 

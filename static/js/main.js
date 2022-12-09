@@ -69,12 +69,12 @@ function setDatabases(selected, callback) {
         // Set the Select listener
         $(select).change(_databaseChanged);
         $(settings_database_address).change(_databaseAddressChanged);
-        _databaseChanged(callback);
+        _databaseChanged();
 
         /**
          * Listener for selected database change
          */
-        function _databaseChanged(callback) {
+        function _databaseChanged() {
             let selected = $(select + " option:selected").val();
             if ( selected === 'custom' ) {
                 $(settings_inputs).val('');
@@ -90,13 +90,13 @@ function setDatabases(selected, callback) {
                 $(settings_database_auth_token).val(database.auth_token);
                 $(settings_database_call_limit).val(database.call_limit);
             }
-            _databaseAddressChanged(callback);
+            _databaseAddressChanged();
         }
 
         /**
          * Listener for database address change
          */
-        function _databaseAddressChanged(callback) {
+        function _databaseAddressChanged() {
             let db_address = $(settings_database_address).val();
             setCacheInfo(db_address, callback);
         }
@@ -134,6 +134,10 @@ function setDatabaseProperties(props, callback) {
  * @param {Function} [callback] Callback function()
  */
 function setCacheInfo(db_address, callback) {
+    console.log("==> SET CACHE INFO")
+    console.log(db_address);
+    console.log(callback);
+
     $("#cache-available-info").hide();
     $("#cache-unavailable-info").hide();
     $("#cache-loading-info").show();

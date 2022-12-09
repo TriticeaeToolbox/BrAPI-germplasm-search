@@ -134,10 +134,6 @@ function setDatabaseProperties(props, callback) {
  * @param {Function} [callback] Callback function()
  */
 function setCacheInfo(db_address, callback) {
-    console.log("==> SET CACHE INFO")
-    console.log(db_address);
-    console.log(callback);
-
     $("#cache-available-info").hide();
     $("#cache-unavailable-info").hide();
     $("#cache-loading-info").show();

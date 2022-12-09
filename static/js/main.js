@@ -221,7 +221,7 @@ function setOptions(opts) {
      * @param  {string} val Initial value
      */
     function _toggle(el, val) {
-        if ( typeof val !== 'undefined' ) {
+        if ( val !== 'undefined' && val !== null ) {
             if ( val ) {
                 $(el).prop('checked', true);
                 $(el + "-opts").show();

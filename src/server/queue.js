@@ -130,11 +130,11 @@ function setProgress(id, progress) {
  */
 function complete(id, results) {
     if ( QUEUE.hasOwnProperty(id) ) {
-        QUEUE[id].status = "complete";
+        QUEUE[id].results = results;
         QUEUE[id].message = undefined;
         QUEUE[id].progress = undefined;
-        QUEUE[id].results = results;
         _update(id);
+        QUEUE[id].status = "complete";
     }
 }
 

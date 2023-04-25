@@ -61,7 +61,7 @@ function info(address, index) {
     // Get max number of terms
     let chunks = getCount(address);
     let m = cache.getSync(md5(address)+'-'+chunks);
-    let term_count = m.end;
+    let term_count = m ? m.end : 0;
 
     // Get info for specific cache
     if ( index ) {
@@ -81,7 +81,7 @@ function info(address, index) {
         return {
             address: address,
             chunks: chunks,
-            saved: m.saved,
+            saved: m ? m.saved : undefined,
             count: term_count
         }
     }

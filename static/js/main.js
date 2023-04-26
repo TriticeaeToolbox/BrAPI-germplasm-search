@@ -129,7 +129,7 @@ function setDatabaseProperties(props, callback) {
             if ( props.call_limit ) $("#database-call-limit").val(props.call_limit);
             if ( props.params ) $("#database-params").val(props.params);
 
-            setCacheInfo(props.address, callback);
+            setCacheInfo(props.address, props.params, callback);
         });
     }
     else {
@@ -827,7 +827,7 @@ function q(name, type) {
  * @returns {Object} Params as an Object
  */
 function paramsToObject(params) {
-    let pa = params.split('\n');
+    let pa = params ? params.split('\n') : [];
     let po = {};
     pa.forEach((line) => {
         let [key, value] = line.split('=');

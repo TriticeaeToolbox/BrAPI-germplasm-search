@@ -186,7 +186,7 @@ function addresses() {
 function _addressKey(address, params) {
     address = address.replace(/\/$/, "");
     params = params && JSON.stringify(params) !== '{}' ? JSON.stringify(params, Object.keys(params).sort()) : '';
-    return md5(address + params);
+    return md5(address.toLowerCase() + params.toLowerCase());
 }
 
 

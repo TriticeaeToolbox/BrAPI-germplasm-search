@@ -24,8 +24,9 @@ and properties found in this file will override the default values.
   - **databases:** an array of objects containting pre-configured BrAPI database options
     - **name:** (required) Database name
     - **address:** (required) Database BrAPI endpoint address
-    - **version:** Database version string (vx.y)
-    - **auth_token:** BrAPI auth token, if one is required for the `/germplasm` call
+    - **params:** an object of additional query params to provide to the BrAPI `GET` `/germplam` call
+    - **version:** Database version string (vx.y) (Defaults to v1 if not provided)
+    - **auth_token:** BrAPI auth token, if one is required for the BrAPI `GET` `/germplasm` call
     - **call_limit:** The max number of simultaneous connections
   - **cache:** `persistent-cache` options
     - **base:** The base directory where persistent-cache will save its caches.
@@ -70,6 +71,13 @@ the initial search parameters.
 The following query params will set the initial database properties:
   - **db:** set the selected database by database index or name
   - **db_address:** the BrAPI database address (will set the selected database to 'Custom')
+  - **db_params:** A URL encoded string of new-line separated query params in the form of `key=value`.
+    - Encoded: `commonCropName%3DWHEAT%0AcountryOfOriginCode%3DUSA`
+    - Original:
+```
+commonCropName=WHEAT
+countryOfOriginCode=USA
+```
   - **db_version:** the BrAPI database version (will set the selected database to 'Custom')
   - **db_auth_token:** the BrAPI database auth token (will set the selected database to 'Custom')
   - **db_call_limit:** the BrAPI database call limit (will set the selected database to 'Custom')
@@ -133,10 +141,12 @@ Get a list of the database properties for all of the pre-configured BrAPI databa
 }
 ```
 
-### `GET` `/cache[?address=]` - Get Germplasm Cache Info
+### `GET` `/cache[?address=][param=value]...` - Get Germplasm Cache Info
 
 Get the cache status (when the cache was saved and the number of database terms) for all 
 of the cached databases (or the one specified by its address)
+
+Additional server query parameters can be provided as query parameters to this API call.
 
 **Response:** `/cache`
 ```json
@@ -168,7 +178,7 @@ of the cached databases (or the one specified by its address)
 }
 ```
 
-**Response:** `/cache?address=https://oat.triticeaetoolbox.org/brapi/v1`
+**Response:** `/cache?address=https://oat.triticeaetoolbox.org/brapi/v1&commonCropName=oat`
 ```json
 {
     "status": "error",
@@ -189,6 +199,7 @@ long running-task the request is added to a job queue and the response will incl
 ```json
 {
     "address": "http://localhost:8080/brapi/v1",
+    "params": {},
     "version": "v1.3",
     "auth_token": "",
     "call_limit": 10
@@ -262,6 +273,7 @@ long running-task the request is added to a job queue and the response will incl
 {
     "database": {
         "address": "http://localhost:8081/brapi/v1",
+        "params": {},
         "version": "v1.3",
         "auth_token": "",
         "call_limit": 10

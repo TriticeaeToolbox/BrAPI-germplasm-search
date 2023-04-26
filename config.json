@@ -26,13 +26,31 @@
             "call_limit": 10
         },
         {
-            "name": "GRIN-Global USDA",
+            "name": "USDA-GRIN Wheat",
             "address": "https://npgsweb.ars-grin.gov/gringlobal/brapi/v2",
-            "version": "v2.0",
-            "call_limit": 10,
             "params": {
                 "commoncropname": "WHEAT"
-            }
+            },
+            "version": "v2.0",
+            "call_limit": 10
+        },
+        {
+            "name": "USDA-GRIN Oat",
+            "address": "https://npgsweb.ars-grin.gov/gringlobal/brapi/v2",
+            "params": {
+                "commoncropname": "OAT"
+            },
+            "version": "v2.0",
+            "call_limit": 10
+        },
+        {
+            "name": "USDA-GRIN Barley",
+            "address": "https://npgsweb.ars-grin.gov/gringlobal/brapi/v2",
+            "params": {
+                "commoncropname": "BARLEY"
+            },
+            "version": "v2.0",
+            "call_limit": 10
         }
     ],
     "cache": {

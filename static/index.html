@@ -91,6 +91,15 @@
               </div>
               <input id="database-call-limit" class="database-setting form-control" type="text" placeholder="18" aria-label="Call Limit">
             </div>
+            <div class="mb-3">
+              <div class="input-group mb-1">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Query Params</span>
+                </div>
+                <textarea id="database-params" class="database-setting form-control" rows="2" placeholder="commoncropname=Wheat" aria-label="Query Params"></textarea>
+              </div>
+              <p class="header-info">(Optional) Enter one parameter per line, in the format of <code>key=value</code></p>
+            </div>
           </div>
         </div>
 
@@ -588,7 +597,8 @@
                 address: q('db_address'),
                 version: q('db_version'),
                 auth_token: q('db_auth_token'),
-                call_limit: q('db_call_limit')
+                call_limit: q('db_call_limit'),
+                params: q('db_params')
               },
 
               // Set initial options

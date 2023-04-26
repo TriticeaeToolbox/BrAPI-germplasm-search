@@ -26,12 +26,14 @@ function getDatabases(callback) {
 /**
  * Get cache info for the specified database
  * @param  {string}   address  DB Address
+ * @param  {Object}   params   DB Params
  * @param  {Function} callback Callback function(err, info)
  * @return {[type]}            [description]
  */
-function getCacheInfo(address, callback) {
+function getCacheInfo(address, params, callback) {
     if ( address && address != "" ) {
-        _get("/cache?address=" + address, callback);
+        const ps = _paramsToQueryString(params);
+        _get("/cache?address=" + address + ps, callback);
     }
     else {
         return callback();
@@ -99,10 +101,12 @@ function getJobInfo(id, results, callback) {
  * Get the record of the specified germplasm on the specified database
  * @param {string} id Germplasm Database ID
  * @param {string} address Database Address to query
+ * @param {Object} params Database Params
  * @param {function} callback Callback function(err, record)
  */
-function getGermplasmRecord(id, address, callback) {
-    let path = "/germplasm/" + id + "?address=" + address;
+function getGermplasmRecord(id, address, params, callback) {
+    const ps = _paramsToQueryString(params);
+    let path = "/germplasm/" + id + "?address=" + address + ps;
     _get(path, callback);
 }
 
@@ -209,4 +213,20 @@ function _request(method, path, body, callback) {
         xhr.send();
     }
 
+}
+
+
+/**
+ * Convert the params object into a query string
+ * @param {Object} params Server Params
+ * @returns {String} Params as query string (starting with &)
+ */
+function _paramsToQueryString(params) {
+    let ps = "";
+    Object.keys(params).forEach((key) => {
+        if ( key && key !== "" ) {
+            ps += `&${key}=${params[key]}`;
+        }
+    });
+    return ps;
 }

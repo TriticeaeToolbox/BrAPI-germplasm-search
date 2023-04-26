@@ -94,15 +94,19 @@ router.get('/job/:id', function(req, res, next) {
 router.get('/cache', function(req, res, next) {
     let address = req.query.address;
     let index = req.query.index;
+    let params = req.query;
+    delete params.address;
+    delete params.index;
 
     // Get all caches
     if ( !address ) {
         let rtn = [];
         let addresses = cache.addresses();
         for ( let i = 0; i < addresses.length; i++ ) {
-            let info = cache.info(addresses[i]);
+            let info = cache.info(addresses[i].address, addresses[i].params);
             let body = {
                 address: info.address,
+                params: info.params,
                 chunks: info.chunks,
                 saved: info.saved,
                 terms: info.count
@@ -114,12 +118,13 @@ router.get('/cache', function(req, res, next) {
     }
 
     // Get cache info
-    let info = cache.info(address, index);
+    let info = cache.info(address, params, index);
 
     // Return cache info
     if ( info ) {
         let body = {
             address: info.address,
+            params: info.params,
             chunks: info.chunks,
             saved: info.saved,
             terms: info.count,
@@ -146,6 +151,7 @@ router.get('/cache', function(req, res, next) {
  */
 router.put('/cache', function(req, res, next) {
     let address = req.body.address;
+    let params = req.body.params;
     let version = req.body.version;
     let auth_token = req.body.auth_token;
     let call_limit = req.body.call_limit;
@@ -159,6 +165,7 @@ router.put('/cache', function(req, res, next) {
     // Set database properties
     let database = {
         address: address,
+        params: params,
         version: version,
         auth_token: auth_token,
         call_limit: call_limit
@@ -169,8 +176,8 @@ router.put('/cache', function(req, res, next) {
         getDBTerms(database, true, function(status, progress) {
             queue.setMessage(id, status.title, status.subtitle);
             queue.setProgress(id, progress);
-        }, function(cache_key, cache_count, term_count) {
-            queue.complete(id, {key: cache_key, chunks: cache_count, terms: term_count});
+        }, function(cache_address, cache_params, cache_count, term_count) {
+            queue.complete(id, {address: cache_address, params: cache_params, chunks: cache_count, terms: term_count});
         });
     });
 
@@ -224,10 +231,10 @@ router.post('/search', function(req, res, next) {
         let start = (chunk_size*(chunk_index-1))+1;
         let end = chunk_size*chunk_index;
 
-        for ( let i = 1; i <= cache.getCount(database.address); i++ ) {
-            let info = cache.info(database.address, i);
+        for ( let i = 1; i <= cache.getCount(database.address, database.params); i++ ) {
+            let info = cache.info(database.address, database.params, i);
             if ( (info.start <= start && info.end >= start) || (info.start <= end && info.end >= end) ) {
-                let t = cache.get(database.address, i);
+                let t = cache.get(database.address, database.params, i);
                 let si = start <= info.start ? info.start : start;
                 let ei = end >= info.end ? info.end : end;
                 let sai = si - info.start;
@@ -251,7 +258,7 @@ router.post('/search', function(req, res, next) {
     let id = queue.add(function() {
 
         // Check to see if there are any cached db terms
-        let db_terms = cache.get(database.address, 1);
+        let db_terms = cache.get(database.address, database.params, 1);
         
         // Update the cache of db terms?
         if ( force || !db_terms || db_terms.length === 0 ) {
@@ -263,8 +270,8 @@ router.post('/search', function(req, res, next) {
                     queue.setMessage(id, status.title, status.subtitle);
                     queue.setProgress(id, progress);
                 }, 
-                function(cache_key, cache_count) {
-                    _search(id, terms, cache_key, cache_count, search_config);
+                function(cache_address, cache_params, cache_count) {
+                    _search(id, terms, cache_address, cache_params, cache_count, search_config);
                 }
             );
 
@@ -272,7 +279,7 @@ router.post('/search', function(req, res, next) {
 
         // Use the Cached DB Terms to search on
         else {
-            _search(id, terms, database.address, cache.getCount(database.address), search_config);
+            _search(id, terms, database.address, database.params, cache.getCount(database.address, database.params), search_config);
         }
 
     });
@@ -290,11 +297,12 @@ router.post('/search', function(req, res, next) {
      * Perform the database search
      * @param  {string}     id            Job ID
      * @param  {string[]}   terms         Search Terms
-     * @param  {String}     cache_key     Cache Key
+     * @param  {String}     address       Server address
+     * @param  {Object}     params        Server params
      * @param  {int}        cache_count   Cache Count
      * @param  {Object}     search_config Search Parameters
      */
-    function _search(id, terms, cache_key, cache_count, search_config) {
+    function _search(id, terms, address, params, cache_count, search_config) {
         let cache_index = 1;
         let rtn = {};
         _run();
@@ -303,7 +311,7 @@ router.post('/search', function(req, res, next) {
          * Start the search of the current chunk
          */
         function _run() {
-            _search_chuck(id, terms, cache_key, cache_count, cache_index, search_config, _finish);
+            _search_chuck(id, terms, address, params, cache_count, cache_index, search_config, _finish);
         }
 
         /**
@@ -347,17 +355,18 @@ router.post('/search', function(req, res, next) {
      * 
      * @param  {string}     id            Job ID
      * @param  {string[]}   terms         Search Terms
-     * @param  {String}     cache_key     Cache Key
+     * @param  {String}     address       Server Address
+     * @param  {Object}     params        Server Params
      * @param  {int}        cache_count   Cache Count
      * @param  {int}        cache_index   Cache Index
      * @param  {Object}     search_config Search Parameters
      * @param  {Function}   callback      Callback function(matches)
      */
-    function _search_chuck(id, terms, cache_key, cache_count, cache_index, search_config, callback) {
+    function _search_chuck(id, terms, address, params, cache_count, cache_index, search_config, callback) {
         let ps = (100/cache_count)*cache_index-(100/cache_count);
         let pe = (100/cache_count)*cache_index;
         let pd = pe - ps;
-        let db_terms = cache.get(cache_key, cache_index);
+        let db_terms = cache.get(address, params, cache_index);
         search(terms, db_terms, search_config,
             function(status, progress) {
                 let p = ((progress/100) * pd) + ps;
@@ -401,6 +410,8 @@ router.post('/search', function(req, res, next) {
 router.get('/germplasm/:id', function(req, res, next) {
     let id = req.params.id;
     let address = req.query.address;
+    let params = req.query;
+    delete params.address;
 
     // Check params
     if ( !address ) {
@@ -409,11 +420,11 @@ router.get('/germplasm/:id', function(req, res, next) {
     }
 
     // Get the number of caches
-    let cache_count = cache.getCount(address);
+    let cache_count = cache.getCount(address, params);
     
     // Parse each cache
     for ( let i = 1; i <= cache_count; i++ ) {
-        let terms = cache.get(address, i);
+        let terms = cache.get(address, params, i);
 
          // Find a matching term
         for ( let i = 0; i < terms.length; i++ ) {

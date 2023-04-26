@@ -18,7 +18,7 @@ const CACHE_CHUNK_SIZE = config.cache.chunk_size;
  * @param  {Object}   database   BrAPI Database properties
  * @param  {boolean}  [force]    Ignore cached database terms and request fresh ones
  * @param  {Function} [progress] Progress callback({title, subtitle}, progress)
- * @param  {Function} callback   Callback function(cache_key, cache_count)
+ * @param  {Function} callback   Callback function(cache_address, cache_params, cache_count, term_count)
  */
 function getDBTerms(database, force, progress, callback) {
 
@@ -57,16 +57,15 @@ function getDBTerms(database, force, progress, callback) {
 
     // Create BrAPI Node
     let brapi = BrAPI(database.address, database.version, database.auth_token, database.call_limit);
-    let cache_key = brapi.brapi.brapi_base_url;
-    
+
     // Return cached records, if available and allowed
-    if ( !force && cache.isCached(cache_key) ) {
-        return callback(cache_key, cache.getCount(cache_key));
+    if ( !force && cache.isCached(database.address, database.params) ) {
+        return callback(database.address, database.params, cache.getCount(database.address, database.params));
     }
 
     // Get fresh germplasm records
-    _getFreshDBTerms(brapi, cache_key, progress, function(cache_count, term_count) {
-        return callback(cache_key, cache_count, term_count);
+    _getFreshDBTerms(brapi, database.address, database.params, progress, function(cache_count, term_count) {
+        return callback(database.address, database.params, cache_count, term_count);
     });
 }
 
@@ -75,11 +74,12 @@ function getDBTerms(database, force, progress, callback) {
  * Get fresh germplasm records from the database and parse out the 
  * terms to search on (database name, synonyms, etc)
  * @param  {BrAPI}    brapi     BrAPI Node
- * @param  {String}   cache_key The base name of the cache to use
+ * @param  {String}   address   The server address
+ * @param  {Object}   params    The server params
  * @param  {Function} progress  Progress callback function
  * @param  {Function} callback  Callback function(cache_count, term_count)
  */
-function _getFreshDBTerms(brapi, cache_key, progress, callback) {
+function _getFreshDBTerms(brapi, address, params, progress, callback) {
     let brapi_version = parseInt(brapi.brapi.version.major);
 
     if ( progress ) {
@@ -90,8 +90,9 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
     }
 
     // Clear the existing cache
-    cache.clear(cache_key);
+    cache.clear(address, params);
 
+    // Make the BrAPI request for the Germplasm
     let count = 0;
     let total = undefined;
     let db_terms = [];
@@ -99,7 +100,7 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
     let start_index = 1;
     let end_index = 0;
     brapi
-        .germplasm({pageSize: 1000})
+        .germplasm({pageSize: 1000, ...params})
         .each(function(datum, key) {
             if ( !total ) {
                 total = datum.__response.metadata.pagination.totalCount;
@@ -152,7 +153,9 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
                     names.push(dn);
                 }
                 syns.forEach(function(syn) {
-                    synonyms.push(syn.synonym)
+                    if ( syn && syn.synonym ) {
+                        synonyms.push(syn.synonym)
+                    }
                 });
                 accession_numbers = ans;
             }
@@ -189,14 +192,14 @@ function _getFreshDBTerms(brapi, cache_key, progress, callback) {
             });
 
             if ( db_terms.length >= CACHE_CHUNK_SIZE ) {
-                cache.put(cache_key, cache_index, db_terms, start_index, end_index);
+                cache.put(address, params, cache_index, db_terms, start_index, end_index);
                 db_terms = [];
                 cache_index++;
                 start_index = end_index+1;
             }
         })
         .all(function(resp) {
-            cache.put(cache_key, cache_index, db_terms, start_index, end_index);
+            cache.put(address, params, cache_index, db_terms, start_index, end_index);
             return callback(cache_index, end_index);
         });
 }

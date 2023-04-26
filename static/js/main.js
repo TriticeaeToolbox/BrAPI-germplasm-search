@@ -25,6 +25,7 @@ function setDatabases(selected, callback) {
     let settings_database_version = "#database-version";
     let settings_database_auth_token = "#database-auth-token";
     let settings_database_call_limit = "#database-call-limit";
+    let settings_database_params = "#database-params";
 
     // Get supported Databases
     getDatabases(function(err, databases) {
@@ -89,6 +90,13 @@ function setDatabases(selected, callback) {
                 $(settings_database_version).val(database.version);
                 $(settings_database_auth_token).val(database.auth_token);
                 $(settings_database_call_limit).val(database.call_limit);
+                let params = [];
+                if ( database.params ) {
+                    Object.keys(database.params).forEach((param) => {
+                        params.push(`${param}=${database.params[param]}`);
+                    });
+                }
+                $(settings_database_params).val(params.join('\n'));
             }
             _databaseAddressChanged();
         }
@@ -98,7 +106,8 @@ function setDatabases(selected, callback) {
          */
         function _databaseAddressChanged() {
             let db_address = $(settings_database_address).val();
-            setCacheInfo(db_address, callback);
+            let db_params = $(settings_database_params).val();
+            setCacheInfo(db_address, db_params, callback);
         }
 
     });
@@ -107,17 +116,18 @@ function setDatabases(selected, callback) {
 
 /**
  * Set custom database properties
- * @param {Object}   props      DB Properties {address, version, auth_token, call_limit}
+ * @param {Object}   props      DB Properties {address, version, auth_token, call_limit, params}
  * @param {Function} [callback] Callback function()
  */
 function setDatabaseProperties(props, callback) {
-    if ( props && (props.address || props.version || props.auth_token || props.call_limit) ) {
+    if ( props && (props.address || props.version || props.auth_token || props.call_limit || props.params) ) {
         setDatabases("custom", function() {
             $("#database-settings").show();
             if ( props.address ) $("#database-address").val(props.address);
             if ( props.version ) $("#database-version").val(props.version);
             if ( props.auth_token ) $("#database-auth-token").val(props.auth_token);
             if ( props.call_limit ) $("#database-call-limit").val(props.call_limit);
+            if ( props.params ) $("#database-params").val(props.params);
 
             setCacheInfo(props.address, callback);
         });
@@ -131,13 +141,14 @@ function setDatabaseProperties(props, callback) {
 /**
  * Set the cache info for the specifed database
  * @param {string}   db_address DB Address
+ * @param {string}   db_params  Line separated set of query params (key=value)
  * @param {Function} [callback] Callback function()
  */
-function setCacheInfo(db_address, callback) {
+function setCacheInfo(db_address, db_params, callback) {
     $("#cache-available-info").hide();
     $("#cache-unavailable-info").hide();
     $("#cache-loading-info").show();
-    getCacheInfo(db_address, function(err, info) {
+    getCacheInfo(db_address, paramsToObject(db_params), function(err, info) {
         if ( db_address === $("#database-address").val() ) {
             if ( info && info.saved && info.terms && parseInt(info.terms) > 0 ) {
                 let saved = new Date(info.saved);
@@ -316,7 +327,8 @@ function setupSearch() {
         address: $("#database-address").val(),
         version: $("#database-version").val(),
         auth_token: $("#database-auth-token").val(),
-        call_limit: $("#database-call-limit").val()
+        call_limit: $("#database-call-limit").val(),
+        params: paramsToObject($("#database-params").val())
     }
 
     // Get database request
@@ -616,7 +628,8 @@ function displayGermplasm(name, id) {
     $("#germplasmModal").modal("show");
 
     let address = $("#database-address").val();
-    getGermplasmRecord(id, address, function(err, record) {
+    let params = paramsToObject($("#database-params").val());
+    getGermplasmRecord(id, address, params, function(err, record) {
         let html = "";
         if ( err || !record ) {
             console.log(err);
@@ -771,7 +784,7 @@ function displayError(err) {
 function displaySearch() {
     $("#search").attr("disabled", false);
     displayContainer("search");
-    setCacheInfo($("#database-address").val());
+    setCacheInfo($("#database-address").val(), $("#database-params").val());
 }
 
 
@@ -806,6 +819,23 @@ function q(name, type) {
         return value;
     }
 }
+
+
+/**
+ * Convert the line separated key=value string of params to an Object
+ * @param {String} params Params as a String
+ * @returns {Object} Params as an Object
+ */
+function paramsToObject(params) {
+    let pa = params.split('\n');
+    let po = {};
+    pa.forEach((line) => {
+        let [key, value] = line.split('=');
+        po[key] = value;
+    });
+    return po;
+}
+
 
 /**
  * Set a cookie with the specified value

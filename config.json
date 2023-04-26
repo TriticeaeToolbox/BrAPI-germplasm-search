@@ -24,6 +24,15 @@
             "address": "https://cassavabase.org/brapi/v1",
             "version": "v1.3",
             "call_limit": 10
+        },
+        {
+            "name": "GRIN-Global USDA",
+            "address": "https://npgsweb.ars-grin.gov/gringlobal/brapi/v2",
+            "version": "v2.0",
+            "call_limit": 10,
+            "params": {
+                "commoncropname": "WHEAT"
+            }
         }
     ],
     "cache": {

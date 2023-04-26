@@ -12,34 +12,37 @@ const cache = PersistentCache(config.cache);
 /**
  * Save the terms for the specified server in the cache
  * @param  {string} address     Server address
+ * @param  {Object} params      Server params
  * @param  {int}    index       Cache index
  * @param  {Object} terms       Terms to save
  * @param  {int}    start       Term index of the first term
  * @param  {int}    end         Term index of the last term
  */
-function put(address, index, terms, start, end) {
-    address = _cleanAddress(address);
+function put(address, params, index, terms, start, end) {
+    const key = _addressKey(address, params);
     let info = {
         address: address,
+        params: params,
         index: index,
         start: start,
         end: end,
         saved: new Date(),
         terms: terms
     }
-    cache.putSync(md5(address)+'-'+index, info);
+    cache.putSync(key+'-'+index, info);
 }
 
 /**
  * Get the terms for the specifed server from the cache
  * @param  {string} address Server address
+ * @param  {Object} params  Server params
  * @param  {int}    index   Cache index
  * @return {Object}         Saved terms
  */
-function get(address, index) {
-    address = _cleanAddress(address);
-    if ( isCached(address, index) ) {
-        return cache.getSync(md5(address)+'-'+index).terms;
+function get(address, params, index) {
+    const key = _addressKey(address, params)
+    if ( isCached(address, params) ) {
+        return cache.getSync(key+'-'+index).terms;
     }
     else {
         return undefined;
@@ -48,26 +51,28 @@ function get(address, index) {
 
 /**
  * Get cached terms and metadata info
- * @param  {string} address Server address
- * @param  {int}    [index] Cache index
- * @return {Object}         Cached info{address, chunks, saved, count, [start], [end]}
+ * @param  {string} address  Server address
+ * @param  {Object} [params] Server params
+ * @param  {int}    [index]  Cache index
+ * @return {Object}          Cached info{address, chunks, saved, count, [start], [end]}
  */
-function info(address, index) {
-    address = _cleanAddress(address);
-    if ( !isCached(address, index) ) {
+function info(address, params, index) {
+    const key = _addressKey(address, params);
+    if ( !isCached(address, params) ) {
         return undefined;
     }
 
     // Get max number of terms
-    let chunks = getCount(address);
-    let m = cache.getSync(md5(address)+'-'+chunks);
+    let chunks = getCount(address, params);
+    let m = cache.getSync(key+'-'+chunks);
     let term_count = m ? m.end : 0;
 
     // Get info for specific cache
     if ( index ) {
-        let c = cache.getSync(md5(address)+'-'+index);
+        let c = cache.getSync(key+'-'+index);
         return {
             address: address,
+            params: params,
             chunks: chunks,
             saved: c.saved,
             count: term_count,
@@ -80,6 +85,7 @@ function info(address, index) {
     else {
         return {
             address: address,
+            params: params,
             chunks: chunks,
             saved: m ? m.saved : undefined,
             count: term_count
@@ -89,18 +95,18 @@ function info(address, index) {
 
 /**
  * Check if there is a cached value for the specified server
- * @param  {string}  address Server address
- * @param  {int}     [index] Cache index to ensure
- * @return {Boolean}         true if there is cached info
+ * @param  {string}  address  Server address
+ * @param  {Object}  [params] Server params
+ * @param  {int}     [index]  Cache index to ensure
+ * @return {Boolean}          true if there is cached info
  */
-function isCached(address, index) {
-    address = _cleanAddress(address);
-    let address_key = md5(address);
+function isCached(address, params, index) {
+    const key = _addressKey(address, params)
     let keys = cache.keysSync();
     for ( let i = 0; i < keys.length; i++ ) {
-        let key = keys[i];
-        if ( key.startsWith(address_key) ) {
-            if ( !index || (index || key.endsWith("-" + index)) ) {
+        let k = keys[i];
+        if ( k.startsWith(key) ) {
+            if ( !index || (index || k.endsWith("-" + index)) ) {
                 return true;
             }
         }
@@ -111,17 +117,17 @@ function isCached(address, index) {
 
 /**
  * Get the number of caches for the specified server
- * @param {string} address Server address
- * @returns {integer}      The count of caches for the server
+ * @param {string} address  Server address
+ * @param {Object} [params] Server params
+ * @returns {integer}       The count of caches for the server
  */
-function getCount(address) {
-    address = _cleanAddress(address);
-    let address_key = md5(address);
+function getCount(address, params) {
+    const key = _addressKey(address, params);
     let count = 0;
     let keys = cache.keysSync();
     for ( let i = 0; i < keys.length; i++ ) {
-        let key = keys[i];
-        if ( key.startsWith(address_key) ) {
+        let k = keys[i];
+        if ( k.startsWith(key) ) {
             count++;
         }
     }
@@ -135,27 +141,35 @@ function getCount(address) {
  */
 function addresses() {
     let keys = cache.keysSync();
+    let seen = [];
     let addresses = [];
     for ( let i = 0; i < keys.length; i++ ) {
-        addresses.push(
-            cache.getSync(keys[i]).address
-        );
+        const c = cache.getSync(keys[i]);
+        if ( c && c.address ) {
+            if ( !seen.includes(c.address) ) {
+                addresses.push({
+                    address: c.address,
+                    params: c.params
+                });
+                seen.push(c.address);
+            }
+        }
     }
-    let rtn = [...new Set(addresses)]
-    return rtn;
+    return addresses;
 }
 
 /**
  * Remove all of the caches for the spcified server
- * @param {string} address Server address
+ * @param {string} address  Server address
+ * @param {Object} [params] Server params
  */
- function clear(address) {
-    address = _cleanAddress(address);
-    if ( isCached(address) ) {
-        let count = getCount(address);
+ function clear(address, params) {
+    const key = _addressKey(address, params);
+    if ( isCached(address, params) ) {
+        let count = getCount(address, params);
         for ( let i = 1; i <= count; i++ ) {
             try {
-                cache.deleteSync(md5(address)+'-'+i);
+                cache.deleteSync(key+'-'+i);
             }
             catch (err) {}
         }
@@ -164,12 +178,15 @@ function addresses() {
 
 
 /**
- * Remove the trailing space from the address
- * @param {string} address Address to clean
- * @returns cleaned address
+ * Get the md5 key of the specified database
+ * @param {String} address Database Address
+ * @param {Object} [params] Database Params
+ * @returns {String} Address key composed of address and params
  */
-function _cleanAddress(address) {
-    return address.replace(/\/$/, "");
+function _addressKey(address, params) {
+    address = address.replace(/\/$/, "");
+    params = params && JSON.stringify(params) !== '{}' ? JSON.stringify(params, Object.keys(params).sort()) : '';
+    return md5(address + params);
 }
 
 

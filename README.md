@@ -1,6 +1,15 @@
 # BrAPI-germplasm-search
 A BrAPI-powered bulk germplasm search API server and website
 
+## Screenshots
+
+### Search Options
+![screenshot-search](https://github.com/TriticeaeToolbox/BrAPI-germplasm-search/assets/7526014/175fcaf9-b3e5-4daa-a0d6-8e5d83c8dc7d)
+
+### Search Results
+![screenshot-results](https://github.com/TriticeaeToolbox/BrAPI-germplasm-search/assets/7526014/27d24114-01ef-491f-9a8d-71fe3d838854)
+
+
 ## Installation
 This project is packaged as a node module that includes a small 
 [Express](https://expressjs.com/) web server that runs the search 

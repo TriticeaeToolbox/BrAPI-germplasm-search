@@ -1,4 +1,4 @@
-const API_HOST = window.location.href + "api";
+const API_HOST = window.location.href.split(/[?#]/)[0].replace(/\/?$/, '/') + "api";
 
 // CACHE OF DATABASES
 let DATABASES = undefined;

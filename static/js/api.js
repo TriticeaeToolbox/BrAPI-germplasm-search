@@ -1,4 +1,4 @@
-const API_HOST = window.location.origin + "/api";
+const API_HOST = window.location.href + "api";
 
 // CACHE OF DATABASES
 let DATABASES = undefined;

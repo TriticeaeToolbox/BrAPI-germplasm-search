@@ -559,8 +559,8 @@ function displayMatches(results) {
                     // DB Entry Header
                     let checked = exact_match && exact_match === germplasmName ? "checked" : "";
                     html += "<h4 class='db-entry-header'>";
-                    html += "<input type='radio' name='" + search_term + "' data-id='" + germplasmDbId + "' data-name='" + germplasmName + "' " + checked + ">&nbsp;&nbsp;";
-                    html += "<a href='#' onclick='displayGermplasm(\"" + germplasmName + "\", " + germplasmDbId + "); return false;'>";
+                    html += `<input type='radio' name='${encode(search_term)}' data-id='${germplasmDbId}' data-name='${encode(germplasmName)}' ${checked}>&nbsp;&nbsp;`;
+                    html += `<a href='#' onclick='displayGermplasm("${encode(germplasmName)}", ${germplasmDbId}); return false;'>`;
                     html += germplasmName;
                     html += "</a>";
                     html += "</h4>";
@@ -585,7 +585,7 @@ function displayMatches(results) {
             // No Match
             let checked = match_count === 0 || !exact_match ? 'checked' : '';
             html += "<h4 class='db-entry-header'>";
-            html += "<input type='radio' name='" + search_term + "' data-id='' data-name='' " + checked + ">&nbsp;&nbsp;";
+            html += `<input type='radio' name='${encode(search_term)}' data-id='' data-name='' ${checked}>&nbsp;&nbsp;`;
             html += "NO MATCH";
             html += "</h4>";
 
@@ -619,10 +619,11 @@ function filterSearch() {
 
 /**
  * Display a modal dialog with the germplasm details
- * @param  {String} name The database germplasm name
+ * @param  {String} name The ENCODED database germplasm name
  * @param  {int}    id   The databse germplasm id
  */
-function displayGermplasm(name, id) {
+function displayGermplasm(encoded_name, id) {
+    let name = decode(encoded_name);
     $("#germplasmModal-title").html(name);
     $("#germplasmModal-details").html("<p>Loading Germplasm Details...</p>");
     $("#germplasmModal").modal("show");
@@ -670,7 +671,8 @@ function downloadMatches() {
     let rows = [];
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
-            let selected = $("input[name='" + term + "']:checked").data("name");
+            let encoded_selected = $(`input[name='${encode(term)}']:checked`).data("name");
+            let selected = decode(encoded_selected);
             if ( selected && selected !== "" ) {
                 rows.push([term, selected]);
             }
@@ -688,7 +690,8 @@ function downloadNoMatches() {
     let rows = [];
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
-            let selected = $("input[name='" + term + "']:checked").data("name");
+            let encoded_selected = $(`input[name='${encode(term)}']:checked`).data("name");
+            let selected = decode(encoded_selected);
             if ( !selected || selected === "" ) {
                 rows.push([term]);
             }
@@ -709,7 +712,8 @@ function downloadAll() {
     for ( term in MATCHES ) {
         if ( MATCHES.hasOwnProperty(term) ) {
             let match = MATCHES[term];
-            let selected = $("input[name='" + term + "']:checked").data("name");
+            let encoded_selected = $(`input[name='${encode(term)}']:checked`).data("name");
+            let selected = decode(encoded_selected);
             let has_match = selected && selected !== "" ? 'true' : 'false';
             let match_count = Object.keys(match.matches).length;
 
@@ -869,4 +873,22 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+
+/**
+ * Encode a string (primarily to remove special characters)
+ * @param {string} s    String to encode
+ * @returns {string}    Encoded string
+ */
+function encode(s) {
+    return btoa(s);
+}
+
+/**
+ * Decode a string (back to its original value)
+ * @param {string} s    String to decode
+ * @returns {string}    Decoded string
+ */
+function decode(s) {
+    return atob(s);
 }

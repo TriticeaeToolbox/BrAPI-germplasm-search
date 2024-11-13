@@ -19,6 +19,7 @@ const SEARCH_ROUTINES = require('../search');
  *     search_routines:
  *         exact = find exact matches to db terms
  *         punctuation = find matches that are the same with special characters removed
+ *         accents = find matches that have special characters replaced with simplified ASCII characters
  *         substring = find db terms that contain the search term
  *         prefix = find matches that are the same when common prefixes are removed
  *         edit_distance = find matches that have an edit distance <= max_edit_distance

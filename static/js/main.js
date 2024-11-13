@@ -185,6 +185,7 @@ function setOptions(opts) {
     _toggle("#include-accession-numbers", opts.database_terms.accession_numbers);
     _toggle("#include-exact", opts.search_routines.exact);
     _toggle("#include-punctuation", opts.search_routines.punctuation);
+    _toggle("#include-accents", opts.search_routines.accents);
     _toggle("#include-substring", opts.search_routines.substring);
     _toggle("#include-prefix", opts.search_routines.prefix);
     _toggle("#include-edit-distance", opts.search_routines.edit_distance);
@@ -344,6 +345,7 @@ function setupSearch() {
         search_routines: {
             exact: $("#include-exact").prop('checked'),
             punctuation: $("#include-punctuation").prop('checked'),
+            accents: $("#include-accents").prop('checked'),
             substring: $("#include-substring").prop('checked'),
             prefix: $("#include-prefix").prop('checked'),
             edit_distance: $("#include-edit-distance").prop('checked')

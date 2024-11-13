@@ -71,6 +71,7 @@
         "search_routines": {
             "exact": true,
             "punctuation": false,
+            "accents": false,
             "substring": false,
             "prefix": false,
             "edit_distance": false

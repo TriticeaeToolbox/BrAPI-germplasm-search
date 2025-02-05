@@ -22,6 +22,9 @@
         {
             "name": "Cassavabase",
             "address": "https://cassavabase.org/brapi/v1",
+            "params": {
+                "minAcquisitionDate": "20200000"
+            },
             "version": "v1.3",
             "call_limit": 10
         },

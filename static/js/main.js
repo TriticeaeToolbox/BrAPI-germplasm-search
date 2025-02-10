@@ -70,7 +70,7 @@ function setDatabases(selected, callback) {
 
         // Set the Select listener
         $(select).change(_databaseChanged);
-        $(settings_database_address).change(_databaseAddressChanged);
+        $(settings_inputs).change(_databaseAddressChanged);
         _databaseChanged();
 
         /**
@@ -82,7 +82,6 @@ function setDatabases(selected, callback) {
                 $(settings_inputs).val('');
                 $(settings).show();
                 $(edit).attr('disabled', true);
-                $(settings_database_params_warning).hide();
             }
             else {
                 $(edit).attr('disabled', false);
@@ -99,17 +98,6 @@ function setDatabases(selected, callback) {
                     });
                 }
                 $(settings_database_params).val(params.join('\n'));
-                if ( params.length > 0 ) {
-                    $(settings_database_params_warning).show();
-                    $(settings_database_params_warning).html(
-                        'The following query parameters are applied to this BrAPI endpoint:<br /><br /><ul>' +
-                        params.map(p =>`<li>${p}</li>`).join('') +
-                        '</ul>'
-                    );
-                }
-                else {
-                    $(settings_database_params_warning).hide();
-                }
             }
             _databaseAddressChanged();
         }
@@ -120,6 +108,28 @@ function setDatabases(selected, callback) {
         function _databaseAddressChanged() {
             let db_address = $(settings_database_address).val();
             let db_params = $(settings_database_params).val();
+
+            if ( db_params !== "" ) {
+                $(settings_database_params_warning).show();
+                $(settings_database_params_warning).html(
+                    '<p>The following filters are applied to this database:</p>' +
+                    '<ul>' +
+                    db_params.split('\n').map(p =>`<li>${p}</li>`).join('') +
+                    '</ul>' +
+                    '<p>Possible query parameters include:</p>' +
+                    '<ul>' +
+                    '<li>commonCropName: only include germplasm with this generalized crop name</li>' +
+                    '<li>minAcquisitionDate: only include germplasm that were acquired by the database on or after this date (in YYYYMMDD format)</li>' +
+                    '<li>maxAcquisitionDate: only include germplasm that were acquired by the database on or before this date (in YYYYMMDD format)</li>' +
+                    '<li>programDbId: only include germplasm from the breeding program with this program database id</li>' +
+                    '</ul>' +
+                    '<p>You can <a href="javascript:toggleEditDatabase()">edit the database settings</a> to change the database query parameters.</p>'
+                );
+            }
+            else {
+                $(settings_database_params_warning).hide();
+            }
+
             setCacheInfo(db_address, db_params, callback);
         }
 

@@ -26,6 +26,7 @@ function setDatabases(selected, callback) {
     let settings_database_auth_token = "#database-auth-token";
     let settings_database_call_limit = "#database-call-limit";
     let settings_database_params = "#database-params";
+    let settings_database_params_warning = "#database-params-warning";
 
     // Get supported Databases
     getDatabases(function(err, databases) {
@@ -82,7 +83,7 @@ function setDatabases(selected, callback) {
                 $(settings).show();
                 $(edit).attr('disabled', true);
             }
-            else {  
+            else {
                 $(edit).attr('disabled', false);
                 if ( !EDIT_DATABASE_TOGGLED ) $(settings).hide();
                 let database = databases[selected];
@@ -97,6 +98,17 @@ function setDatabases(selected, callback) {
                     });
                 }
                 $(settings_database_params).val(params.join('\n'));
+                if ( params.length > 0 ) {
+                    $(settings_database_params_warning).show();
+                    $(settings_database_params_warning).html(
+                        'The following query parameters are applied to this BrAPI endpoint:<br /><br /><ul>' +
+                        params.map(p =>`<li>${p}</li>`).join('') +
+                        '</ul>'
+                    );
+                }
+                else {
+                    $(settings_database_params_warning).hide();
+                }
             }
             _databaseAddressChanged();
         }

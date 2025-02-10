@@ -82,6 +82,7 @@ function setDatabases(selected, callback) {
                 $(settings_inputs).val('');
                 $(settings).show();
                 $(edit).attr('disabled', true);
+                $(settings_database_params_warning).hide();
             }
             else {
                 $(edit).attr('disabled', false);

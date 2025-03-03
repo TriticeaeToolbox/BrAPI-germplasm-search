@@ -14,6 +14,7 @@ const bar = new progress.SingleBar({
 const update = function() {
     let index = 0;
     let total = dbs.length;
+    let database = process.env.npm_config_database;
     
     if ( !IS_UPDATING ) {
         console.log("===> STARTING CACHE UPDATE...");
@@ -23,10 +24,16 @@ const update = function() {
     function _run() {
         if ( index < total ) {
             IS_UPDATING = true;
-            _updateDB(dbs[index], function() {
+            if ( !database || database === '' || database === dbs[index].name ) {
+                _updateDB(dbs[index], function() {
+                    index++;
+                    _run();
+                });
+            }
+            else {
                 index++;
                 _run();
-            });
+            }
         }
         else {
             IS_UPDATING = false;

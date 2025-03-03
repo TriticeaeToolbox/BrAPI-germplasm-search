@@ -116,7 +116,7 @@ function _performSetup(db_terms, matches, config) {
  */
 function _performSearch(db_terms, matches, config, setup, progress, callback) {
 
-    // Chuck DB Terms
+    // Chunk DB Terms
     let chunks = _chunkArray(db_terms, 1000);
 
     // Start processing the first chunk
@@ -300,6 +300,7 @@ function _addMatch(routine_name, routine_key, weight, properties, match, db_term
         match.matches[db_term.record.germplasmName] = {
             germplasmName: db_term.record.germplasmName,
             germplasmDbId: db_term.record.germplasmDbId,
+            germplasmSynonyms: db_term.record.synonyms,
             record: db_term.record,
             matched_db_terms: []
         }

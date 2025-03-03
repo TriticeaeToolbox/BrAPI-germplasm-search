@@ -311,7 +311,7 @@ router.post('/search', function(req, res, next) {
          * Start the search of the current chunk
          */
         function _run() {
-            _search_chuck(id, terms, address, params, cache_count, cache_index, search_config, _finish);
+            _search_chunk(id, terms, address, params, cache_count, cache_index, search_config, _finish);
         }
 
         /**
@@ -362,7 +362,7 @@ router.post('/search', function(req, res, next) {
      * @param  {Object}     search_config Search Parameters
      * @param  {Function}   callback      Callback function(matches)
      */
-    function _search_chuck(id, terms, address, params, cache_count, cache_index, search_config, callback) {
+    function _search_chunk(id, terms, address, params, cache_count, cache_index, search_config, callback) {
         let ps = (100/cache_count)*cache_index-(100/cache_count);
         let pe = (100/cache_count)*cache_index;
         let pd = pe - ps;

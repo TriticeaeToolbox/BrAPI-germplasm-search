@@ -69,7 +69,8 @@
         "database_terms": {
             "name": true,
             "synonyms": true,
-            "accession_numbers": true
+            "accession_numbers": true,
+            "crosses": false
         },
         "search_routines": {
             "exact": true,

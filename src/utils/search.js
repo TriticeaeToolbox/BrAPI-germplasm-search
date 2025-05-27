@@ -292,14 +292,14 @@ function _addMatch(routine_name, routine_key, weight, properties, match, db_term
 
     // Set Exact Match Flag
     if ( routine_key === 'exact' ) {
-        match.exact_match = db_term.record.germplasmName;
+        match.exact_match = db_term.record.germplasmName || db_term.record.crossName;
     }
 
     // Create Match for DB Term
-    if ( !match.matches.hasOwnProperty(db_term.record.germplasmName) ) {
-        match.matches[db_term.record.germplasmName] = {
-            germplasmName: db_term.record.germplasmName,
-            germplasmDbId: db_term.record.germplasmDbId,
+    if ( !match.matches.hasOwnProperty(db_term.record.germplasmName || db_term.record.crossName) ) {
+        match.matches[db_term.record.germplasmName || db_term.record.crossName] = {
+            germplasmName: db_term.record.germplasmName || db_term.record.crossName,
+            germplasmDbId: db_term.record.germplasmDbId || db_term.record.crossDbId,
             germplasmSynonyms: db_term.record.synonyms,
             record: db_term.record,
             matched_db_terms: []
@@ -307,7 +307,7 @@ function _addMatch(routine_name, routine_key, weight, properties, match, db_term
     }
 
     // Add match info
-    match.matches[db_term.record.germplasmName].matched_db_terms.push({
+    match.matches[db_term.record.germplasmName || db_term.record.crossName].matched_db_terms.push({
         search_routine: {
             key: routine_key,
             name: routine_name,
@@ -340,6 +340,9 @@ function _isDBTermTypeIncluded(type, config) {
     }
     else if ( type === 'accession_number' ) {
         return config.database_terms.accession_numbers;
+    }
+    else if ( type === 'cross' ) {
+        return config.database_terms.crosses;
     }
     else {
         return false;

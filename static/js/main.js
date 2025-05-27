@@ -206,6 +206,7 @@ function setOptions(opts) {
     _toggle("#include-name", opts.database_terms.name);
     _toggle("#include-synonyms", opts.database_terms.synonyms);
     _toggle("#include-accession-numbers", opts.database_terms.accession_numbers);
+    _toggle("#include-crosses", opts.database_terms.crosses);
     _toggle("#include-exact", opts.search_routines.exact);
     _toggle("#include-punctuation", opts.search_routines.punctuation);
     _toggle("#include-accents", opts.search_routines.accents);
@@ -363,7 +364,8 @@ function setupSearch() {
         database_terms: {
             name: $("#include-name").prop('checked'),
             synonyms: $("#include-synonyms").prop('checked'),
-            accession_numbers: $("#include-accession-numbers").prop('checked')
+            accession_numbers: $("#include-accession-numbers").prop('checked'),
+            crosses: $("#include-crosses").prop('checked')
         },
         search_routines: {
             exact: $("#include-exact").prop('checked'),

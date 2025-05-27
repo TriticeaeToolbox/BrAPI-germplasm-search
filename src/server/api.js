@@ -245,8 +245,8 @@ router.post('/search', function(req, res, next) {
                         terms.push({
                             term: ta[j].term,
                             type: ta[j].type,
-                            id: ta[j].record.germplasmDbId,
-                            name: ta[j].record.germplasmName
+                            id: ta[j].record.germplasmDbId || ta[j].record.crossDbId,
+                            name: ta[j].record.germplasmName || ta[j].record.crossName
                         });
                     }
                 }
@@ -428,7 +428,12 @@ router.get('/germplasm/:id', function(req, res, next) {
 
          // Find a matching term
         for ( let i = 0; i < terms.length; i++ ) {
-            if ( terms[i].record && terms[i].record.germplasmDbId.toString() === id ) {
+            if ( terms[i].record && 
+                (
+                    (terms[i].record.germplasmDbId && terms[i].record.germplasmDbId.toString() === id) ||
+                    (terms[i].record.crossDbId && terms[i].record.crossDbId.toString() === id)
+                )
+            ) {
                 let record = terms[i].record;
                 response.success(res, record);
                 return next();

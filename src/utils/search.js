@@ -51,10 +51,10 @@ function search(search_terms, db_terms, config, progress, callback) {
 
     // Check for required parameters
     if ( !search_terms || search_terms.length === 0 ) {
-        throw("Search terms are required");
+        console.warn("WARNING: No Search Terms provided to search function!");
     }
     else if ( !db_terms || db_terms.length === 0 ) {
-        throw("DB terms are required");
+        console.warn("WARNING: No DB Terms provided to search function!");
     }
 
     // Merge provided config into default config
@@ -130,7 +130,7 @@ function _performSearch(db_terms, matches, config, setup, progress, callback) {
 
         // Get the current chunk
         index = index ? index : 0;
-        let chunk = chunks[index];
+        let chunk = chunks[index] || [];
 
         // Update Progress
         let count = index+1;
@@ -356,7 +356,6 @@ function _isDBTermTypeIncluded(type, config) {
  * @param {int} size Max size of the chunks
  */
 function _chunkArray(arr, size) {
-    var index = 0;
     var arrayLength = arr.length;
     var tempArray = [];
     for ( let index = 0; index < arrayLength; index += size ) {

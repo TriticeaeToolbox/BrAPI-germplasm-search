@@ -32,6 +32,7 @@
     "@solgenomics/brapijs": "github:solgenomics/BrAPI-js#v2.0.0",
     "cli-progress": "^3.9.1",
     "deep-extend": "^0.6.0",
+    "exceljs": "^4.4.0",
     "express": "^4.17.1",
     "flat": "^5.0.2",
     "md5": "^2.3.0",

@@ -97,5 +97,12 @@
         },
         "return_records": false,
         "case_sensitive": false
+    },
+    "templates": {
+        "wheat.triticeaetoolbox.org": { "file": "wheat.xlsx", "species": "Triticum aestivum" },
+        "wheatcap.triticeaetoolbox.org": { "file": "wheat.xlsx", "species": "Triticum aestivum" },
+        "oat.triticeaetoolbox.org": { "file": "oat.xlsx", "species": "Avena sativum" },
+        "barley.triticeaetoolbox.org": { "file": "barley.xlsx", "species": "Hordeum vulgare" },
+        "cassavabase.org": { "file": "barley.xlsx", "species": "Manihot esculenta" }
     }
 }

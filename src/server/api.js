@@ -1,6 +1,9 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const router = require('express').Router();
+const ExcelJS = require('exceljs');
 const response = require('./response.js');
 const queue = require('./queue.js');
 const config = require('../utils/config.js');
@@ -445,5 +448,40 @@ router.get('/germplasm/:id', function(req, res, next) {
     response.error(res, 404, "No database record found for the requested germplasm [" + id + "]");
     return next();
 });
+
+
+/**
+ * Generate a template for the specified terms for the specified database
+ * Required body params: database.address, terms
+ * @param  {Object}   req   Express Request
+ * @param  {Object}   res   Express Response
+ * @param  {Function} next  Express handler stack callback
+ */
+router.post('/template', async function(req, res, next) {
+    const database = req.body.database || '';
+    const terms = req.body.terms || [];
+    const host = new URL(database)?.hostname || '';
+    const species = config.templates[host]?.species || '';
+    const file = config.templates[host]?.file || 'generic.xls';
+    const template_file = `${__dirname}/../../static/templates/${file}`;
+
+    try {
+        // Add missing terms and species to template file
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(template_file);
+        const worksheet = workbook.worksheets[0];
+        terms.forEach((t) => worksheet.addRow([t, species]));
+
+        // Send stream as response
+        res.setHeader('Content-disposition', 'attachment; filename=accessions.xlsx');
+        res.setHeader('Content-type', 'application/vnd.ms-excel');
+        await workbook.xlsx.write(res);
+    }
+    catch (err) {
+        response.error(res, 500, `There was an error generating the breedbase template [${err}]`);
+        return next();
+    }
+});
+
 
 module.exports = router;

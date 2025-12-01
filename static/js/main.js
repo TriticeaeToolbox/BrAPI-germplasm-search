@@ -779,6 +779,24 @@ function downloadAll() {
     downloadCSV(headers, rows, "allMatchData");
 }
 
+/**
+ * Download a breedbase accession template for the missing terms
+ * (Generated on the server)
+ */
+function downloadBreedbaseTemplate() {
+    let missing = [];
+    for ( term in MATCHES ) {
+        if ( MATCHES.hasOwnProperty(term) ) {
+            let encoded_selected = $(`input[name='${encode(term)}']:checked`).data("name");
+            let selected = decode(encoded_selected);
+            if ( !selected || selected === "" ) {
+                missing.push(term);
+            }
+        }
+    }
+    getBreedbaseTemplate($("#database-address").val(), missing);
+}
+
 
 /**
  * Create a CSV and start the download of it

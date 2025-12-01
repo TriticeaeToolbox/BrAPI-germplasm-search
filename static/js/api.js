@@ -70,7 +70,7 @@ function startSearch(terms, database, config, callback) {
         database: database,
         config: config
     }
-    _post("/search", body, function(err, resp) {
+    _post("/search", body, false, function(err, resp) {
         if ( err || !resp.job || !resp.job.id ) {
             return callback(err);
         }
@@ -112,12 +112,29 @@ function getGermplasmRecord(id, address, params, callback) {
 
 
 /**
+ * Download a breedbase accessions template for the specified terms.  The database will 
+ * determine which base template to use and the species to assume for the terms.
+ * @param {string} database The URL of the database the terms will be uploaded to
+ * @param {string[]} terms A list of germplasm names to add to the template
+ */
+function getBreedbaseTemplate(database, terms) {
+    _post("/template", { database, terms }, true, function(err, resp) {
+        var blob=new Blob([resp]);
+        var link=document.createElement('a');
+        link.href=window.URL.createObjectURL(blob);
+        link.download="accessions.xlsx";
+        link.click();
+    });
+}
+
+
+/**
  * Make a GET Request
  * @param  {string}   path     API Path
  * @param  {Function} callback Callback function(err, response)
  */
 function _get(path, callback) {
-    _request("GET", path, undefined, callback);
+    _request("GET", path, undefined, false, callback);
 }
 
 /**
@@ -127,17 +144,18 @@ function _get(path, callback) {
  * @param  {Function} callback Callback function(err, response)
  */
 function _put(path, body, callback) {
-    _request("PUT", path, body, callback);
+    _request("PUT", path, body, false, callback);
 }
 
 /**
  * Make a POST Request
  * @param  {string}   path     API Path
  * @param  {Object}   body     JSON Request Body
+ * @param  {Boolean}  binary   Flag to download a binary file
  * @param  {Function} callback Callback function(err, response)
  */
-function _post(path, body, callback) {
-    _request("POST", path, body, callback);
+function _post(path, body, binary, callback) {
+    _request("POST", path, body, binary, callback);
 }
 
 
@@ -148,7 +166,7 @@ function _post(path, body, callback) {
  * @param  {Object}   body     JSON Request Body
  * @param  {Function} callback Callback function(err, response)
  */
-function _request(method, path, body, callback) {
+function _request(method, path, body, binary, callback) {
     // console.log("--> API REQUEST [" + method + "] " + path);
     
     // Set URL to Config API Host
@@ -157,7 +175,7 @@ function _request(method, path, body, callback) {
     // Set Request
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
-    xhr.responseType = "text";
+    xhr.responseType = binary ? "blob" : "text";
 
     // Set Error Listener
     xhr.onerror = function() {
@@ -170,27 +188,33 @@ function _request(method, path, body, callback) {
         if ( xhr.response ) {
             try {
 
+                // Return response as-is
+                if ( binary ) {
+                    return callback(null, xhr.response);
+                }
+
                 // Parse Response to JSON
-                var resp = JSON.parse(xhr.response);
+                else {
+                    var resp = JSON.parse(xhr.response);
 
-                // console.log("--> API RESPONSE:");
-                // console.log(resp);
+                    // console.log("--> API RESPONSE:");
+                    // console.log(resp);
 
-                // Request Error
-                if ( resp.status === "error" ) {
-                    return callback(new Error(resp.error.message));
+                    // Request Error
+                    if ( resp.status === "error" ) {
+                        return callback(new Error(resp.error.message));
+                    }
+
+                    // Request Success
+                    else if ( resp.status === "success" ) {
+                        return callback(null, resp.response);
+                    }
+
+                    // Job Status
+                    else if ( resp.job ) {
+                        return callback(null, resp);
+                    }
                 }
-
-                // Request Success
-                else if ( resp.status === "success" ) {
-                    return callback(null, resp.response);
-                }
-
-                // Job Status
-                else if ( resp.job ) {
-                    return callback(null, resp);
-                }
-
             }
             catch(err) {
                 console.log("API Response Error: " + err);

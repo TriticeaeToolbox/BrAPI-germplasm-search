@@ -8,6 +8,13 @@
             "call_limit": 10
         },
         {
+            "name": "T3/WheatCAP",
+            "address": "https://wheatcap.triticeaetoolbox.org/brapi/v1",
+            "version": "v1.3",
+            "call_limit": 10,
+            "requires_login": true
+        },
+        {
             "name": "T3/Oat",
             "address": "https://oat.triticeaetoolbox.org/brapi/v1",
             "version": "v1.3",

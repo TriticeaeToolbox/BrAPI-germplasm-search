@@ -20,11 +20,16 @@ function setDatabases(selected, callback) {
     let select = "#database-select";
     let edit = "#edit-database";
     let settings = "#database-settings";
+    let login_info_connect = "#database-login-connect";
+    let login_info_disconnect = "#database-login-disconnect";
     let settings_inputs = ".database-setting";
     let settings_database_address = "#database-address";
     let settings_database_version = "#database-version";
     let settings_database_auth_token = "#database-auth-token";
+    let settings_database_auth_token_required = "#database-auth-token-required";
     let settings_database_call_limit = "#database-call-limit";
+    let settings_database_login_warning = "#database-login-warning";
+    let settings_database_login_stored = "#database-login-stored";
     let settings_database_params = "#database-params";
     let settings_database_params_warning = "#database-params-warning";
 
@@ -68,9 +73,19 @@ function setDatabases(selected, callback) {
         html += ">Custom</option>";
         $(select).html(html);
 
+        // Store any config-provided auth tokens, if one is not already stored
+        if ( databases ) {
+            for ( let i = 0; i < databases.length; i++ ) {
+                const db = databases[i];
+                if ( db.auth_token && !hasAuthToken(db.address) ) {
+                    setAuthToken(db.address, db.auth_token);
+                }
+            }
+        }
+
         // Set the Select listener
         $(select).change(_databaseChanged);
-        $(settings_inputs).change(_databaseAddressChanged);
+        $(settings_inputs).change(_databaseSettingsChanged);
         _databaseChanged();
 
         /**
@@ -89,7 +104,9 @@ function setDatabases(selected, callback) {
                 let database = databases[selected];
                 $(settings_database_address).val(database.address);
                 $(settings_database_version).val(database.version);
-                $(settings_database_auth_token).val(database.auth_token);
+                $(settings_database_auth_token).val(getAuthToken(database.address));
+                $(settings_database_auth_token).data('required', database.requires_login ? 'true' : 'false');
+                $(settings_database_auth_token_required).css("display", database.requires_login ? 'block' : 'none');
                 $(settings_database_call_limit).val(database.call_limit);
                 let params = [];
                 if ( database.params ) {
@@ -99,16 +116,19 @@ function setDatabases(selected, callback) {
                 }
                 $(settings_database_params).val(params.join('\n'));
             }
-            _databaseAddressChanged();
+            _databaseSettingsChanged();
         }
 
         /**
-         * Listener for database address change
+         * Listener for database settings change
          */
-        function _databaseAddressChanged() {
+        function _databaseSettingsChanged() {
             let db_address = $(settings_database_address).val();
             let db_params = $(settings_database_params).val();
+            let db_auth_token = $(settings_database_auth_token).val();
+            let db_requires_login = $(settings_database_auth_token).data('required') === 'true';
 
+            // Set DB Params Warning
             if ( db_params !== "" ) {
                 $(settings_database_params_warning).show();
                 $(settings_database_params_warning).html(
@@ -128,6 +148,37 @@ function setDatabases(selected, callback) {
             }
             else {
                 $(settings_database_params_warning).hide();
+            }
+
+            // Store input auth token, if provided
+            if ( db_auth_token !== "" ) {
+                setAuthToken(db_address, db_auth_token);
+            }
+
+            // Check if Auth Token Required
+            if ( db_requires_login ) {
+                if ( hasAuthToken(db_address) ) {
+                    $(settings_database_login_warning).hide();
+                    $(settings_database_login_stored).show();
+                }
+                else {
+                    $(settings_database_login_warning).show();
+                    $(settings_database_login_stored).hide();
+                }
+            }
+            else {
+                $(settings_database_login_warning).hide();
+                $(settings_database_login_stored).hide();
+            }
+
+            // Check if connected to this database
+            if ( hasAuthToken(db_address) ) {
+                $(login_info_disconnect).show();
+                $(login_info_connect).hide();
+            }
+            else {
+                $(login_info_connect).show();
+                $(login_info_disconnect).hide();
             }
 
             setCacheInfo(db_address, db_params, callback);
@@ -276,6 +327,92 @@ function toggleEditDatabase() {
     EDIT_DATABASE_TOGGLED = !EDIT_DATABASE_TOGGLED;
     $("#database-settings").toggle();
 }
+
+
+/**
+ * Start the OAuth process
+ * - save the source database in the cookie
+ * - redirect to the database to allow the OAuth connection
+ */
+function startConnectDatabase() {
+    let db_address = $("#database-address").val();
+    let db_connect_url = `${db_address.replace(/\/v[12]/i, "")}/authorize?redirect_uri=${window.location.protocol}//${window.location.host}`;
+    setCookie("connect-database-address", db_address);
+    setCookie("connect-database-select", $("#database-select").val());
+    window.location = db_connect_url;
+}
+
+
+/**
+ * Finalize the OAuth process
+ * - read the source database from the cookie
+ * - save the auth token in a cookie
+ * - show success message on website
+ */
+function finalizeConnectDatabase() {
+    let db_address = getCookie("connect-database-address");
+    let db_select = getCookie("connect-database-select");
+
+    let token = q('access_token');
+    let status = q('status');
+    if ( status === "200" && (token || '').length > 0 ) {
+        setAuthToken(db_address, token);
+        setDatabases(db_select);
+        $("#database-login-success").show();
+        $("#database-login-success-address").html(db_address);
+    }
+}
+
+/**
+ * Disconnect the current database
+ * - Remove auth token cookie
+ * - Reset auth token input
+ */
+function disconnectDatabase() {
+    let db_address = $("#database-address").val();
+    deleteAuthToken(db_address);
+    setDatabases($("#database-select").val());
+}
+
+/**
+ * Check if there is an auth token set for the current DB
+ * @param {string} db_address DB Address
+ * @returns {boolean}
+ */
+function hasAuthToken(db_address) {
+    let cookie = getAuthToken(db_address);
+    return cookie && cookie !== '' && cookie.length > 0;
+}
+
+/**
+ * Set the auth token for the current DB (saved as a cookie)
+ * @param {string} db_address DB Address
+ * @param {string} token Auth Token
+ */
+function setAuthToken(db_address, token) {
+    let cname = `auth-token-${encode(db_address)}`;
+    setCookie(cname, token);
+}
+
+/**
+ * Get the auth token for the current DB
+ * @param {string} db_address DB Address
+ * @returns {string}
+ */
+function getAuthToken(db_address) {
+    let cname = `auth-token-${encode(db_address)}`;
+    return getCookie(cname);
+}
+
+/**
+ * Remove the auth token for the current DB
+ * @param {string} db_address DB Address
+ */
+function deleteAuthToken(db_address) {
+    let cname = `auth-token-${encode(db_address)}`;
+    deleteCookie(cname);
+}
+
 
 /**
  * Toggle the display of additional options when a switch is toggled
@@ -891,8 +1028,7 @@ function paramsToObject(params) {
  * @param {string} cname  Cookie name
  * @param {string} cvalue Cookie value
  */
-function setCookie(cname, cvalue) {
-    var exdays = 999;
+function setCookie(cname, cvalue, exdays = 999) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
@@ -918,6 +1054,14 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+
+/**
+ * Delete the specified cookie
+ * @param {string} cname Cookie name
+ */
+function deleteCookie(cname) {
+    setCookie(cname, "", -999);
 }
 
 /**

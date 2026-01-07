@@ -33,6 +33,14 @@
         </p>
       </div>
 
+      <div id="database-login-success" class="alert alert-success" style="display: none">
+        <p style="margin: 0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M4 1c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2H1v2h12V9h-3c1.11 0 2-.89 2-2V3c0-1.11-.89-2-2-2zm0 2h6v4H4zM3 13v7h7v-2H5v-5zm11 0c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h-3v2h12v-2h-3c1.11 0 2-.89 2-2v-4c0-1.11-.89-2-2-2zm0 2h6v4h-6z"/>
+          </svg>
+          Successfully connected to <span id="database-login-success-address"></span>
+        </p>
+      </div>
 
       <!-- SEARCH CONTAINER -->
       <div id="search-container" class="section-container">
@@ -53,6 +61,17 @@
           </div>
         </div>
 
+        <!-- Database Login Warning -->
+        <div id="database-login-warning" class="alert alert-warning" role="alert" style="display: none">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 16 16"><path fill="currentColor" d="M11 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2a4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/></svg>
+          This database requires a login. <a href="javascript:toggleEditDatabase()">Add an Auth Token</a> in this database's settings.
+        </div>
+
+        <!-- Database Login Stored -->
+        <div id="database-login-stored" class="alert alert-success" role="alert" style="display: none">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 16 16"><path fill="currentColor" d="M11 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2a4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/></svg>
+          This database requires a login. An Auth Token is set for this database.
+        </div>
 
         <!-- Database Params Warning -->
         <div id="database-params-warning" class="alert alert-info" role="alert" style="display: none"></div>
@@ -82,12 +101,30 @@
               </div>
               <input id="database-version" class="database-setting form-control" type="text" placeholder="v1.3" aria-label="Version">
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group">
               <div class="input-group-prepend">
                 <span class="input-group-text">Auth Token</span>
               </div>
-              <input id="database-auth-token" class="database-setting form-control" type="text" placeholder="myToken" aria-label="Auth Token">
+              <input id="database-auth-token" class="database-setting form-control" type="text" placeholder="myToken" aria-label="Auth Token" data-required="false">
+              <div class="input-group-append" id="database-auth-token-required" style="display: none">
+                <span class="input-group-text"><strong>required</strong></span>
+              </div>
             </div>
+            <div id="database-login-connect" class="mb-3" style="display: none">
+              <a id="database-login-connect-btn" href="#" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M4 1c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2H1v2h12V9h-3c1.11 0 2-.89 2-2V3c0-1.11-.89-2-2-2zm0 2h6v4H4zM3 13v7h7v-2H5v-5zm11 0c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h-3v2h12v-2h-3c1.11 0 2-.89 2-2v-4c0-1.11-.89-2-2-2zm0 2h6v4h-6z"/>
+                </svg>
+                Get Auth Token
+              </a>
+              <span><em>Only works with supported T3 or Breedbase DBs</em></span>
+            </div>
+            <a id="database-login-disconnect" href="#" class="btn btn-danger mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M4 1c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2H1v2h12V9h-3c1.11 0 2-.89 2-2V3c0-1.11-.89-2-2-2zm0 2h6v4H4zm10 10c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h-3v2h12v-2h-3c1.11 0 2-.89 2-2v-4c0-1.11-.89-2-2-2zm-10.12.46l-1.42 1.42L4.59 17l-2.13 2.12l1.42 1.42L6 18.41l2.12 2.13l1.42-1.42L7.41 17l2.13-2.12l-1.42-1.42L6 15.59zM14 15h6v4h-6z"/>
+              </svg>
+              Remove Stored Auth Token
+            </a>
             <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text">Call Limit</span>
@@ -690,6 +727,8 @@
 
         // Set Click Listeners
         $("#edit-database").click(toggleEditDatabase);
+        $("#database-login-connect-btn").click(startConnectDatabase);
+        $("#database-login-disconnect").click(disconnectDatabase);
         $(".custom-control-input").click(toggleSearchRoutine);
         $("#search").click(setupSearch);
         $("#error-return").click(displaySearch);
@@ -705,6 +744,13 @@
         if ( getCookie("info-alert") !== "dismissed" ) {
           $("#info-alert").show();
         }
+
+        // Check for OAuth Access Token
+        setTimeout(function() {
+          if ( q('access_token') !== null ) {
+            finalizeConnectDatabase();
+          }
+        }, 500)
  
         // Enable Tooltips
         $("[data-toggle='tooltip']").tooltip({delay: {"show": 500, "hide": 0}});

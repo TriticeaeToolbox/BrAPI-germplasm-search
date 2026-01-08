@@ -140,6 +140,21 @@ function complete(id, results) {
 
 
 /**
+ * Set the job as failed with an error message
+ * @param {string} id Job ID
+ * @param {string} message Error Message
+ */
+function fail(id, message) {
+    if ( QUEUE.hasOwnProperty(id) ) {
+        QUEUE[id].progress = 0;
+        QUEUE[id].message = message;
+        _update(id);
+        QUEUE[id].status = "failed";
+    }
+}
+
+
+/**
  * Update the updated timestamp of the specified job
  * @param  {string} id Job ID
  */
@@ -160,5 +175,6 @@ module.exports = {
     getResults: getResults,
     setMessage: setMessage,
     setProgress: setProgress,
-    complete: complete
+    complete: complete,
+    fail: fail
 }

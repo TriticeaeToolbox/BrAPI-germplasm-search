@@ -8,6 +8,7 @@ const ICONS = {
     "check": '<svg class="bi bi-check-circle" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/></svg>',
     "check_multiple": '<svg class="bi bi-check2-all" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg"><path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"/><path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z"/></svg>'
 }
+const AUTH_TOKEN_AGE = 1.5/24;      // Duration (in days) to keep cached auth tokens
 
 /**
  * Set the Database Selection menu options
@@ -151,7 +152,7 @@ function setDatabases(selected, callback) {
             }
 
             // Store input auth token, if provided
-            if ( db_auth_token !== "" ) {
+            if ( db_auth_token !== "" && db_auth_token !== getAuthToken(db_address) ) {
                 setAuthToken(db_address, db_auth_token);
             }
 
@@ -360,6 +361,9 @@ function finalizeConnectDatabase() {
         setDatabases(db_select);
         $("#database-login-success").show();
         $("#database-login-success-address").html(db_address);
+        setTimeout(() => {
+            $("#database-login-success").hide()
+        }, 5000);
     }
 }
 
@@ -391,7 +395,7 @@ function hasAuthToken(db_address) {
  */
 function setAuthToken(db_address, token) {
     let cname = `auth-token-${encode(db_address)}`;
-    setCookie(cname, token);
+    setCookie(cname, token, AUTH_TOKEN_AGE);
 }
 
 /**
@@ -489,6 +493,7 @@ function setupSearch() {
         address: $("#database-address").val(),
         version: $("#database-version").val(),
         auth_token: $("#database-auth-token").val(),
+        login_required: $("#database-auth-token").data("required") === "true",
         call_limit: $("#database-call-limit").val(),
         params: paramsToObject($("#database-params").val())
     }
@@ -553,6 +558,11 @@ function setupSearch() {
     // BrAPI needs at least an address
     if ( !database.address || database.address === "" ) {
         return displayError("A database address / URL is required");
+    }
+
+    // Check for auth token, if required
+    if ( database.login_required && (!database.auth_token || database.auth_token === '') ) {
+        return displayError("This database requires an auth token to be set");
     }
 
     // Ensure at least one database term type

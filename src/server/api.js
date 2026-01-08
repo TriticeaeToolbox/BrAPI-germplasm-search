@@ -179,8 +179,13 @@ router.put('/cache', function(req, res, next) {
         getDBTerms(database, true, function(status, progress) {
             queue.setMessage(id, status.title, status.subtitle);
             queue.setProgress(id, progress);
-        }, function(cache_address, cache_params, cache_count, term_count) {
-            queue.complete(id, {address: cache_address, params: cache_params, chunks: cache_count, terms: term_count});
+        }, function(err, cache_address, cache_params, cache_count, term_count) {
+            if ( err ) {
+                queue.fail(id, err);
+            }
+            else {
+                queue.complete(id, {address: cache_address, params: cache_params, chunks: cache_count, terms: term_count});
+            }
         });
     });
 
@@ -273,7 +278,11 @@ router.post('/search', function(req, res, next) {
                     queue.setMessage(id, status.title, status.subtitle);
                     queue.setProgress(id, progress);
                 }, 
-                function(cache_address, cache_params, cache_count) {
+                function(err, cache_address, cache_params, cache_count) {
+                    if ( err ) {
+                        response.error(res, 500, err);
+                        return next();
+                    }
                     _search(id, terms, cache_address, cache_params, cache_count, search_config);
                 }
             );

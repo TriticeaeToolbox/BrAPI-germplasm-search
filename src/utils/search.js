@@ -3,6 +3,7 @@
 const extend = require('deep-extend');
 const DEFAULT_CONFIG = require('./config.js').search;
 const SEARCH_ROUTINES = require('../search');
+const chunk_array = require('./chunk_array.js');
 
 /**
  * Search the BrAPI database terms for germplasm entries that match the specified search 
@@ -117,7 +118,7 @@ function _performSetup(db_terms, matches, config) {
 function _performSearch(db_terms, matches, config, setup, progress, callback) {
 
     // Chunk DB Terms
-    let chunks = _chunkArray(db_terms, 1000);
+    let chunks = chunk_array(db_terms, 1000);
 
     // Start processing the first chunk
     _processChunk();
@@ -348,22 +349,6 @@ function _isDBTermTypeIncluded(type, config) {
         return false;
     }
 }
-
-
-/**
- * Split an array into separate chunks
- * @param {Array} arr Array to separate into chunks
- * @param {int} size Max size of the chunks
- */
-function _chunkArray(arr, size) {
-    var arrayLength = arr.length;
-    var tempArray = [];
-    for ( let index = 0; index < arrayLength; index += size ) {
-        let myChunk = arr.slice(index, index+size);
-        tempArray.push(myChunk);
-    }
-    return tempArray;
-};
 
 
 

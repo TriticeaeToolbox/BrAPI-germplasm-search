@@ -52,7 +52,8 @@ const _updateDB = function(db, callback) {
         function(msg, progress) {
             bar.update(parseFloat(progress.toFixed(2)));
         },
-        function() {
+        function(err) {
+            if ( err ) console.log("ERROR: " + err);
             bar.update(100);
             bar.stop();
             return callback();   

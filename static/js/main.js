@@ -66,6 +66,7 @@ function setDatabases(selected, callback) {
                 html += ">"
                 html += db.name + " (" + db.address + ")";
                 if ( db.version ) html += " [" + db.version + "]";
+                if ( db.requires_login ) html += " 🔒";
                 html += "</option>";
             }
         }
@@ -96,6 +97,8 @@ function setDatabases(selected, callback) {
             let selected = $(select + " option:selected").val();
             if ( selected === 'custom' ) {
                 $(settings_inputs).val('');
+                $(settings_database_auth_token).data('required', 'false');
+                $(settings_database_auth_token_required).css("display", 'none');
                 $(settings).show();
                 $(edit).attr('disabled', true);
             }

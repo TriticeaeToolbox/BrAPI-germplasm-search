@@ -207,7 +207,7 @@ router.put('/cache', function(req, res, next) {
  * @param  {Object}   res   Express Response
  * @param  {Function} next  Express handler stack callback
  */
-router.post('/search', function(req, res, next) {
+router.post('/search', async function(req, res, next) {
     let database = req.body.database;
     let force = req.body.force && ( req.body.force === 'true' || req.body.force === true );
     let terms = req.body.terms;
@@ -226,6 +226,25 @@ router.post('/search', function(req, res, next) {
     }
     if ( !full_database_search && (!terms || terms.length === 0) ) {
         response.error(res, 400, "Search terms not provided as 'terms' in the request body");
+        return next();
+    }
+
+    // Check Database Access
+    try {
+        const headers = {};
+        if ( database.auth_token && database.auth_token !== '' ) headers.Authorization = `Bearer ${database.auth_token}`;
+        const resp = await fetch(`${database.address}/serverinfo`, { headers });
+        if ( resp.status === 401 ) {
+            response.error(res, 401, "The Synonym Search Tool is unauthorized to fetch data from this database.  Make sure the Auth Token is correct.");
+            return next();
+        }
+        else if ( !resp.ok ) {
+            response.error(res, 400, `The Synonym Search Tool could not communicate with the BrAPI database. Please make sure the server settings are correct and try again. [${resp.status} - ${resp.statusText}]`);
+            return next();
+        }
+    }
+    catch (err) {
+        response.error(res, 500, `Could not connect to BrAPI database [${err}]`);
         return next();
     }
 

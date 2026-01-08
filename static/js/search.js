@@ -44,7 +44,7 @@ function _startSearch(terms, database, config, callback) {
     startSearch(terms, database, config, function(err, id) {
         if ( err || !id ) {
             console.log(err);
-            return displayError("Could not start the germplasm search");
+            return displayError(`Could not start the germplasm search. [${err}]`);
         }
         _watchJob(id, true, "Performing Search", function(job) {
             let rtn = job && job.results ? job.results : {}

@@ -14,7 +14,7 @@ class BrAPI {
         this.call_limit = parseInt(call_limit);
     }
 
-    get(path, { params = {}, page = 1, pageSize = 100 } = {}, progress = () => {}) {
+    get(path, { params = {}, page = undefined, pageSize = 100 } = {}, progress = () => {}, start = true) {
         return new Promise(async (resolve, reject) => {
             try {
                 console.log(`[BRAPI] GET ${this.address}/${path} [${JSON.stringify({ ...params, pageSize, page })}]`);
@@ -23,7 +23,8 @@ class BrAPI {
                 const url = `${this.address}/${path}`;
                 const headers = {};
                 if ( this.auth_token ) headers.Authorization = `Bearer ${this.auth_token}`;
-                const query = { ...params, page, pageSize };
+                const query = { ...params, pageSize };
+                if ( page ) query.page = page;
 
                 // Make Request
                 const response = await fetch(`${url}?` + new URLSearchParams(query), {
@@ -36,7 +37,7 @@ class BrAPI {
                     return reject("The Synonym Search Tool is unauthorized to fetch data from this database.  Make sure the Auth Token is correct.")
                 }
                 else if ( response.status === 404 ) {
-                    return reject("This BrAPI server does not support the /germplasm and /crosses endpoints.  Make sure the BrAPI URL is correct.");
+                    return reject(`This BrAPI server does not support the ${path} endpoint.  Make sure the BrAPI URL is correct.`);
                 }
                 else if ( !response.ok ) {
                     return reject(`BrAPI Server did not return valid response: HTTP Status Code ${response.status}`);
@@ -47,25 +48,25 @@ class BrAPI {
                 const data = body?.result?.data || [];
 
                 // Get page info
-                const currentPage = body?.metadata?.pagination?.currentPage || 1;
-                const totalPages = body?.metadata?.pagination?.totalPages || 1;
-                const totalCount = body?.metadata?.pagination?.totalCount || data.length;
-                progress(data.length, totalCount);
+                const currentPage = body?.metadata?.pagination?.currentPage;
+                const totalPages = body?.metadata?.pagination?.totalPages;
+                const totalCount = body?.metadata?.pagination?.totalCount;
+                if ( progress && start ) progress(data.length, totalCount);
 
                 // Get additional pages
-                if ( currentPage === 1 && totalPages > 1 ) {
-                    const additionalPages = Array.from({length: totalPages - currentPage}, (_, i) => currentPage + 1 + i);
+                if ( start && totalPages > 1 ) {
+                    const additionalPages = Array.from({length: totalPages - 1}, (_, i) => currentPage + 1 + i);
 
                     // Requeset additional pages in chunks
                     const batches = chunk_array(additionalPages, this.call_limit);
                     for ( let i = 0; i < batches.length; i++ ) {
                         const tasks = [];
                         batches[i].forEach((p) => {
-                            tasks.push(this.get(path, { ...params, page: p, pageSize }))
-                        });                        
+                            tasks.push(this.get(path, { params, page: p, pageSize }, progress, false))
+                        });
                         const batchResults = await Promise.all(tasks);
                         data.push(...batchResults.flat());
-                        progress(data.length, totalCount);
+                        if ( progress ) progress(data.length, totalCount);
                     }
                 }
 

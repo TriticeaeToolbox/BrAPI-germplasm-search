@@ -286,7 +286,8 @@ function _getFreshCrosses(brapi, address, params, init_cache_index, init_start_i
 
         return callback(undefined, cache_index, end_index);
     }).catch((err) => {
-        return callback(`Could not fetch cross entries from the database [${err}]`);
+        console.log(`WARNING: Could not fetch cross entries from the database [${err}]`)
+        return callback(undefined, cache_index, end_index);
     });
 }
 

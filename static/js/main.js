@@ -64,7 +64,7 @@ function setDatabases(selected, callback) {
                 html += "<option value='" + i + "'";
                 if ( selected_index && parseInt(selected_index) === i ) html += " selected";
                 html += ">"
-                html += db.name + " (" + db.address + ")";
+                html += db.name + " (" + db.address.replace(/^https?:\/\//, "").replace(/\/brapi\/v[0-9]\/?$/, "") + ")";
                 if ( db.version ) html += " [" + db.version + "]";
                 if ( db.requires_login ) html += " 🔒";
                 html += "</option>";

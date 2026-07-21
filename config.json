@@ -5,7 +5,8 @@
             "name": "T3/Wheat",
             "address": "https://wheat.triticeaetoolbox.org/brapi/v1",
             "version": "v1.3",
-            "call_limit": 10
+            "call_limit": 10,
+            "requires_login": true
         },
         {
             "name": "T3/WheatCAP",
@@ -18,13 +19,15 @@
             "name": "T3/Oat",
             "address": "https://oat.triticeaetoolbox.org/brapi/v1",
             "version": "v1.3",
-            "call_limit": 10
+            "call_limit": 10,
+            "requires_login": true
         },
         {
             "name": "T3/Barley",
             "address": "https://barley.triticeaetoolbox.org/brapi/v1",
             "version": "v1.3",
-            "call_limit": 10
+            "call_limit": 10,
+            "requires_login": true
         },
         {
             "name": "Cassavabase",
